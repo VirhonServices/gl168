@@ -9,12 +9,12 @@ import java.util.List;
 
 public abstract class AbstractPage {
     private ZonedDateTime startedAt;
-    private BigDecimal startAmount;
+    private BigDecimal startBalance;
     private List<Post> posts = new ArrayList<>();
 
-    public AbstractPage(ZonedDateTime startedAt, BigDecimal startAmount) {
+    public AbstractPage(ZonedDateTime startedAt, BigDecimal startBalance) {
         this.startedAt = startedAt;
-        this.startAmount = startAmount;
+        this.startBalance = startBalance;
     }
 
     /**
@@ -36,8 +36,8 @@ public abstract class AbstractPage {
         return posts;
     }
 
-    public BigDecimal getAmountAt(ZonedDateTime at) {
-        BigDecimal curAmount = this.startAmount;
+    public BigDecimal getBalanceAt(ZonedDateTime at) {
+        BigDecimal curAmount = this.startBalance;
         if (!posts.isEmpty()) {
             int res = 0;
             for (int i=0; i<posts.size(); i++) {
@@ -56,7 +56,7 @@ public abstract class AbstractPage {
     /**
      *
      * @param number
-     * @return              - true if the block overflowed
+     * @return              - true if the page overflowed
      */
     private boolean checkOverflow(int number) {
         return number > Config.getInstance().getMaxNumPostsInBlock();
@@ -74,8 +74,8 @@ public abstract class AbstractPage {
         return !checkOverflow(this.posts.size()+1);
     }
 
-    public BigDecimal getStartAmount() {
-        return this.startAmount;
+    public BigDecimal getStartBalance() {
+        return this.startBalance;
     }
 
     public ZonedDateTime getStartedAt() {

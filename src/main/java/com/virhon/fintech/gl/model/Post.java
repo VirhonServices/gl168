@@ -1,13 +1,14 @@
 package com.virhon.fintech.gl.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class Post {
     private Long            documentId;
     private ZonedDateTime   postedAt;
-    private Date            reportedAt;
+    private LocalDate       reportedAt;
     private BigDecimal      amount;
 
     /**
@@ -18,7 +19,7 @@ public class Post {
      * @param reportedAt            - financial date the post linked with
      * @param amount                - negative says about credit turnover, positive - about debit
      */
-    public Post(Long documentId, ZonedDateTime postedAt, Date reportedAt, BigDecimal amount) {
+    public Post(Long documentId, ZonedDateTime postedAt, LocalDate reportedAt, BigDecimal amount) {
         this.documentId = documentId;
         this.postedAt = postedAt;
         this.reportedAt = reportedAt;
@@ -33,7 +34,7 @@ public class Post {
         return postedAt;
     }
 
-    public Date getReportedAt() {
+    public LocalDate getReportedAt() {
         return reportedAt;
     }
 

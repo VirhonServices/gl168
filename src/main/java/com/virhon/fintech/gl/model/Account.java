@@ -1,100 +1,75 @@
 package com.virhon.fintech.gl.model;
 
 import com.virhon.fintech.gl.exception.LedgerException;
+import com.virhon.fintech.gl.repo.AttrRepo;
+import com.virhon.fintech.gl.repo.CurPagesRepo;
+import com.virhon.fintech.gl.repo.HistPageRepo;
+import com.virhon.fintech.gl.repo.IdentifiedEntity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.UUID;
 
 public class Account {
-    private UUID            accountUUID;
-    private String          accountNumber;
-    private AccountType     accountType;
-    private BigDecimal      balance;
-    private BigDecimal      reservedAmount;
+    private Long                accountId;
 
-    private CurrentPage     currentPage;
+    private AttrRepo            attrRepo;
+    private CurPagesRepo        curPagesRepo;
+    private HistPageRepo        histPageRepo;
 
-    public Account() {
+    public static Account getById(Long accountId,
+                                  AttrRepo attrRepo, CurPagesRepo curPagesRepo, HistPageRepo histPageRepo) {
+        final Account account = new Account(attrRepo, curPagesRepo, histPageRepo);
+        account.accountId = accountId;
+        return account;
+    }
+
+    private Account(AttrRepo attrRepo, CurPagesRepo curPagesRepo, HistPageRepo histPageRepo) {
+        this.attrRepo = attrRepo;
+        this.curPagesRepo = curPagesRepo;
+        this.histPageRepo = histPageRepo;
     }
 
     /**
-     * For reading from JSON
+     * Returns the balance of the account from current or historical pages
      *
-     * @param accountUUID
-     * @param accountNumber
-     * @param accountType
-     * @param balance
-     * @param reservedAmount
-     * @param currentPage
-     */
-    public Account(UUID         accountUUID,
-                   String       accountNumber,
-                   AccountType  accountType,
-                   BigDecimal balance,
-                   BigDecimal   reservedAmount,
-                   CurrentPage  currentPage) {
-        this.accountUUID = accountUUID;
-        this.accountNumber = accountNumber;
-        this.accountType = accountType;
-        this.balance = balance;
-        this.reservedAmount = reservedAmount;
-        this.currentPage = currentPage;
-    }
-
-    /**
-     * To create new instance of account
-     *
-     * @param accountNumber
-     * @param accountType
+     * @param at
      * @return
+     * @throws LedgerException
      */
-    public static Account createNew(String accountNumber, AccountType accountType) {
-        Account result = new Account();
-        result.accountNumber = accountNumber;
-        result.accountType = accountType;
-        result.accountUUID = UUID.randomUUID();
-        result.balance = BigDecimal.ZERO;
-        result.reservedAmount = BigDecimal.ZERO;
-        result.currentPage = new CurrentPage(ZonedDateTime.now(), BigDecimal.ZERO);
-        return result;
+    public BigDecimal getAccountBalanceAt(ZonedDateTime at) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> attributes = getAttributes();
+        final IdentifiedEntity<CurrentPage> currentPage = getCurrentPage();
+        if (currentPage.getEntity().contains(at)) {
+            return currentPage.getEntity().getBalanceAt(at);
+        } else {
+            final IdentifiedEntity<HistoricalPage> historicalPage = histPageRepo.getByAccountId(attributes.getId(), at);
+            if (historicalPage == null) {
+                throw LedgerException.invalidHistoricalData(this, at);
+            } else {
+                return historicalPage.getEntity().getBalanceAt(at);
+            }
+        }
     }
 
-    public UUID getAccountUUID() {
-        return accountUUID;
-    }
-
-    public String getAccountNumber() {
-        return accountNumber;
-    }
-
-    public AccountType getAccountType() {
-        return accountType;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public BigDecimal getReservedAmount() {
-        return reservedAmount;
-    }
-
-    public CurrentPage getCurrentPage() {
-        return currentPage;
+    public void commit() {
+        this.attrRepo.commit();
+        this.curPagesRepo.commit();
     }
 
     /**
      * Checks if specified balance accords to account's type
      *
-     * @param balance
+     * @param pBalance
      * @return
      */
-    private boolean isValidBalance(BigDecimal balance) {
-        return (accountType.equals(AccountType.ACTIVEPASSIVE)) ||
-                (accountType.equals(AccountType.ACTIVE) && (balance.signum() ==   1 || balance.signum() == 0)) ||
-                (accountType.equals(AccountType.PASSIVE) && (balance.signum() == -1 || balance.signum() == 0));
+    private boolean isValidBalance(AccountAttributes attributes, BigDecimal pBalance) {
+        final BigDecimal balance = pBalance.add(attributes.getReservedAmount());
+        return (attributes.getAccountType().equals(AccountType.ACTIVEPASSIVE)) ||
+                (attributes.getAccountType().equals(AccountType.ACTIVE) && (balance.signum() ==   1 ||
+                        balance.signum() == 0)) ||
+                (attributes.getAccountType().equals(AccountType.PASSIVE) && (balance.signum() == -1 ||
+                        balance.signum() == 0));
     }
 
     /**
@@ -104,11 +79,17 @@ public class Account {
      * @throws LedgerException
      */
     private void registerPost(Post post) throws LedgerException {
-        final BigDecimal newBalance = this.balance.add(post.getAmount());
-        if (!isValidBalance(newBalance)) {
-            throw LedgerException.redBalance(this.accountNumber);
+        final IdentifiedEntity<AccountAttributes> attributes = this.attrRepo.getByIdExclusive(this.accountId);
+        final IdentifiedEntity<CurrentPage> currentPage = this.curPagesRepo.getByIdExclusive(this.accountId);
+        final BigDecimal newBalance = attributes.getEntity().getBalance().add(post.getAmount());
+        if (!isValidBalance(attributes.getEntity(), newBalance)) {
+            throw LedgerException.redBalance(attributes.getEntity().getAccountNumber());
         } else {
-            this.currentPage.addPost(post);
+            currentPage.getEntity().addPost(post);
+            attributes.getEntity().setBalance(newBalance);
+            this.attrRepo.put(attributes);
+            this.curPagesRepo.put(currentPage);
+            commit();
         }
     }
 
@@ -121,16 +102,23 @@ public class Account {
      * @param amount        positive only!!!!
      * @return              resulted account balance
      */
-    public BigDecimal credit(Long documentId, ZonedDateTime postedAt, Date reportedAt, BigDecimal amount)
+    public BigDecimal credit(Long documentId, ZonedDateTime postedAt, LocalDate reportedAt, BigDecimal amount)
             throws LedgerException {
         Post post = new Post(documentId, postedAt, reportedAt, amount);
         registerPost(post);
-        return this.getBalance();
+        return getAttributes().getEntity().getBalance();
     }
 
-    public BigDecimal debit(Long documentId, ZonedDateTime postedAt, Date reportedAt, BigDecimal amount)
+    public BigDecimal debit(Long documentId, ZonedDateTime postedAt, LocalDate reportedAt, BigDecimal amount)
             throws LedgerException {
         return credit(documentId, postedAt, reportedAt, amount.negate());
     }
 
+    public IdentifiedEntity<AccountAttributes> getAttributes() {
+        return this.attrRepo.getById(this.accountId);
+    }
+
+    public IdentifiedEntity<CurrentPage> getCurrentPage() {
+        return this.curPagesRepo.getById(this.accountId);
+    }
 }
