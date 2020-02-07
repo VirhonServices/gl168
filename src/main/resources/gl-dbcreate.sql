@@ -9,8 +9,24 @@ create table account_attribute (
     uuid            varchar(36) not null unique,
     account_number  varchar(30),
     iban            varchar(34),
-    data            blob,
+    data            text,
 
     primary key (id)
 ) comment "Accounts attributes";
 
+create table current_page (
+    id              bigint      not null,
+    data            text,
+
+    primary key (id)
+) comment "Accounts current pages";
+
+create table historical_page (
+    id              bigint      not null,
+    account_id      bigint      not null,
+    started_at      timestamp   not null,
+    finished_at     timestamp   not null,
+    data            text,
+
+    primary key (id)
+) comment "Accounts historical pages";

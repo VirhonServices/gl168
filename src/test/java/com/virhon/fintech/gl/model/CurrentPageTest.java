@@ -1,12 +1,11 @@
 package com.virhon.fintech.gl.model;
 
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Date;
 
 public class CurrentPageTest {
 

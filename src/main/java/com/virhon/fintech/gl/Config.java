@@ -1,9 +1,6 @@
 package com.virhon.fintech.gl;
 
-import org.springframework.beans.factory.annotation.Value;
-
 public class Config {
-    @Value("${MAX_NUM_POSTS_IN_BLOCK}")
     private Integer maxNumPostsInBlock;
 
     private static Config INSTANCE = null;

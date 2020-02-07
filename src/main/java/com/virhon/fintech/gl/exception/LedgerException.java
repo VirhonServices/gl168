@@ -16,6 +16,10 @@ public class LedgerException extends Exception {
         return new LedgerException(100, "Red balance on the account ".concat(accountNumber));
     }
 
+    public static LedgerException wrongReservation(String accountNumber) {
+        return new LedgerException(110, "The balance of the account ".concat(accountNumber).concat(" is not enough to make a reservation"));
+    }
+
     public static LedgerException invalidHistoricalData(Account account, ZonedDateTime at) {
         return new LedgerException(200, "The account ".concat(account.getAttributes().getEntity().getAccountNumber()
                 .concat(" didn't exist at the date ").concat(at.toString())));
