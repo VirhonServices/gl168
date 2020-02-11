@@ -3,6 +3,7 @@ package com.virhon.fintech.gl.model;
 import com.virhon.fintech.gl.Config;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +11,12 @@ import java.util.List;
 public abstract class AbstractPage {
     private ZonedDateTime startedAt;
     private BigDecimal startBalance;
+    private LocalDate reportedAt;
     private List<Post> posts = new ArrayList<>();
 
-    public AbstractPage(ZonedDateTime startedAt, BigDecimal startBalance) {
+    public AbstractPage(ZonedDateTime startedAt, LocalDate reportedAt, BigDecimal startBalance) {
         this.startedAt = startedAt;
+        this.reportedAt = reportedAt;
         this.startBalance = startBalance;
     }
 
@@ -82,4 +85,11 @@ public abstract class AbstractPage {
         return this.startedAt;
     }
 
+    public LocalDate getReportedAt() {
+        return reportedAt;
+    }
+
+    public void setReportedAt(LocalDate reportedAt) {
+        this.reportedAt = reportedAt;
+    }
 }

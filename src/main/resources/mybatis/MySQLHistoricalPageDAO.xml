@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.virhon.fintech.gl.repo.mysql.currentpage.MySQLHistoricalPageDAO">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.historicalpage.MySQLHistoricalPageRecord" autoMapping="true">
+        <result column="id" property="id"/>
+        <result column="account_id" property="accountId"/>
+        <result column="started_at" property="startedAt"/>
+        <result column="finished_at" property="finishedAt"/>
+        <result column="reported_at" property="reportedAt"/>
+        <result column="data" property="data"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `id`,
+        `account_id`,
+        `started_at`,
+        `finished_at`,
+        `reported_at`,
+        `data`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" parameterType="historical_page" useGeneratedKeys="true" keyProperty="pojo.id" keyColumn="id">
+        INSERT INTO current_page (
+        `id`,
+        `account_id`,
+        `started_at`,
+        `finished_at`,
+        `reported_at`,
+        `data`
+        ) VALUES (
+        #{pojo.id},
+        #{pojo.accountId},
+        #{pojo.startedAt},
+        #{pojo.finishedAt},
+        #{pojo.reportedAt},
+        #{pojo.data}
+        )
+        <selectKey keyProperty="pojo.id" resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE historical_page
+        <set>
+            <if test="pojo.accountId != null"> `account_id` = #{pojo.accountId}, </if>
+            <if test="pojo.startedAt != null"> `started_at` = #{pojo.startedAt}, </if>
+            <if test="pojo.finishedAt != null"> `finished_at` = #{pojo.finishedAt}, </if>
+            <if test="pojo.reportedAt != null"> `reported_at` = #{pojo.reportedAt}, </if>
+            <if test="pojo.data != null"> `data` = #{pojo.data} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="selectById" parameterType="long" resultType="historical_page">
+        select * from historical_page where id = #{id}
+    </select>
+
+    <select id="selectByAccountId" parameterType="map" resultType="historical_page">
+        select * from historical_page where account_id = #{id} and #{postedAt} between started_at and finished_at
+    </select>
+
+    <select id="selectReportedHistory" parameterType="map" resultType="historical_page">
+        select * from historical_page where account_id = #{id} and reported_at between #{from} and #{to}
+    </select>
+
+</mapper>
+

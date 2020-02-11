@@ -24,8 +24,9 @@ create table current_page (
 create table historical_page (
     id              bigint      not null,
     account_id      bigint      not null,
-    started_at      timestamp   not null,
-    finished_at     timestamp   not null,
+    started_at      datetime    not null,
+    finished_at     datetime    not null,
+    reported_at     datetime    not null,
     data            text,
 
     primary key (id)
