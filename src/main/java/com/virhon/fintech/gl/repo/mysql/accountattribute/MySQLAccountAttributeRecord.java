@@ -1,4 +1,4 @@
-package com.virhon.fintech.gl.repo.mysql;
+package com.virhon.fintech.gl.repo.mysql.accountattribute;
 
 public class MySQLAccountAttributeRecord {
     private Long                id;

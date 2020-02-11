@@ -6,7 +6,8 @@
     <properties resource="mybatis/mybatis.properties">
     </properties>
     <typeAliases>
-        <typeAlias type="com.virhon.fintech.gl.repo.mysql.MySQLAccountAttributeRecord" alias="account_attribute" />
+        <typeAlias type="com.virhon.fintech.gl.repo.mysql.accountattribute.MySQLAccountAttributeRecord" alias="account_attribute" />
+        <typeAlias type="com.virhon.fintech.gl.repo.mysql.currentpage.MySQLCurrentPageRecord" alias="current_page" />
     </typeAliases>
     <environments default="development">
         <environment id="development">
@@ -21,5 +22,6 @@
     </environments>
     <mappers>
         <mapper resource="mybatis/MySQLAccountAttributeDAO.xml" />
+        <mapper resource="mybatis/MySQLCurrentPageDAO.xml" />
     </mappers>
 </configuration>

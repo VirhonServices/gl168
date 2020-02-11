@@ -1,4 +1,4 @@
-package com.virhon.fintech.gl.repo.mysql;
+package com.virhon.fintech.gl.repo.mysql.accountattribute;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

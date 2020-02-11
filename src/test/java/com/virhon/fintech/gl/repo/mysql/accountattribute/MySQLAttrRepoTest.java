@@ -1,4 +1,4 @@
-package com.virhon.fintech.gl.repo.mysql;
+package com.virhon.fintech.gl.repo.mysql.accountattribute;
 
 import com.virhon.fintech.gl.model.AccountAttributes;
 import com.virhon.fintech.gl.model.AccountType;

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.virhon.fintech.gl.repo.mysql.currentpage.MySQLCurrentPageDAO">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.currentpage.MySQLCurrentPageRecord">
+        <result column="id" property="id"/>
+        <result column="data" property="data"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `id`,
+        `data`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" parameterType="current_page" useGeneratedKeys="false" keyProperty="pojo.id" keyColumn="id">
+        INSERT INTO current_page (
+        `id`,
+        `data`
+        ) VALUES (
+        #{pojo.id},
+        #{pojo.data}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE current_page
+        <set>
+            <if test="pojo.data != null"> `data` = #{pojo.data} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="selectById" parameterType="long" resultType="current_page">
+        select * from current_page where id = #{id}
+    </select>
+
+    <select id="selectByIdExclusive" parameterType="long" resultType="current_page">
+        select * from current_page where id = #{id} for update
+    </select>
+
+</mapper>
+
