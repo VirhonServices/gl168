@@ -2,7 +2,7 @@ package com.virhon.fintech.gl.model;
 
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.AttrRepo;
-import com.virhon.fintech.gl.repo.CurPagesRepo;
+import com.virhon.fintech.gl.repo.CurPageRepo;
 import com.virhon.fintech.gl.repo.HistPageRepo;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 
@@ -14,19 +14,19 @@ public class Account {
     private Long                accountId;
 
     private AttrRepo            attrRepo;
-    private CurPagesRepo        curPagesRepo;
+    private CurPageRepo curPageRepo;
     private HistPageRepo        histPageRepo;
 
     public static Account getById(Long accountId,
-                                  AttrRepo attrRepo, CurPagesRepo curPagesRepo, HistPageRepo histPageRepo) {
-        final Account account = new Account(attrRepo, curPagesRepo, histPageRepo);
+                                  AttrRepo attrRepo, CurPageRepo curPageRepo, HistPageRepo histPageRepo) {
+        final Account account = new Account(attrRepo, curPageRepo, histPageRepo);
         account.accountId = accountId;
         return account;
     }
 
-    private Account(AttrRepo attrRepo, CurPagesRepo curPagesRepo, HistPageRepo histPageRepo) {
+    private Account(AttrRepo attrRepo, CurPageRepo curPageRepo, HistPageRepo histPageRepo) {
         this.attrRepo = attrRepo;
-        this.curPagesRepo = curPagesRepo;
+        this.curPageRepo = curPageRepo;
         this.histPageRepo = histPageRepo;
     }
 
@@ -39,11 +39,11 @@ public class Account {
      */
     public BigDecimal getAccountBalanceAt(ZonedDateTime at) throws LedgerException {
         final IdentifiedEntity<AccountAttributes> attributes = getAttributes();
-        final IdentifiedEntity<CurrentPage> currentPage = getCurrentPage();
+        final IdentifiedEntity<Page> currentPage = getCurrentPage();
         if (currentPage.getEntity().contains(at)) {
             return currentPage.getEntity().getBalanceAt(at);
         } else {
-            final IdentifiedEntity<HistoricalPage> historicalPage = histPageRepo.getByAccountId(attributes.getId(), at);
+            final IdentifiedEntity<Page> historicalPage = histPageRepo.getByAccountId(attributes.getId(), at);
             if (historicalPage == null) {
                 throw LedgerException.invalidHistoricalData(this, at);
             } else {
@@ -54,7 +54,7 @@ public class Account {
 
     public void commit() {
         this.attrRepo.commit();
-        this.curPagesRepo.commit();
+        this.curPageRepo.commit();
     }
 
     /**
@@ -80,7 +80,7 @@ public class Account {
      */
     private void registerPost(Post post) throws LedgerException {
         final IdentifiedEntity<AccountAttributes> attributes = this.attrRepo.getByIdExclusive(this.accountId);
-        final IdentifiedEntity<CurrentPage> currentPage = this.curPagesRepo.getByIdExclusive(this.accountId);
+        final IdentifiedEntity<Page> currentPage = this.curPageRepo.getByIdExclusive(this.accountId);
         final BigDecimal newBalance = attributes.getEntity().getBalance().add(post.getAmount());
         if (!isValidBalance(attributes.getEntity(), newBalance)) {
             throw LedgerException.redBalance(attributes.getEntity().getAccountNumber());
@@ -88,7 +88,7 @@ public class Account {
             currentPage.getEntity().addPost(post);
             attributes.getEntity().setBalance(newBalance);
             this.attrRepo.put(attributes);
-            this.curPagesRepo.put(currentPage);
+            this.curPageRepo.put(currentPage);
             commit();
         }
     }
@@ -118,7 +118,7 @@ public class Account {
         return this.attrRepo.getById(this.accountId);
     }
 
-    public IdentifiedEntity<CurrentPage> getCurrentPage() {
-        return this.curPagesRepo.getById(this.accountId);
+    public IdentifiedEntity<Page> getCurrentPage() {
+        return this.curPageRepo.getById(this.accountId);
     }
 }

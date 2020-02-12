@@ -7,7 +7,8 @@
         <result column="account_id" property="accountId"/>
         <result column="started_at" property="startedAt"/>
         <result column="finished_at" property="finishedAt"/>
-        <result column="reported_at" property="reportedAt"/>
+        <result column="rep_started_on" property="repStartedOn"/>
+        <result column="rep_finished_on" property="repFinishedOn"/>
         <result column="data" property="data"/>
     </resultMap>
 
@@ -17,7 +18,8 @@
         `account_id`,
         `started_at`,
         `finished_at`,
-        `reported_at`,
+        `rep_started_on`,
+        `rep_finished_on`,
         `data`
     </sql>
 
@@ -28,14 +30,16 @@
         `account_id`,
         `started_at`,
         `finished_at`,
-        `reported_at`,
+        `rep_started_on`,
+        `rep_finished_on`,
         `data`
         ) VALUES (
         #{pojo.id},
         #{pojo.accountId},
         #{pojo.startedAt},
         #{pojo.finishedAt},
-        #{pojo.reportedAt},
+        #{pojo.repStartedOn},
+        #{pojo.repFinishedOn},
         #{pojo.data}
         )
         <selectKey keyProperty="pojo.id" resultType="long" order="AFTER">
@@ -50,7 +54,8 @@
             <if test="pojo.accountId != null"> `account_id` = #{pojo.accountId}, </if>
             <if test="pojo.startedAt != null"> `started_at` = #{pojo.startedAt}, </if>
             <if test="pojo.finishedAt != null"> `finished_at` = #{pojo.finishedAt}, </if>
-            <if test="pojo.reportedAt != null"> `reported_at` = #{pojo.reportedAt}, </if>
+            <if test="pojo.repStartedOn != null"> `rep_started_on` = #{pojo.repStartedOn}, </if>
+            <if test="pojo.repFinishedOn != null"> `rep_finished_on` = #{pojo.repFinishedOn}, </if>
             <if test="pojo.data != null"> `data` = #{pojo.data} </if>
         </set>
         WHERE id = #{pojo.id}
@@ -64,9 +69,4 @@
         select * from historical_page where account_id = #{id} and #{postedAt} between started_at and finished_at
     </select>
 
-    <select id="selectReportedHistory" parameterType="map" resultType="historical_page">
-        select * from historical_page where account_id = #{id} and reported_at between #{from} and #{to}
-    </select>
-
 </mapper>
-

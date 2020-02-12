@@ -26,7 +26,8 @@ create table historical_page (
     account_id      bigint      not null,
     started_at      datetime    not null,
     finished_at     datetime    not null,
-    reported_at     datetime    not null,
+    rep_started_on  date        not null,
+    rep_finished_on date        not null,
     data            text,
 
     primary key (id)

@@ -8,8 +8,9 @@ public class MySQLHistoricalPageRecord {
     private Long            accountId;
     private ZonedDateTime   startedAt;
     private ZonedDateTime   finishedAt;
-    private LocalDate       reportedAt;
-    private String data;
+    private LocalDate       repStartedOn;
+    private LocalDate       repFinishedOn;
+    private String          data;
 
     public Long getId() {
         return id;
@@ -43,12 +44,20 @@ public class MySQLHistoricalPageRecord {
         this.finishedAt = finishedAt;
     }
 
-    public LocalDate getReportedAt() {
-        return reportedAt;
+    public LocalDate getRepStartedOn() {
+        return repStartedOn;
     }
 
-    public void setReportedAt(LocalDate reportedAt) {
-        this.reportedAt = reportedAt;
+    public void setRepStartedOn(LocalDate repStartedOn) {
+        this.repStartedOn = repStartedOn;
+    }
+
+    public LocalDate getRepFinishedOn() {
+        return repFinishedOn;
+    }
+
+    public void setRepFinishedOn(LocalDate repFinishedOn) {
+        this.repFinishedOn = repFinishedOn;
     }
 
     public String getData() {

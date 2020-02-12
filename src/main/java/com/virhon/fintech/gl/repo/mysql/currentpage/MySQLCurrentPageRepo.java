@@ -5,8 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.virhon.fintech.gl.model.CurrentPage;
-import com.virhon.fintech.gl.repo.CurPagesRepo;
+import com.virhon.fintech.gl.model.Page;
+import com.virhon.fintech.gl.repo.CurPageRepo;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -20,7 +20,7 @@ import java.time.ZonedDateTime;
 
 import static java.lang.System.getProperties;
 
-public class MySQLCurrentPageRepo implements CurPagesRepo {
+public class MySQLCurrentPageRepo implements CurPageRepo {
     public static final String CONFIGURATION_XML = "mybatis/mybatis-config.xml";
     private InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_XML);
     private SqlSessionFactory sqlMapper = new SqlSessionFactoryBuilder().build(inputStream, getProperties());
@@ -47,10 +47,10 @@ public class MySQLCurrentPageRepo implements CurPagesRepo {
     }
 
     @Override
-    public IdentifiedEntity<CurrentPage> getById(Long accountId) {
+    public IdentifiedEntity<Page> getById(Long accountId) {
         final MySQLCurrentPageRecord record = this.mapper.selectById(accountId);
         if (record != null) {
-            final CurrentPage page = this.converter.fromJson(record.getData(), CurrentPage.class);
+            final Page page = this.converter.fromJson(record.getData(), Page.class);
             return new IdentifiedEntity<>(accountId, page);
         } else {
             return null;
@@ -58,10 +58,10 @@ public class MySQLCurrentPageRepo implements CurPagesRepo {
     }
 
     @Override
-    public IdentifiedEntity<CurrentPage> getByIdExclusive(Long accountId) {
+    public IdentifiedEntity<Page> getByIdExclusive(Long accountId) {
         final MySQLCurrentPageRecord record = this.mapper.selectByIdExclusive(accountId);
         if (record != null) {
-            final CurrentPage page = this.converter.fromJson(record.getData(), CurrentPage.class);
+            final Page page = this.converter.fromJson(record.getData(), Page.class);
             return new IdentifiedEntity<>(accountId, page);
         } else {
             return null;
@@ -69,7 +69,7 @@ public class MySQLCurrentPageRepo implements CurPagesRepo {
     }
 
     @Override
-    public void put(IdentifiedEntity<CurrentPage> page) {
+    public void put(IdentifiedEntity<Page> page) {
         final MySQLCurrentPageRecord record = new MySQLCurrentPageRecord();
         record.setId(page.getId());
         final String json = this.converter.toJson(page.getEntity());

@@ -1,5 +1,6 @@
 package com.virhon.fintech.gl.model;
 
+import com.virhon.fintech.gl.exception.LedgerException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -7,13 +8,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-public class CurrentPageTest {
+public class PageTest {
 
-    public static CurrentPage createTestPage() {
+    public static Page createTestPage() throws LedgerException {
         final ZonedDateTime startedAt = ZonedDateTime.now().minusDays(3);
         final LocalDate reportedAt = LocalDate.now().minusDays(3);
         final BigDecimal startedBalance = new BigDecimal("10.282737364");
-        final CurrentPage page = new CurrentPage(startedAt, reportedAt, startedBalance);
+        final Page page = Page.create(startedAt, reportedAt, startedBalance);
         for (int i=0;i<85;i++) {
             final ZonedDateTime postedAt = startedAt.plusSeconds(i*i);
             final BigDecimal currentBalance =
@@ -25,13 +26,13 @@ public class CurrentPageTest {
     }
 
     @Test
-    void test() {
+    void test() throws LedgerException {
         final ZonedDateTime startedAt = ZonedDateTime.now().minusDays(3);
         final LocalDate reportedAt = LocalDate.now().minusDays(3);
         final BigDecimal startedBalance = new BigDecimal("10.282737364");
         ZonedDateTime fixedDateTimeAt = null;
         BigDecimal fixedBalance = BigDecimal.ZERO;
-        final CurrentPage page = new CurrentPage(startedAt, reportedAt, startedBalance);
+        final Page page = Page.create(startedAt, reportedAt, startedBalance);
         for (int i=0;i<85;i++) {
             final ZonedDateTime postedAt = startedAt.plusSeconds(i*i);
             final BigDecimal currentBalance =

@@ -1,8 +1,8 @@
 package com.virhon.fintech.gl;
 
-public class Config {
-    private Integer maxNumPostsInBlock;
+import java.time.LocalDate;
 
+public class Config {
     private static Config INSTANCE = null;
 
     public static Config getInstance() {
@@ -15,6 +15,8 @@ public class Config {
     public int getMaxNumPostsInBlock() {
         return 100;
     }
+
+    public LocalDate getReportedOn() {return LocalDate.now();}
 
     /**
      * Returns maximum limit of reserving duration in seconds

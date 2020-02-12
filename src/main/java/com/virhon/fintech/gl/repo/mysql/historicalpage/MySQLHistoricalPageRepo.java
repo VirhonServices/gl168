@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.virhon.fintech.gl.model.HistoricalPage;
+import com.virhon.fintech.gl.model.Page;
 import com.virhon.fintech.gl.repo.HistPageRepo;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.apache.ibatis.io.Resources;
@@ -51,33 +51,33 @@ public class MySQLHistoricalPageRepo implements HistPageRepo {
 
 
     @Override
-    public IdentifiedEntity<HistoricalPage> getById(Long id) {
+    public IdentifiedEntity<Page> getById(Long id) {
         final MySQLHistoricalPageRecord record = this.mapper.selectById(id);
         if (record!=null) {
-            final HistoricalPage page = this.converter.fromJson(record.getData(), HistoricalPage.class);
+            final Page page = this.converter.fromJson(record.getData(), Page.class);
             return new IdentifiedEntity<>(id, page);
         }
         return null;
     }
 
     @Override
-    public IdentifiedEntity<HistoricalPage> getByAccountId(Long accountId, ZonedDateTime at) {
+    public IdentifiedEntity<Page> getByAccountId(Long accountId, ZonedDateTime at) {
         final MySQLHistoricalPageRecord record = this.mapper.selectByAccountId(accountId, at);
         if (record!=null) {
-            final HistoricalPage page = this.converter.fromJson(record.getData(), HistoricalPage.class);
+            final Page page = this.converter.fromJson(record.getData(), Page.class);
             return new IdentifiedEntity<>(record.getId(), page);
         }
         return null;
     }
 
     @Override
-    public List<IdentifiedEntity<HistoricalPage>> getReporetedHistory(Long accountId, LocalDate from, LocalDate to) {
+    public List<IdentifiedEntity<Page>> getReporetedHistory(Long accountId, LocalDate from, LocalDate to) {
         final List<MySQLHistoricalPageRecord> records = this.mapper.selectReportedHistory(accountId, from, to);
         if (!records.isEmpty()) {
-            final List<IdentifiedEntity<HistoricalPage>> result = new ArrayList<>();
+            final List<IdentifiedEntity<Page>> result = new ArrayList<>();
             records.forEach(r -> {
-                final HistoricalPage page = this.converter.fromJson(r.getData(), HistoricalPage.class);
-                result.add(new IdentifiedEntity<HistoricalPage>(r.getId(), page));
+                final Page page = this.converter.fromJson(r.getData(), Page.class);
+                result.add(new IdentifiedEntity<Page>(r.getId(), page));
             });
             return result;
         }
@@ -85,13 +85,14 @@ public class MySQLHistoricalPageRepo implements HistPageRepo {
     }
 
     @Override
-    public Long put(IdentifiedEntity<HistoricalPage> page) {
+    public Long put(IdentifiedEntity<Page> page) {
         final MySQLHistoricalPageRecord record = new MySQLHistoricalPageRecord();
         record.setId(page.getId());
         record.setAccountId(page.getId());
         record.setStartedAt(page.getEntity().getStartedAt());
         record.setFinishedAt(page.getEntity().getFinishedAt());
-        record.setReportedAt(page.getEntity().getReportedAt());
+        record.setRepStartedOn(page.getEntity().getRepStartedOn());
+        record.setRepFinishedOn(page.getEntity().getRepFinishedOn());
         final String data = this.converter.toJson(page.getEntity());
         record.setData(data);
         if (this.mapper.selectById(page.getId()) == null) {

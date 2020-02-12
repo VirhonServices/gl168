@@ -6,7 +6,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.virhon.fintech.gl.model.CurrentPage;
-import com.virhon.fintech.gl.model.CurrentPageTest;
+import com.virhon.fintech.gl.model.PageTest;
 import com.virhon.fintech.gl.model.Post;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.testng.Assert;
@@ -57,7 +57,7 @@ public class MySQLCurrentPageRepoTest {
     @Test(enabled = false)
     void testCreating() {
         for (long i=0;i<100;i++) {
-            final CurrentPage page = CurrentPageTest.createTestPage();
+            final CurrentPage page = PageTest.createTestPage();
             final IdentifiedEntity<CurrentPage> identifiedPage = new IdentifiedEntity<CurrentPage>(i, page);
             repo.put(identifiedPage);
         }
