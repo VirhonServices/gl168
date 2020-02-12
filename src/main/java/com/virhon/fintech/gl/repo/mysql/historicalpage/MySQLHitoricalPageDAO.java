@@ -15,6 +15,6 @@ public interface MySQLHitoricalPageDAO {
     List<MySQLHistoricalPageRecord> selectReportedHistory(@Param("accountId") Long accountId,
                                                           @Param("from") LocalDate from,
                                                           @Param("to") LocalDate to);
-    void insert(@Param("pojo") MySQLHistoricalPageRecord pojo);
+    Long insert(@Param("pojo") MySQLHistoricalPageRecord pojo);
     void update(@Param("pojo") MySQLHistoricalPageRecord pojo);
 }

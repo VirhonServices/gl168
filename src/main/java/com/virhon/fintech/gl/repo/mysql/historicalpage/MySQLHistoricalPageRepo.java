@@ -70,7 +70,7 @@ public class MySQLHistoricalPageRepo implements HistPageRepo {
         return null;
     }
 
-    @Override
+    @Deprecated
     public List<IdentifiedEntity<Page>> getReporetedHistory(Long accountId, LocalDate from, LocalDate to) {
         final List<MySQLHistoricalPageRecord> records = this.mapper.selectReportedHistory(accountId, from, to);
         if (!records.isEmpty()) {
@@ -85,22 +85,31 @@ public class MySQLHistoricalPageRepo implements HistPageRepo {
     }
 
     @Override
-    public Long put(IdentifiedEntity<Page> page) {
+    public Long update(Long accountId, IdentifiedEntity<Page> page) {
         final MySQLHistoricalPageRecord record = new MySQLHistoricalPageRecord();
         record.setId(page.getId());
-        record.setAccountId(page.getId());
+        record.setAccountId(accountId);
         record.setStartedAt(page.getEntity().getStartedAt());
         record.setFinishedAt(page.getEntity().getFinishedAt());
         record.setRepStartedOn(page.getEntity().getRepStartedOn());
         record.setRepFinishedOn(page.getEntity().getRepFinishedOn());
-        final String data = this.converter.toJson(page.getEntity());
+        final String data = this.converter.toJson(page);
         record.setData(data);
-        if (this.mapper.selectById(page.getId()) == null) {
-            this.mapper.insert(record);
-        } else {
-            this.mapper.update(record);
-        }
+        this.mapper.update(record);
         return page.getId();
+    }
+
+    @Override
+    public Long insert(Long accountId, Page page) {
+        final MySQLHistoricalPageRecord record = new MySQLHistoricalPageRecord();
+        record.setAccountId(accountId);
+        record.setStartedAt(page.getStartedAt());
+        record.setFinishedAt(page.getFinishedAt());
+        record.setRepStartedOn(page.getRepStartedOn());
+        record.setRepFinishedOn(page.getRepFinishedOn());
+        final String data = this.converter.toJson(page);
+        record.setData(data);
+        return this.mapper.insert(record);
     }
 
     @Override

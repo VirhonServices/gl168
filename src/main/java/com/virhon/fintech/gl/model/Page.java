@@ -130,11 +130,11 @@ public class Page {
      *
      * @return              - true if the block is full
      */
-    private boolean isFull() {
+    public boolean isFull() {
         return !checkOverflow(this.posts.size());
     }
 
-    private boolean hasNext() {
+    public boolean hasNext() {
         return !checkOverflow(this.posts.size()+1);
     }
 

@@ -14,7 +14,7 @@ public class Account {
     private Long                accountId;
 
     private AttrRepo            attrRepo;
-    private CurPageRepo curPageRepo;
+    private CurPageRepo         curPageRepo;
     private HistPageRepo        histPageRepo;
 
     public static Account getById(Long accountId,
@@ -52,11 +52,6 @@ public class Account {
         }
     }
 
-    public void commit() {
-        this.attrRepo.commit();
-        this.curPageRepo.commit();
-    }
-
     /**
      * Checks if specified balance accords to account's type
      *
@@ -85,11 +80,22 @@ public class Account {
         if (!isValidBalance(attributes.getEntity(), newBalance)) {
             throw LedgerException.redBalance(attributes.getEntity().getAccountNumber());
         } else {
-            currentPage.getEntity().addPost(post);
-            attributes.getEntity().setBalance(newBalance);
             this.attrRepo.put(attributes);
-            this.curPageRepo.put(currentPage);
-            commit();
+            if (currentPage.getEntity().hasNext()) {
+                currentPage.getEntity().addPost(post);
+                attributes.getEntity().setBalance(newBalance);
+                this.curPageRepo.put(currentPage);
+            } else {
+                final Page hPage = currentPage.getEntity();
+                final Page cPage = Page.create(hPage.getFinishedAt(),
+                        hPage.getRepFinishedOn(), hPage.getFinishBalance());
+                final IdentifiedEntity<Page> cidPage = new IdentifiedEntity<>(this.accountId, cPage);
+                this.histPageRepo.insert(this.accountId, hPage);
+                this.curPageRepo.put(cidPage);
+                this.histPageRepo.commit();
+            }
+            this.attrRepo.commit();
+            this.curPageRepo.commit();
         }
     }
 
