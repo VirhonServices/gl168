@@ -49,7 +49,7 @@ public class PageTest {
         final ZonedDateTime dateBefore = ZonedDateTime.now().minusDays(10);
         Assert.assertFalse(page.contains(dateBefore));
         final ZonedDateTime dateAfter = ZonedDateTime.now().minusDays(1);
-        Assert.assertTrue(page.contains(dateAfter));
+        Assert.assertTrue(page.currentCanContain(dateAfter));
         final BigDecimal gottenBalance = page.getBalanceAt(fixedDateTimeAt);
         Assert.assertEquals(gottenBalance, fixedBalance.add(startedBalance));
     }

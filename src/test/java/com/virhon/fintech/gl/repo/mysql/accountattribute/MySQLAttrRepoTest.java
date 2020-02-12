@@ -18,7 +18,7 @@ public class MySQLAttrRepoTest {
 
     @Test
     void testGetByIdDummy() {
-        final IdentifiedEntity<AccountAttributes> attr = repo.getById(1L);
+        final IdentifiedEntity<AccountAttributes> attr = repo.getById(21L);
         Assert.assertNotNull(attr);
         final IdentifiedEntity<AccountAttributes> attrNull = repo.getById(-1L);
         Assert.assertNull(attrNull);
@@ -34,7 +34,7 @@ public class MySQLAttrRepoTest {
             final AccountAttributes attributes = AccountAttributes.createNew(accountNumber,iban, AccountType.PASSIVE);
             attributes.setBalance(new BigDecimal(i));
             final IdentifiedEntity<AccountAttributes> identifiedEntity = new IdentifiedEntity<>(i, attributes);
-            final Long id = this.repo.put(identifiedEntity);
+            final Long id = this.repo.insert(attributes);
             Assert.assertNotNull(id);
         }
         this.repo.commit();

@@ -16,6 +16,7 @@ import org.apache.ibatis.session.TransactionIsolationLevel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.lang.System.getProperties;
@@ -27,23 +28,33 @@ public class MySQLAttrRepo implements AttrRepo {
     private SqlSession session = sqlMapper.openSession(TransactionIsolationLevel.READ_COMMITTED);
     private MySQLAccountAttributeDAO mapper = this.session.getMapper(MySQLAccountAttributeDAO.class);
 
-    private Gson converter = null;
+    private Gson converter = new GsonBuilder()
+            .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
+                @Override
+                public void write(JsonWriter out, ZonedDateTime value) throws IOException {
+                    out.value(value.toString());
+                }
+
+                @Override
+                public ZonedDateTime read(JsonReader in) throws IOException {
+                    return ZonedDateTime.parse(in.nextString());
+                }
+            })
+            .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
+                @Override
+                public void write(JsonWriter out, LocalDate value) throws IOException {
+                    out.value(value.toString());
+                }
+
+                @Override
+                public LocalDate read(JsonReader in) throws IOException {
+                    return LocalDate.parse(in.nextString());
+                }
+            })
+            .enableComplexMapKeySerialization()
+            .create();
 
     public MySQLAttrRepo() throws IOException {
-        this.converter = new GsonBuilder()
-                .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
-                    @Override
-                    public void write(JsonWriter out, ZonedDateTime value) throws IOException {
-                        out.value(value.toString());
-                    }
-
-                    @Override
-                    public ZonedDateTime read(JsonReader in) throws IOException {
-                        return ZonedDateTime.parse(in.nextString());
-                    }
-                })
-                .enableComplexMapKeySerialization()
-                .create();
     }
 
     @Override
@@ -69,7 +80,7 @@ public class MySQLAttrRepo implements AttrRepo {
     }
 
     @Override
-    public Long put(IdentifiedEntity<AccountAttributes> attributes) {
+    public void update(IdentifiedEntity<AccountAttributes> attributes) {
         final MySQLAccountAttributeRecord record = new MySQLAccountAttributeRecord();
         record.setId(attributes.getId());
         record.setAccountNumber(attributes.getEntity().getAccountNumber());
@@ -77,11 +88,19 @@ public class MySQLAttrRepo implements AttrRepo {
         record.setUuid(attributes.getEntity().getAccountUUID());
         final String json = this.converter.toJson(attributes.getEntity());
         record.setData(json);
-        if (this.mapper.selectById(attributes.getId()) == null) {
-            return this.mapper.insert(record);
-        } else {
-            return this.mapper.update(record);
-        }
+        this.mapper.update(record);
+    }
+
+    @Override
+    public Long insert(AccountAttributes attributes) {
+        final MySQLAccountAttributeRecord record = new MySQLAccountAttributeRecord();
+        record.setAccountNumber(attributes.getAccountNumber());
+        record.setIban(attributes.getIban());
+        record.setUuid(attributes.getAccountUUID());
+        final String json = this.converter.toJson(attributes);
+        record.setData(json);
+        this.mapper.insert(record);
+        return record.getId();
     }
 
     @Override

@@ -9,5 +9,5 @@ public interface MySQLAccountAttributeDAO {
     MySQLAccountAttributeRecord selectByUuid(@Param("uuid") String uuid);
     MySQLAccountAttributeRecord selectByIdExclusive(@Param("id") Long id);
     Long insert(@Param("pojo") MySQLAccountAttributeRecord pojo);
-    Long update(@Param("pojo") MySQLAccountAttributeRecord pojo);
+    void update(@Param("pojo") MySQLAccountAttributeRecord pojo);
 }

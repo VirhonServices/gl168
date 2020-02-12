@@ -22,7 +22,7 @@ create table current_page (
 ) comment "Accounts current pages";
 
 create table historical_page (
-    id              bigint      not null,
+    id              bigint      not null AUTO_INCREMENT,
     account_id      bigint      not null,
     started_at      datetime    not null,
     finished_at     datetime    not null,

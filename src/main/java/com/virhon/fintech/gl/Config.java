@@ -13,7 +13,7 @@ public class Config {
     }
 
     public int getMaxNumPostsInBlock() {
-        return 100;
+        return 120;
     }
 
     public LocalDate getReportedOn() {return LocalDate.now();}

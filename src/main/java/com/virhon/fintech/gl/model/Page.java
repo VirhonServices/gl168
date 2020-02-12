@@ -19,25 +19,8 @@ public class Page {
 
     private List<Post>      posts = new ArrayList<>();
 
-    public Page(ZonedDateTime startedAt,
-                ZonedDateTime finishedAt,
-                LocalDate repStartedOn,
-                LocalDate repFinishedOn,
-                BigDecimal startBalance,
-                BigDecimal finishBalance,
-                List<Post> posts) {
-        this.startedAt = startedAt;
-        this.finishedAt = finishedAt;
-        this.repStartedOn = repStartedOn;
-        this.repFinishedOn = repFinishedOn;
-        this.startBalance = startBalance;
-        this.finishBalance = finishBalance;
-        this.posts = posts;
-    }
-
     private Page() {
     }
-
 
     /**
      * Factory method
@@ -62,6 +45,27 @@ public class Page {
         return create(ZonedDateTime.now(), LocalDate.now(), startBalance);
     }
 
+
+    /**
+     * Check if current page can contain the POSTING date
+     *
+     * @param at
+     * @return
+     */
+    public boolean currentCanContain(ZonedDateTime at) {
+        return this.startedAt.compareTo(at) <= 0;
+    }
+
+    /**
+     * Check if current page can contain the REPORTING date
+     *
+     * @param on
+     * @return
+     */
+    public boolean currentCanContain(LocalDate on) {
+        return this.repStartedOn.compareTo(on) <= 0;
+    }
+
     /**
      * Checks if POSTING date belongs to the page
      *
@@ -69,7 +73,7 @@ public class Page {
      * @return
      */
     public boolean contains(ZonedDateTime at) {
-        return (this.startedAt.compareTo(at) <= 0 && at.compareTo(this.finishedAt) <= 0);
+        return (currentCanContain(at) && at.compareTo(this.finishedAt) <= 0);
     }
 
     /**
@@ -79,7 +83,7 @@ public class Page {
      * @return
      */
     public boolean contains(LocalDate on) {
-        return (this.repStartedOn.compareTo(on) <= 0 && on.compareTo(this.getRepFinishedOn()) <= 0);
+        return (currentCanContain(on) && on.compareTo(this.getRepFinishedOn()) <= 0);
     }
 
     public List<Post> addPost(final Post post) throws LedgerException {

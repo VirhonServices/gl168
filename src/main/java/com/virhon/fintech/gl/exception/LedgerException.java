@@ -29,11 +29,14 @@ public class LedgerException extends Exception {
         return new LedgerException(210, "The balance of the account ".concat(accountNumber).concat(" is not enough to make a reservation"));
     }
 
-    public static LedgerException invalidHistoricalData(Account account, ZonedDateTime at) {
-        return new LedgerException(300, "The account ".concat(account.getAttributes().getEntity().getAccountNumber()
-                .concat(" didn't exist at the date ").concat(at.toString())));
+    public static LedgerException invalidAccount(Long accountId) {
+        return new LedgerException(300, "The account id=".concat(accountId.toString()).concat(" doesn't exist"));
     }
 
+    public static LedgerException invalidHistoricalData(Account account, ZonedDateTime at) {
+        return new LedgerException(310, "The account ".concat(account.getAttributes().getEntity().getAccountNumber()
+                .concat(" didn't exist at the date ").concat(at.toString())));
+    }
     public static LedgerException invalidMode(Account account) {
         return new LedgerException(400, "Can't operate read-only account "
                 .concat(account.getAttributes().getEntity().getAccountNumber()));

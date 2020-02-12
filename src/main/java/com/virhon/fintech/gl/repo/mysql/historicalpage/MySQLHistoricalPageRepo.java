@@ -30,23 +30,33 @@ public class MySQLHistoricalPageRepo implements HistPageRepo {
     private SqlSession session = sqlMapper.openSession(TransactionIsolationLevel.READ_COMMITTED);
     private MySQLHitoricalPageDAO mapper = this.session.getMapper(MySQLHitoricalPageDAO.class);
 
-    private Gson converter = null;
+    private Gson converter = new GsonBuilder()
+            .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
+                @Override
+                public void write(JsonWriter out, ZonedDateTime value) throws IOException {
+                    out.value(value.toString());
+                }
+
+                @Override
+                public ZonedDateTime read(JsonReader in) throws IOException {
+                    return ZonedDateTime.parse(in.nextString());
+                }
+            })
+            .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
+                @Override
+                public void write(JsonWriter out, LocalDate value) throws IOException {
+                    out.value(value.toString());
+                }
+
+                @Override
+                public LocalDate read(JsonReader in) throws IOException {
+                    return LocalDate.parse(in.nextString());
+                }
+            })
+            .enableComplexMapKeySerialization()
+            .create();
 
     public MySQLHistoricalPageRepo() throws IOException {
-        this.converter = new GsonBuilder()
-                .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
-                    @Override
-                    public void write(JsonWriter out, ZonedDateTime value) throws IOException {
-                        out.value(value.toString());
-                    }
-
-                    @Override
-                    public ZonedDateTime read(JsonReader in) throws IOException {
-                        return ZonedDateTime.parse(in.nextString());
-                    }
-                })
-                .enableComplexMapKeySerialization()
-                .create();
     }
 
 
@@ -109,7 +119,8 @@ public class MySQLHistoricalPageRepo implements HistPageRepo {
         record.setRepFinishedOn(page.getRepFinishedOn());
         final String data = this.converter.toJson(page);
         record.setData(data);
-        return this.mapper.insert(record);
+        this.mapper.insert(record);
+        return record.getId();
     }
 
     @Override

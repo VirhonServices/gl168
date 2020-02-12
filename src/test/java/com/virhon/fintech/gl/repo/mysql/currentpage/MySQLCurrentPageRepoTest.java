@@ -5,7 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.virhon.fintech.gl.model.CurrentPage;
+import com.virhon.fintech.gl.exception.LedgerException;
+import com.virhon.fintech.gl.model.Page;
 import com.virhon.fintech.gl.model.PageTest;
 import com.virhon.fintech.gl.model.Post;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
@@ -55,10 +56,10 @@ public class MySQLCurrentPageRepoTest {
     }
 
     @Test(enabled = false)
-    void testCreating() {
+    void testCreating() throws LedgerException {
         for (long i=0;i<100;i++) {
-            final CurrentPage page = PageTest.createTestPage();
-            final IdentifiedEntity<CurrentPage> identifiedPage = new IdentifiedEntity<CurrentPage>(i, page);
+            final Page page = PageTest.createTestPage();
+            final IdentifiedEntity<Page> identifiedPage = new IdentifiedEntity<Page>(i, page);
             repo.put(identifiedPage);
         }
         repo.commit();
@@ -66,7 +67,7 @@ public class MySQLCurrentPageRepoTest {
 
     @Test
     void testGetting() {
-        final IdentifiedEntity<CurrentPage> identifiedPage = repo.getById(55L);
+        final IdentifiedEntity<Page> identifiedPage = repo.getById(55L);
         Assert.assertNotNull(identifiedPage);
         Assert.assertNotNull(identifiedPage.getEntity());
         Assert.assertEquals(identifiedPage.getEntity().getPosts().size(), 85);

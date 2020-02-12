@@ -13,30 +13,7 @@ public class AccountAttributes {
     private BigDecimal      balance;
     private BigDecimal      reservedAmount;
 
-    public AccountAttributes() {
-    }
-
-    /**
-     * For reading from JSON
-     *
-     * @param accountType
-     * @param accountUUID
-     * @param accountNumber
-     * @param balance
-     * @param reservedAmount
-     */
-    public AccountAttributes(String       accountUUID,
-                             String       accountNumber,
-                             AccountType  accountType,
-                             String       iban,
-                             BigDecimal   balance,
-                             BigDecimal   reservedAmount) {
-        this.accountUUID = accountUUID;
-        this.accountNumber = accountNumber;
-        this.iban = iban;
-        this.accountType = accountType;
-        this.balance = balance;
-        this.reservedAmount = reservedAmount;
+    private AccountAttributes() {
     }
 
     /**

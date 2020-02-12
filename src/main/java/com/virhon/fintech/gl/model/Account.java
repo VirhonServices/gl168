@@ -5,6 +5,7 @@ import com.virhon.fintech.gl.repo.AttrRepo;
 import com.virhon.fintech.gl.repo.CurPageRepo;
 import com.virhon.fintech.gl.repo.HistPageRepo;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
+import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,17 +18,44 @@ public class Account {
     private CurPageRepo         curPageRepo;
     private HistPageRepo        histPageRepo;
 
-    public static Account getById(Long accountId,
-                                  AttrRepo attrRepo, CurPageRepo curPageRepo, HistPageRepo histPageRepo) {
+    final static Logger LOGGER = Logger.getLogger(Account.class);
+
+    private Account(AttrRepo        attrRepo,
+                    CurPageRepo     curPageRepo,
+                    HistPageRepo    histPageRepo) {
+        this.attrRepo = attrRepo;
+        this.curPageRepo = curPageRepo;
+        this.histPageRepo = histPageRepo;
+    }
+
+    public static Account getExisting(Long          accountId,
+                                      AttrRepo      attrRepo,
+                                      CurPageRepo   curPageRepo,
+                                      HistPageRepo  histPageRepo) throws LedgerException {
+        if (attrRepo.getById(accountId)==null) {
+            throw LedgerException.invalidAccount(accountId);
+        }
         final Account account = new Account(attrRepo, curPageRepo, histPageRepo);
         account.accountId = accountId;
         return account;
     }
 
-    private Account(AttrRepo attrRepo, CurPageRepo curPageRepo, HistPageRepo histPageRepo) {
-        this.attrRepo = attrRepo;
-        this.curPageRepo = curPageRepo;
-        this.histPageRepo = histPageRepo;
+    public static Account openNew(String          accountNumber,
+                                  String          iban,
+                                  AccountType     accountType,
+                                  AttrRepo        attrRepo,
+                                  CurPageRepo     curPageRepo,
+                                  HistPageRepo    histPageRepo) {
+        final AccountAttributes attributes = AccountAttributes.createNew(accountNumber, iban, accountType);
+        final Page page = Page.create(BigDecimal.ZERO);
+        final Account account = new Account(attrRepo, curPageRepo, histPageRepo);
+        final Long accountId = attrRepo.insert(attributes);
+        account.accountId = accountId;
+        final IdentifiedEntity<Page> identifiedPage = new IdentifiedEntity<Page>(accountId, page);
+        curPageRepo.put(identifiedPage);
+        attrRepo.commit();
+        curPageRepo.commit();
+        return account;
     }
 
     /**
@@ -75,27 +103,32 @@ public class Account {
      */
     private void registerPost(Post post) throws LedgerException {
         final IdentifiedEntity<AccountAttributes> attributes = this.attrRepo.getByIdExclusive(this.accountId);
+        if (attributes == null) {
+            throw LedgerException.invalidAccount(this.accountId);
+        }
         final IdentifiedEntity<Page> currentPage = this.curPageRepo.getByIdExclusive(this.accountId);
         final BigDecimal newBalance = attributes.getEntity().getBalance().add(post.getAmount());
         if (!isValidBalance(attributes.getEntity(), newBalance)) {
             throw LedgerException.redBalance(attributes.getEntity().getAccountNumber());
         } else {
-            this.attrRepo.put(attributes);
+            attributes.getEntity().setBalance(newBalance);
             if (currentPage.getEntity().hasNext()) {
                 currentPage.getEntity().addPost(post);
-                attributes.getEntity().setBalance(newBalance);
                 this.curPageRepo.put(currentPage);
+                this.curPageRepo.commit();
             } else {
                 final Page hPage = currentPage.getEntity();
                 final Page cPage = Page.create(hPage.getFinishedAt(),
                         hPage.getRepFinishedOn(), hPage.getFinishBalance());
+                cPage.addPost(post);
                 final IdentifiedEntity<Page> cidPage = new IdentifiedEntity<>(this.accountId, cPage);
-                this.histPageRepo.insert(this.accountId, hPage);
                 this.curPageRepo.put(cidPage);
+                this.curPageRepo.commit();
+                this.histPageRepo.insert(this.accountId, hPage);
                 this.histPageRepo.commit();
             }
+            this.attrRepo.update(attributes);
             this.attrRepo.commit();
-            this.curPageRepo.commit();
         }
     }
 
@@ -104,20 +137,31 @@ public class Account {
      *
      * @param documentId
      * @param postedAt
-     * @param reportedAt
-     * @param amount        positive only!!!!
+     * @param reportedOn
+     * @param amount        positive says about debiting, negative says about crediting
      * @return              resulted account balance
      */
-    public BigDecimal credit(Long documentId, ZonedDateTime postedAt, LocalDate reportedAt, BigDecimal amount)
+    private BigDecimal operate(Long documentId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
             throws LedgerException {
-        Post post = new Post(documentId, postedAt, reportedAt, amount);
+        Post post = new Post(documentId, postedAt, reportedOn, amount);
         registerPost(post);
         return getAttributes().getEntity().getBalance();
     }
 
-    public BigDecimal debit(Long documentId, ZonedDateTime postedAt, LocalDate reportedAt, BigDecimal amount)
+    public BigDecimal credit(Long documentId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
             throws LedgerException {
-        return credit(documentId, postedAt, reportedAt, amount.negate());
+        LOGGER.info("Crediting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
+        final BigDecimal balance = operate(documentId, postedAt, reportedOn, amount.negate());
+        LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
+        return balance;
+    }
+
+    public BigDecimal debit(Long documentId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
+            throws LedgerException {
+        LOGGER.info("Debting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
+        final BigDecimal balance = operate(documentId, postedAt, reportedOn, amount);
+        LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
+        return balance;
     }
 
     public IdentifiedEntity<AccountAttributes> getAttributes() {
@@ -126,5 +170,13 @@ public class Account {
 
     public IdentifiedEntity<Page> getCurrentPage() {
         return this.curPageRepo.getById(this.accountId);
+    }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 }

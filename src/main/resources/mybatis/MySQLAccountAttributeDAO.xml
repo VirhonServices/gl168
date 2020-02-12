@@ -33,7 +33,7 @@
         #{pojo.data}
         )
         <selectKey keyProperty="pojo.id" resultType="long" order="AFTER">
-            select last_insert_id()
+            select last_insert_id() as id
         </selectKey>
     </insert>
 

@@ -16,6 +16,7 @@ import org.apache.ibatis.session.TransactionIsolationLevel;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.lang.System.getProperties;
@@ -27,23 +28,33 @@ public class MySQLCurrentPageRepo implements CurPageRepo {
     private SqlSession session = sqlMapper.openSession(TransactionIsolationLevel.READ_COMMITTED);
     private MySQLCurrentPageDAO mapper = this.session.getMapper(MySQLCurrentPageDAO.class);
 
-    private Gson converter = null;
+    private Gson converter = new GsonBuilder()
+            .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
+                @Override
+                public void write(JsonWriter out, ZonedDateTime value) throws IOException {
+                    out.value(value.toString());
+                }
+
+                @Override
+                public ZonedDateTime read(JsonReader in) throws IOException {
+                    return ZonedDateTime.parse(in.nextString());
+                }
+            })
+            .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
+                @Override
+                public void write(JsonWriter out, LocalDate value) throws IOException {
+                    out.value(value.toString());
+                }
+
+                @Override
+                public LocalDate read(JsonReader in) throws IOException {
+                    return LocalDate.parse(in.nextString());
+                }
+            })
+            .enableComplexMapKeySerialization()
+            .create();
 
     public MySQLCurrentPageRepo() throws IOException {
-        this.converter = new GsonBuilder()
-                .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
-                    @Override
-                    public void write(JsonWriter out, ZonedDateTime value) throws IOException {
-                        out.value(value.toString());
-                    }
-
-                    @Override
-                    public ZonedDateTime read(JsonReader in) throws IOException {
-                        return ZonedDateTime.parse(in.nextString());
-                    }
-                })
-                .enableComplexMapKeySerialization()
-                .create();
     }
 
     @Override
