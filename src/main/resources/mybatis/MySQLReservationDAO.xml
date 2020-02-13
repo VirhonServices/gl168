@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.virhon.fintech.gl.repo.mysql.reservation.MySQLReservationDAO">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.reservation.MySQLReservationRecord">
+        <result column="id" property="id"/>
+        <result column="data" property="data"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `id`,
+        `expire_at`,
+        `closed_at`,
+        `reason`,
+        `data`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" parameterType="reservation" useGeneratedKeys="false" keyProperty="pojo.id" keyColumn="id">
+        INSERT INTO ${tablename} (
+        `expire_at`,
+        `closed_at`,
+        `reason`,
+        `data`
+        ) VALUES (
+        #{pojo.expire_at},
+        #{pojo.closedAt},
+        #{pojo.reason},
+        #{pojo.data}
+        )
+        <selectKey keyProperty="pojo.id" resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="selectById" parameterType="long" resultType="reservation">
+        select * from ${tablename} where id = #{id}
+    </select>
+
+    <select id="selectByIdExclusive" parameterType="long" resultType="reservation">
+        select * from ${tablename} where id = #{id} for update
+    </select>
+
+    <delete id="delete" parameterType="long">
+        delete from ${tablename} where id = #{id}
+    </delete>
+
+</mapper>

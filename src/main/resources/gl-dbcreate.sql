@@ -39,3 +39,14 @@ create table transfer (
 
     primary key (id)
 ) comment "Transfers";
+
+
+create table reservation (
+    id              bigint      not null AUTO_INCREMENT,
+    expireAt        datetime    not null,
+    closedAt        datetime,
+    reason          varchar(10),
+    data            text,
+
+    primary key (id)
+) comment "Reservations";

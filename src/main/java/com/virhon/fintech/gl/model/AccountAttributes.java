@@ -69,9 +69,6 @@ public class AccountAttributes {
     }
 
     public void setReservedDebit(BigDecimal reservedDebit) throws LedgerException {
-        if (reservedDebit.compareTo(balance) > 0) {
-            throw LedgerException.wrongReservation(this.accountNumber);
-        }
         this.reservedDebit = reservedDebit;
     }
 
