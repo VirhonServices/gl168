@@ -73,11 +73,3 @@ public class AccountTest {
     }
 
 }
-
-
-/*
-*     <select id="selectHistoryPeriod" parameterType="map" resultType="list" resultMap="AllColumnMap">
-        select * from historical_page where account_id = #{accountId} and rep_started_on >= #{from} and rep_finished_on <= #{to}
-    </select>
-
-* */

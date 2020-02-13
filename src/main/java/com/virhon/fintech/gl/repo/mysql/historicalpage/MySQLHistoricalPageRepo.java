@@ -102,7 +102,7 @@ public class MySQLHistoricalPageRepo implements HistPageRepo {
         record.setFinishedAt(page.getEntity().getFinishedAt());
         record.setRepStartedOn(page.getEntity().getRepStartedOn());
         record.setRepFinishedOn(page.getEntity().getRepFinishedOn());
-        final String data = this.converter.toJson(page);
+        final String data = this.converter.toJson(page.getEntity());
         record.setData(data);
         this.mapper.update(record);
         return page.getId();

@@ -32,3 +32,10 @@ create table historical_page (
 
     primary key (id)
 ) comment "Accounts historical pages";
+
+create table transfer (
+    id              bigint      not null AUTO_INCREMENT,
+    data            text,
+
+    primary key (id)
+) comment "Transfers";
