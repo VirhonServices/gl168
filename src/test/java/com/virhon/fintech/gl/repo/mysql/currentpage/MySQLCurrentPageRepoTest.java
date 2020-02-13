@@ -25,7 +25,7 @@ public class MySQLCurrentPageRepoTest {
         repo.commit();
     }
 
-    @Test
+    @Test(enabled = false)
     void testGetting() {
         final IdentifiedEntity<Page> identifiedPage = repo.getById(55L);
         Assert.assertNotNull(identifiedPage);

@@ -16,7 +16,7 @@ public class MySQLAttrRepoTest {
     public MySQLAttrRepoTest() throws IOException {
     }
 
-    @Test
+    @Test(enabled = false)
     void testGetByIdDummy() {
         final IdentifiedEntity<AccountAttributes> attr = repo.getById(21L);
         Assert.assertNotNull(attr);
@@ -40,21 +40,4 @@ public class MySQLAttrRepoTest {
         this.repo.commit();
     }
 
-    @Test
-    void testGetById() {
-        final IdentifiedEntity<AccountAttributes> attr = repo.getById(25L);
-        Assert.assertNotNull(attr);
-        Assert.assertNotNull(attr.getEntity().getAccountType());
-        Assert.assertNotNull(attr.getEntity().getAccountNumber());
-        Assert.assertNotNull(attr.getEntity().getAccountUUID());
-        Assert.assertNotNull(attr.getEntity().getIban());
-        Assert.assertNotNull(attr.getEntity().getBalance());
-        Assert.assertNotNull(attr.getEntity().getReservedDebit());
-    }
-
-    @Test
-    void testGetByIdExclusive() {
-        final IdentifiedEntity<AccountAttributes> attr = repo.getByIdExclusive(26L);
-        Assert.assertNotNull(attr);
-    }
 }

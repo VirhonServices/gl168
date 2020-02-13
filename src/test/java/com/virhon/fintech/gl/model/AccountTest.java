@@ -25,7 +25,7 @@ public class AccountTest {
     public AccountTest() throws IOException {
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     void testCreating() throws LedgerException {
         final List<Long> accountIds = new ArrayList<>();
         // 1. Create new accounts

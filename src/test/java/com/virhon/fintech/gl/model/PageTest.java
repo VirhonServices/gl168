@@ -25,7 +25,7 @@ public class PageTest {
         return page;
     }
 
-    @Test
+    @Test(enabled = false)
     void test() throws LedgerException {
         final ZonedDateTime startedAt = ZonedDateTime.now().minusDays(3);
         final LocalDate reportedAt = LocalDate.now().minusDays(3);
