@@ -80,18 +80,17 @@ public class MySQLHistoricalPageRepo implements HistPageRepo {
         return null;
     }
 
-    @Deprecated
-    public List<IdentifiedEntity<Page>> getReporetedHistory(Long accountId, LocalDate from, LocalDate to) {
-        final List<MySQLHistoricalPageRecord> records = this.mapper.selectReportedHistory(accountId, from, to);
+    @Override
+    public List<IdentifiedEntity<Page>> getHistory(Long accountId) {
+        final List<MySQLHistoricalPageRecord> records = this.mapper.selectHistory(accountId);
+        final List<IdentifiedEntity<Page>> result = new ArrayList<>();
         if (!records.isEmpty()) {
-            final List<IdentifiedEntity<Page>> result = new ArrayList<>();
             records.forEach(r -> {
                 final Page page = this.converter.fromJson(r.getData(), Page.class);
                 result.add(new IdentifiedEntity<Page>(r.getId(), page));
             });
-            return result;
         }
-        return null;
+        return result;
     }
 
     @Override

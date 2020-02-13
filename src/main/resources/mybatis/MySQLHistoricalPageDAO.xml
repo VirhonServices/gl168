@@ -64,7 +64,11 @@
     </select>
 
     <select id="selectByAccountId" parameterType="map" resultType="historical_page">
-        select * from historical_page where account_id = #{id} and #{postedAt} between started_at and finished_at
+        select * from historical_page where account_id = #{accountId} and #{postedAt} between started_at and finished_at
+    </select>
+
+    <select id="selectHistory" parameterType="long" resultType="historical_page">
+        select * from historical_page where account_id = #{accountId}
     </select>
 
 </mapper>

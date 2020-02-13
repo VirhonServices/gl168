@@ -4,16 +4,13 @@ import java.time.LocalDate;
 
 public class Config {
     private static Config INSTANCE = null;
+    private int maxNumPostsInBlock = 120;
 
     public static Config getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new Config();
         }
         return INSTANCE;
-    }
-
-    public int getMaxNumPostsInBlock() {
-        return 120;
     }
 
     public LocalDate getReportedOn() {return LocalDate.now();}
@@ -25,5 +22,18 @@ public class Config {
      */
     public int getReservigDuration() {
         return 300;
+    }
+
+    public int getMaxNumPostsInBlock() {
+        return maxNumPostsInBlock;
+    }
+
+    /**
+     * Temporary measure to be able to test
+     *
+     * @param maxNumPostsInBlock
+     */
+    public void setMaxNumPostsInBlock(int maxNumPostsInBlock) {
+        this.maxNumPostsInBlock = maxNumPostsInBlock;
     }
 }

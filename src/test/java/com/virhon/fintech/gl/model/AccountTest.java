@@ -1,6 +1,8 @@
 package com.virhon.fintech.gl.model;
 
+import com.virhon.fintech.gl.Config;
 import com.virhon.fintech.gl.exception.LedgerException;
+import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.mysql.accountattribute.MySQLAttrRepo;
 import com.virhon.fintech.gl.repo.mysql.currentpage.MySQLCurrentPageRepo;
 import com.virhon.fintech.gl.repo.mysql.historicalpage.MySQLHistoricalPageRepo;
@@ -23,7 +25,7 @@ public class AccountTest {
     public AccountTest() throws IOException {
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     void testCreating() throws LedgerException {
         final List<Long> accountIds = new ArrayList<>();
         // 1. Create new accounts
@@ -36,7 +38,8 @@ public class AccountTest {
             }
         }
         // 2. Generate postings between several days and few accounts
-        int limit = 2000;
+        int limit = 20;
+        Config.getInstance().setMaxNumPostsInBlock(limit / 2 + 3);
         int perDay = limit/3;
         ZonedDateTime postedAt = ZonedDateTime.now();
         LocalDate reportedOn = LocalDate.now();
@@ -60,6 +63,21 @@ public class AccountTest {
         final BigDecimal targetBalance = new BigDecimal(limit * 2);
         Assert.assertTrue(attributes.getBalance().compareTo(targetBalance.negate())==0);
         // 4. Check number of historical pages
+        final List<IdentifiedEntity<Page>> pages = hRepo.getHistory(account.getAccountId());
+        final long pagesNum = pages.size();
+        final int historicalPagesNumber = limit / Config.getInstance().getMaxNumPostsInBlock();
+        Assert.assertEquals(pagesNum, historicalPagesNumber);
+        final long curPageSize = limit - (pagesNum * Config.getInstance().getMaxNumPostsInBlock());
+        final Page curPage = this.cRepo.getById(account.getAccountId()).getEntity();
+        Assert.assertEquals(curPage.getPosts().size(), curPageSize);
     }
 
 }
+
+
+/*
+*     <select id="selectHistoryPeriod" parameterType="map" resultType="list" resultMap="AllColumnMap">
+        select * from historical_page where account_id = #{accountId} and rep_started_on >= #{from} and rep_finished_on <= #{to}
+    </select>
+
+* */
