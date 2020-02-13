@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Random;
 
 public class AccountTest {
-    private MySQLAttrRepo               attrRepo = new MySQLAttrRepo();
-    private MySQLCurrentPageRepo        cRepo = new MySQLCurrentPageRepo();
-    private MySQLHistoricalPageRepo     hRepo = new MySQLHistoricalPageRepo();
+    private MySQLAttrRepo               attrRepo = new MySQLAttrRepo("uah_account_attribute");
+    private MySQLCurrentPageRepo        cRepo = new MySQLCurrentPageRepo("uah_current_page");
+    private MySQLHistoricalPageRepo     hRepo = new MySQLHistoricalPageRepo("uah_historical_page");
 
     public AccountTest() throws IOException {
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     void testCreating() throws LedgerException {
         final List<Long> accountIds = new ArrayList<>();
         // 1. Create new accounts

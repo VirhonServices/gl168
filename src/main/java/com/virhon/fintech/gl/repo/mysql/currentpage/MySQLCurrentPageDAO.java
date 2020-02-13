@@ -5,8 +5,8 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface MySQLCurrentPageDAO {
-    MySQLCurrentPageRecord selectById(@Param("id") Long id);
-    MySQLCurrentPageRecord selectByIdExclusive(@Param("id") Long id);
-    void insert(@Param("pojo") MySQLCurrentPageRecord pojo);
-    void update(@Param("pojo") MySQLCurrentPageRecord pojo);
+    MySQLCurrentPageRecord selectById(@Param("tablename") String tablename, @Param("id") Long id);
+    MySQLCurrentPageRecord selectByIdExclusive(@Param("tablename") String tablename, @Param("id") Long id);
+    void insert(@Param("tablename") String tablename, @Param("pojo") MySQLCurrentPageRecord pojo);
+    void update(@Param("tablename") String tablename, @Param("pojo") MySQLCurrentPageRecord pojo);
 }

@@ -15,7 +15,7 @@
 
     <!--auto generated Code-->
     <insert id="insert" parameterType="current_page" useGeneratedKeys="false" keyProperty="pojo.id" keyColumn="id">
-        INSERT INTO current_page (
+        INSERT INTO ${tablename} (
         `id`,
         `data`
         ) VALUES (
@@ -26,7 +26,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE current_page
+        UPDATE ${tablename}
         <set>
             <if test="pojo.data != null"> `data` = #{pojo.data} </if>
         </set>
@@ -34,11 +34,11 @@
     </update>
 
     <select id="selectById" parameterType="long" resultType="current_page">
-        select * from current_page where id = #{id}
+        select * from ${tablename} where id = #{id}
     </select>
 
     <select id="selectByIdExclusive" parameterType="long" resultType="current_page">
-        select * from current_page where id = #{id} for update
+        select * from ${tablename} where id = #{id} for update
     </select>
 
 </mapper>

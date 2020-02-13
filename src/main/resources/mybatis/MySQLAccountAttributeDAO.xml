@@ -21,7 +21,7 @@
 
     <!--auto generated Code-->
     <insert id="insert" parameterType="account_attribute" useGeneratedKeys="true" keyProperty="pojo.id" keyColumn="id">
-        INSERT INTO account_attribute (
+        INSERT INTO ${tablename} (
         `uuid`,
         `account_number`,
         `iban`,
@@ -39,7 +39,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE account_attribute
+        UPDATE ${tablename}
         <set>
             <if test="pojo.uuid != null"> `uuid` = #{pojo.uuid}, </if>
             <if test="pojo.accountNumber != null"> `account_number` = #{pojo.accountNumber}, </if>
@@ -50,15 +50,15 @@
     </update>
 
     <select id="selectById" parameterType="long" resultType="account_attribute">
-        select * from account_attribute where id = #{id}
+        select * from ${tablename} where id = #{id}
     </select>
 
     <select id="selectByUuid" parameterType="string" resultType="account_attribute">
-        select * from account_attribute where uuid = #{uuid}
+        select * from ${tablename} where uuid = #{uuid}
     </select>
 
     <select id="selectByIdExclusive" parameterType="long" resultType="account_attribute">
-        select * from account_attribute where id = #{id} for update
+        select * from ${tablename} where id = #{id} for update
     </select>
 
 </mapper>

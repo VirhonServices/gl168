@@ -5,9 +5,9 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface MySQLAccountAttributeDAO {
-    MySQLAccountAttributeRecord selectById(@Param("id") Long id);
-    MySQLAccountAttributeRecord selectByUuid(@Param("uuid") String uuid);
-    MySQLAccountAttributeRecord selectByIdExclusive(@Param("id") Long id);
-    Long insert(@Param("pojo") MySQLAccountAttributeRecord pojo);
-    void update(@Param("pojo") MySQLAccountAttributeRecord pojo);
+    MySQLAccountAttributeRecord selectById(@Param("tablename") String tablename, @Param("id") Long id);
+    MySQLAccountAttributeRecord selectByUuid(@Param("tablename") String tablename, @Param("uuid") String uuid);
+    MySQLAccountAttributeRecord selectByIdExclusive(@Param("tablename") String tablename, @Param("id") Long id);
+    Long insert(@Param("tablename") String tablename, @Param("pojo") MySQLAccountAttributeRecord pojo);
+    void update(@Param("tablename") String tablename, @Param("pojo") MySQLAccountAttributeRecord pojo);
 }

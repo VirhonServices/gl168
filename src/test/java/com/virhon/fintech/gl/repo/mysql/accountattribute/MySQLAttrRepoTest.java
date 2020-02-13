@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.Random;
 
 public class MySQLAttrRepoTest {
-    private MySQLAttrRepo repo = new MySQLAttrRepo();
+    private MySQLAttrRepo repo = new MySQLAttrRepo("uah_account_attribute");
 
     public MySQLAttrRepoTest() throws IOException {
     }

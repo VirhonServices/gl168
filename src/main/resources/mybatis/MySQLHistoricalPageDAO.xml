@@ -25,7 +25,7 @@
 
     <!--auto generated Code-->
     <insert id="insert" parameterType="historical_page" useGeneratedKeys="true" keyProperty="pojo.id" keyColumn="id">
-        INSERT INTO historical_page (
+        INSERT INTO ${tablename} (
         `account_id`,
         `started_at`,
         `finished_at`,
@@ -47,7 +47,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE historical_page
+        UPDATE ${tablename}
         <set>
             <if test="pojo.accountId != null"> `account_id` = #{pojo.accountId}, </if>
             <if test="pojo.startedAt != null"> `started_at` = #{pojo.startedAt}, </if>
@@ -60,15 +60,15 @@
     </update>
 
     <select id="selectById" parameterType="long" resultType="historical_page">
-        select * from historical_page where id = #{id}
+        select * from ${tablename} where id = #{id}
     </select>
 
     <select id="selectByAccountId" parameterType="map" resultType="historical_page">
-        select * from historical_page where account_id = #{accountId} and #{postedAt} between started_at and finished_at
+        select * from ${tablename} where account_id = #{accountId} and #{postedAt} between started_at and finished_at
     </select>
 
     <select id="selectHistory" parameterType="long" resultType="historical_page">
-        select * from historical_page where account_id = #{accountId}
+        select * from ${tablename} where account_id = #{accountId}
     </select>
 
 </mapper>

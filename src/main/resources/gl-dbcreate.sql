@@ -4,7 +4,7 @@ create database gl DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 use gl;
 set sql_mode = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION";
 
-create table account_attribute (
+create table uah_account_attribute (
     id              bigint      not null AUTO_INCREMENT,
     uuid            varchar(36) not null unique,
     account_number  varchar(30),
@@ -14,14 +14,14 @@ create table account_attribute (
     primary key (id)
 ) comment "Accounts attributes";
 
-create table current_page (
+create table uah_current_page (
     id              bigint      not null,
     data            text,
 
     primary key (id)
 ) comment "Accounts current pages";
 
-create table historical_page (
+create table uah_historical_page (
     id              bigint      not null AUTO_INCREMENT,
     account_id      bigint      not null,
     started_at      datetime    not null,
@@ -33,15 +33,14 @@ create table historical_page (
     primary key (id)
 ) comment "Accounts historical pages";
 
-create table transfer (
+create table uah_transfer (
     id              bigint      not null AUTO_INCREMENT,
     data            text,
 
     primary key (id)
 ) comment "Transfers";
 
-
-create table reservation (
+create table uah_reservation (
     id              bigint      not null AUTO_INCREMENT,
     expireAt        datetime    not null,
     closedAt        datetime,
