@@ -11,7 +11,8 @@ public class AccountAttributes {
     private String          accountNumber;
     private String          iban;
     private BigDecimal      balance;
-    private BigDecimal      reservedAmount;
+    private BigDecimal      reservedDebit;
+    private BigDecimal      reservedCredit;
 
     private AccountAttributes() {
     }
@@ -30,7 +31,8 @@ public class AccountAttributes {
         result.accountUUID = UUID.randomUUID().toString();
         result.iban = iban;
         result.balance = BigDecimal.ZERO;
-        result.reservedAmount = BigDecimal.ZERO;
+        result.reservedDebit = BigDecimal.ZERO;
+        result.reservedCredit = BigDecimal.ZERO;
         return result;
     }
 
@@ -50,8 +52,12 @@ public class AccountAttributes {
         return this.balance;
     }
 
-    public BigDecimal getReservedAmount() {
-        return this.reservedAmount;
+    public BigDecimal getReservedDebit() {
+        return this.reservedDebit;
+    }
+
+    public BigDecimal getReservedCredit() {
+        return reservedCredit;
     }
 
     public void setBalance(BigDecimal balance) {
@@ -62,10 +68,14 @@ public class AccountAttributes {
         return iban;
     }
 
-    public void setReservedAmount(BigDecimal reservedAmount) throws LedgerException {
-        if (reservedAmount.compareTo(balance) > 0) {
+    public void setReservedDebit(BigDecimal reservedDebit) throws LedgerException {
+        if (reservedDebit.compareTo(balance) > 0) {
             throw LedgerException.wrongReservation(this.accountNumber);
         }
-        this.reservedAmount = reservedAmount;
+        this.reservedDebit = reservedDebit;
+    }
+
+    public void setReservedCredit(BigDecimal reservedCredit) {
+        this.reservedCredit = reservedCredit;
     }
 }

@@ -49,7 +49,7 @@ public class MySQLAttrRepoTest {
         Assert.assertNotNull(attr.getEntity().getAccountUUID());
         Assert.assertNotNull(attr.getEntity().getIban());
         Assert.assertNotNull(attr.getEntity().getBalance());
-        Assert.assertNotNull(attr.getEntity().getReservedAmount());
+        Assert.assertNotNull(attr.getEntity().getReservedDebit());
     }
 
     @Test

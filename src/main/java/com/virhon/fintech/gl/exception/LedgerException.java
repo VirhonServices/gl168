@@ -3,6 +3,7 @@ package com.virhon.fintech.gl.exception;
 import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.Post;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 public class LedgerException extends Exception {
@@ -19,6 +20,10 @@ public class LedgerException extends Exception {
 
     public static LedgerException invalidReportedOn(Post post) {
         return new LedgerException(110, "Unable to add the post older than the page ".concat(post.getReportedOn().toString()));
+    }
+
+    public static LedgerException invalidReservationAmount(BigDecimal amount) {
+        return new LedgerException(120, "The negative amount ".concat(amount.toString()).concat(" can't be reserved"));
     }
 
     public static LedgerException redBalance(String accountNumber) {

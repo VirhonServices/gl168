@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.virhon.fintech.gl.repo.mysql.currentpage.MySQLTransferDAO">
+<mapper namespace="com.virhon.fintech.gl.repo.mysql.transfer.MySQLTransferDAO">
     <!--auto generated Code-->
-    <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.currentpage.MySQLTransferRecord">
+    <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.transfer.MySQLTransferRecord">
         <result column="id" property="id"/>
         <result column="data" property="data"/>
     </resultMap>
@@ -15,7 +15,7 @@
 
     <!--auto generated Code-->
     <insert id="insert" parameterType="transfer" useGeneratedKeys="false" keyProperty="pojo.id" keyColumn="id">
-        INSERT INTO #{tablename} (
+        INSERT INTO ${tablename} (
         `data`
         ) VALUES (
         #{pojo.data}
@@ -27,7 +27,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE #{tablename}
+        UPDATE ${tablename}
         <set>
             <if test="pojo.data != null"> `data` = #{pojo.data} </if>
         </set>
@@ -35,11 +35,11 @@
     </update>
 
     <select id="selectById" parameterType="long" resultType="transfer">
-        select * from #{tablename} where id = #{id}
+        select * from ${tablename} where id = #{id}
     </select>
 
     <select id="selectByIdExclusive" parameterType="long" resultType="transfer">
-        select * from #{tablename} where id = #{id} for update
+        select * from ${tablename} where id = #{id} for update
     </select>
 
 </mapper>

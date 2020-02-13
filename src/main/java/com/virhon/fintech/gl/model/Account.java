@@ -87,7 +87,7 @@ public class Account {
      * @return
      */
     private boolean isValidBalance(AccountAttributes attributes, BigDecimal pBalance) {
-        final BigDecimal balance = pBalance.add(attributes.getReservedAmount());
+        final BigDecimal balance = pBalance.add(attributes.getReservedDebit());
         return (attributes.getAccountType().equals(AccountType.ACTIVEPASSIVE)) ||
                 (attributes.getAccountType().equals(AccountType.ACTIVE) && (balance.signum() ==   1 ||
                         balance.signum() == 0)) ||
@@ -135,33 +135,97 @@ public class Account {
     /**
      * Credit account
      *
-     * @param documentId
+     * @param transferId
      * @param postedAt
      * @param reportedOn
      * @param amount        positive says about debiting, negative says about crediting
      * @return              resulted account balance
      */
-    private BigDecimal operate(Long documentId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
+    private BigDecimal operate(Long transferId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
             throws LedgerException {
-        Post post = new Post(documentId, postedAt, reportedOn, amount);
+        Post post = new Post(transferId, postedAt, reportedOn, amount);
         registerPost(post);
         return getAttributes().getEntity().getBalance();
     }
 
-    public BigDecimal credit(Long documentId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
+    public BigDecimal credit(Long transferId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
             throws LedgerException {
         LOGGER.info("Crediting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
-        final BigDecimal balance = operate(documentId, postedAt, reportedOn, amount.negate());
+        final BigDecimal balance = operate(transferId, postedAt, reportedOn, amount.negate());
         LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
         return balance;
     }
 
-    public BigDecimal debit(Long documentId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
+    public BigDecimal debit(Long transferId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
             throws LedgerException {
         LOGGER.info("Debting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
-        final BigDecimal balance = operate(documentId, postedAt, reportedOn, amount);
+        final BigDecimal balance = operate(transferId, postedAt, reportedOn, amount);
         LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
         return balance;
+    }
+
+    /**
+     * Reserves amount for future debiting
+     *
+     * @param reserveId
+     * @param amount
+     * @return
+     * @throws LedgerException
+     */
+    public BigDecimal reserveDebit(Long reserveId, BigDecimal amount) throws LedgerException {
+        // 1. Calculate new reservedAmount
+        final IdentifiedEntity<AccountAttributes> iAttributes = this.attrRepo.getByIdExclusive(this.accountId);
+        if (iAttributes==null) {
+            throw LedgerException.invalidAccount(this.accountId);
+        }
+        if (amount.signum() == -1) {
+            throw LedgerException.invalidReservationAmount(amount);
+        }
+        final AccountAttributes attributes = iAttributes.getEntity();
+        final BigDecimal balance = attributes.getBalance();
+        final BigDecimal reserved = attributes.getReservedDebit();
+        final BigDecimal newReserved = reserved.add(amount);
+        // 2. Check the reservedAmount
+        if (attributes.getAccountType() == AccountType.PASSIVE && balance.negate().compareTo(newReserved) < 0) {
+            throw LedgerException.wrongReservation(attributes.getAccountNumber());
+        }
+        // 3. Change reservedAmount
+        attributes.setReservedDebit(newReserved);
+        final IdentifiedEntity<AccountAttributes> oAttr = new IdentifiedEntity<>(this.accountId, attributes);
+        this.attrRepo.update(oAttr);
+        return newReserved;
+    }
+
+    /**
+     * Reserves amount for future crediting
+     *
+     * @param reserveId
+     * @param amount
+     * @return
+     * @throws LedgerException
+     */
+    public BigDecimal reserveCredit(Long reserveId, BigDecimal amount) throws LedgerException {
+        // 1. Calculate new reservedAmount
+        final IdentifiedEntity<AccountAttributes> iAttributes = this.attrRepo.getByIdExclusive(this.accountId);
+        if (iAttributes==null) {
+            throw LedgerException.invalidAccount(this.accountId);
+        }
+        if (amount.signum() == -1) {
+            throw LedgerException.invalidReservationAmount(amount);
+        }
+        final AccountAttributes attributes = iAttributes.getEntity();
+        final BigDecimal balance = attributes.getBalance();
+        final BigDecimal reserved = attributes.getReservedCredit();
+        final BigDecimal newReserved = reserved.add(amount);
+        // 2. Check the reservedAmount
+        if (attributes.getAccountType() == AccountType.ACTIVE && balance.compareTo(newReserved) < 0) {
+            throw LedgerException.wrongReservation(attributes.getAccountNumber());
+        }
+        // 3. Change reservedAmount
+        attributes.setReservedCredit(newReserved);
+        final IdentifiedEntity<AccountAttributes> oAttr = new IdentifiedEntity<>(this.accountId, attributes);
+        this.attrRepo.update(oAttr);
+        return newReserved;
     }
 
     public IdentifiedEntity<AccountAttributes> getAttributes() {
