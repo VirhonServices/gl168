@@ -5,7 +5,7 @@ import com.virhon.fintech.gl.model.Transfer;
 public interface TransferRepo {
     IdentifiedEntity<Transfer> getById(Long id);
     IdentifiedEntity<Transfer> getByIdExclusive(Long id);
-    Long insert(Transfer transfer);
+    IdentifiedEntity<Transfer> insert(Transfer transfer);
     void update(IdentifiedEntity<Transfer> transfer);
     void commit();
 }

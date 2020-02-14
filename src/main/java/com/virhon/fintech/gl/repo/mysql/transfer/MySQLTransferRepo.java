@@ -36,12 +36,12 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
     }
 
     @Override
-    public Long insert(Transfer transfer) {
+    public IdentifiedEntity<Transfer> insert(Transfer transfer) {
         final MySQLTransferRecord record = new MySQLTransferRecord();
         final String data = getConverter().toJson(transfer);
         record.setData(data);
         getMapper().insert(getTablename(), record);
-        return record.getId();
+        return new IdentifiedEntity<Transfer>(record.getId(), transfer);
     }
 
     @Override

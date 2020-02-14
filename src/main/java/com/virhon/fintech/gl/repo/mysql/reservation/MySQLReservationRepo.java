@@ -34,13 +34,13 @@ public class MySQLReservationRepo extends MySQLAbstactRepo<MySQLReservationDAO> 
     }
 
     @Override
-    public Long insert(Reservation reservation) {
+    public IdentifiedEntity<Reservation> insert(Reservation reservation) {
         final MySQLReservationRecord record = new MySQLReservationRecord();
         final String data = getConverter().toJson(reservation);
         record.setExpireAt(reservation.getExpireAt());
         record.setData(data);
         getMapper().insert(getTablename(), record);
-        return record.getId();
+        return new IdentifiedEntity<Reservation>(record.getId(), reservation);
     }
 
     @Override

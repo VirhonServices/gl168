@@ -9,7 +9,7 @@ import com.virhon.fintech.gl.repo.mysql.transfer.MySQLTransferRepo;
 
 import java.io.IOException;
 
-public class MySQLLedger implements LedgerFactory {
+public class MySQLLedgerRepoFactory implements LedgerRepoFactory {
     public static final String ACCOUNT_ATTRIBUTE = "account_attribute";
     public static final String CURRENT_PAGE = "current_page";
     public static final String HISTORICAL_PAGE = "historical_page";
@@ -17,7 +17,7 @@ public class MySQLLedger implements LedgerFactory {
     public static final String TRANSFER = "transfer";
     private String currency;
 
-    public MySQLLedger(String currency) {
+    public MySQLLedgerRepoFactory(String currency) {
         this.currency = currency;
     }
 

@@ -5,8 +5,8 @@ import java.time.ZonedDateTime;
 
 public class Reservation {
     private String          transferRef;
-    private Long            debitAccountId;
-    private Long            creditAccountId;
+    private Long            debitId;
+    private Long            creditId;
     private BigDecimal      amount;
     private String          description;
     private ZonedDateTime   expireAt;
@@ -19,20 +19,20 @@ public class Reservation {
         this.transferRef = transferRef;
     }
 
-    public Long getDebitAccountId() {
-        return debitAccountId;
+    public Long getDebitId() {
+        return debitId;
     }
 
-    public void setDebitAccountId(Long debitAccountId) {
-        this.debitAccountId = debitAccountId;
+    public void setDebitId(Long debitId) {
+        this.debitId = debitId;
     }
 
-    public Long getCreditAccountId() {
-        return creditAccountId;
+    public Long getCreditId() {
+        return creditId;
     }
 
-    public void setCreditAccountId(Long creditAccountId) {
-        this.creditAccountId = creditAccountId;
+    public void setCreditId(Long creditId) {
+        this.creditId = creditId;
     }
 
     public BigDecimal getAmount() {

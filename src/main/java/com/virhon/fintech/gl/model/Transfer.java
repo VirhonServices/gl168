@@ -6,10 +6,9 @@ import java.time.ZonedDateTime;
 
 public class Transfer {
     private String          transferRef;
-    private ZonedDateTime   createdAt;
+    private ZonedDateTime   postedAt;
     private BigDecimal      amount;
     private BigDecimal      localAmount;
-    private ZonedDateTime   postedAt;
     private LocalDate       reportedOn;
     private String          description;
 
@@ -19,14 +18,6 @@ public class Transfer {
 
     public void setTransferRef(String transferRef) {
         this.transferRef = transferRef;
-    }
-
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(ZonedDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public BigDecimal getAmount() {

@@ -26,6 +26,10 @@ public class LedgerException extends Exception {
         return new LedgerException(120, "The negative amount ".concat(amount.toString()).concat(" can't be reserved"));
     }
 
+    public static LedgerException invalidTransferAmount(BigDecimal amount) {
+        return new LedgerException(130, "The negative amount ".concat(amount.toString()).concat(" can't be transferred"));
+    }
+
     public static LedgerException redBalance(String accountNumber) {
         return new LedgerException(200, "Red balance on the account ".concat(accountNumber));
     }
@@ -42,6 +46,11 @@ public class LedgerException extends Exception {
         return new LedgerException(310, "The account ".concat(account.getAttributes().getEntity().getAccountNumber()
                 .concat(" didn't exist at the date ").concat(at.toString())));
     }
+
+    public static LedgerException accountCantBeOperated(Long accountId) {
+        return new LedgerException(320, "The account id=".concat(accountId.toString()).concat(" can't be operated"));
+    }
+
     public static LedgerException invalidMode(Account account) {
         return new LedgerException(400, "Can't operate read-only account "
                 .concat(account.getAttributes().getEntity().getAccountNumber()));

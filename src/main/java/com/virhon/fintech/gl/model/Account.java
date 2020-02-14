@@ -53,8 +53,6 @@ public class Account {
         account.accountId = accountId;
         final IdentifiedEntity<Page> identifiedPage = new IdentifiedEntity<Page>(accountId, page);
         curPageRepo.put(identifiedPage);
-        attrRepo.commit();
-        curPageRepo.commit();
         return account;
     }
 
@@ -115,7 +113,6 @@ public class Account {
             if (currentPage.getEntity().hasNext()) {
                 currentPage.getEntity().addPost(post);
                 this.curPageRepo.put(currentPage);
-                this.curPageRepo.commit();
             } else {
                 final Page hPage = currentPage.getEntity();
                 final Page cPage = Page.create(hPage.getFinishedAt(),
@@ -123,12 +120,9 @@ public class Account {
                 cPage.addPost(post);
                 final IdentifiedEntity<Page> cidPage = new IdentifiedEntity<>(this.accountId, cPage);
                 this.curPageRepo.put(cidPage);
-                this.curPageRepo.commit();
                 this.histPageRepo.insert(this.accountId, hPage);
-                this.histPageRepo.commit();
             }
             this.attrRepo.update(attributes);
-            this.attrRepo.commit();
         }
     }
 
@@ -167,12 +161,11 @@ public class Account {
     /**
      * Reserves amount for future debiting
      *
-     * @param reserveId
      * @param amount
      * @return
      * @throws LedgerException
      */
-    public BigDecimal reserveDebit(Long reserveId, BigDecimal amount) throws LedgerException {
+    public BigDecimal reserveDebit(BigDecimal amount) throws LedgerException {
         // 1. Calculate new reservedAmount
         final IdentifiedEntity<AccountAttributes> iAttributes = this.attrRepo.getByIdExclusive(this.accountId);
         if (iAttributes==null) {
@@ -199,12 +192,11 @@ public class Account {
     /**
      * Reserves amount for future crediting
      *
-     * @param reserveId
      * @param amount
      * @return
      * @throws LedgerException
      */
-    public BigDecimal reserveCredit(Long reserveId, BigDecimal amount) throws LedgerException {
+    public BigDecimal reserveCredit(BigDecimal amount) throws LedgerException {
         // 1. Calculate new reservedAmount
         final IdentifiedEntity<AccountAttributes> iAttributes = this.attrRepo.getByIdExclusive(this.accountId);
         if (iAttributes==null) {
@@ -227,6 +219,12 @@ public class Account {
         this.attrRepo.update(oAttr);
         return newReserved;
     }
+
+    /**
+     * Reserved for checking if the account arrested or blocked
+     * @return
+     */
+    public Boolean canBeOperated() {return true;}
 
     public IdentifiedEntity<AccountAttributes> getAttributes() {
         return this.attrRepo.getById(this.accountId);
