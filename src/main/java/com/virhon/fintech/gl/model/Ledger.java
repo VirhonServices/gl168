@@ -1,5 +1,6 @@
 package com.virhon.fintech.gl.model;
 
+import com.virhon.fintech.gl.Config;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.*;
 import org.apache.log4j.Logger;
@@ -40,8 +41,8 @@ public class Ledger {
             throw LedgerException.invalidTransferAmount(amount);
         }
         // 2. Get accounts
-        final Account debit  = Account.getExisting(debitId, this.attrRepo, this.curPageRepo, this.histPageRepo);
-        final Account credit = Account.getExisting(creditId, this.attrRepo, this.curPageRepo, this.histPageRepo);
+        final Account debit  = Account.getExistingById(this, debitId);
+        final Account credit = Account.getExistingById(this, creditId);
         // 3. Check if the transfer is possible
         if (!debit.canBeOperated()) {
             throw LedgerException.accountCantBeOperated(debitId);
@@ -77,11 +78,12 @@ public class Ledger {
         reservation.setDebitId(debitId);
         reservation.setCreditId(creditId);
         reservation.setAmount(amount);
+        reservation.setExpireAt(ZonedDateTime.now().plusSeconds(Config.getInstance().getReservigDuration()));
         reservation.setDescription(description);
         final IdentifiedEntity<Reservation> iReservation = this.reservationRepo.insert(reservation);
         // 2. Reserve funds
-        final Account debit = Account.getExisting(debitId, this.attrRepo, this.curPageRepo, this.histPageRepo);
-        final Account credit = Account.getExisting(creditId, this.attrRepo, this.curPageRepo, this.histPageRepo);
+        final Account debit = Account.getExistingById(this, debitId);
+        final Account credit = Account.getExistingById(this, creditId);
         debit.reserveDebit(amount);
         credit.reserveCredit(amount);
         return iReservation;
@@ -105,5 +107,33 @@ public class Ledger {
 
     void cancelReservation(Long id) {
         this.reservationRepo.delete(id);
+    }
+
+    void commit() {
+        this.attrRepo.commit();
+        this.curPageRepo.commit();
+        this.histPageRepo.commit();
+        this.transferRepo.commit();
+        this.reservationRepo.commit();
+    }
+
+    public AttrRepo getAttrRepo() {
+        return attrRepo;
+    }
+
+    public CurPageRepo getCurPageRepo() {
+        return curPageRepo;
+    }
+
+    public HistPageRepo getHistPageRepo() {
+        return histPageRepo;
+    }
+
+    public TransferRepo getTransferRepo() {
+        return transferRepo;
+    }
+
+    public ReservationRepo getReservationRepo() {
+        return reservationRepo;
     }
 }

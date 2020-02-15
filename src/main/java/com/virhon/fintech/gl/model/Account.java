@@ -1,9 +1,6 @@
 package com.virhon.fintech.gl.model;
 
 import com.virhon.fintech.gl.exception.LedgerException;
-import com.virhon.fintech.gl.repo.AttrRepo;
-import com.virhon.fintech.gl.repo.CurPageRepo;
-import com.virhon.fintech.gl.repo.HistPageRepo;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.apache.log4j.Logger;
 
@@ -13,46 +10,57 @@ import java.time.ZonedDateTime;
 
 public class Account {
     private Long                accountId;
-
-    private AttrRepo            attrRepo;
-    private CurPageRepo         curPageRepo;
-    private HistPageRepo        histPageRepo;
+    private Ledger              ledger;
 
     final static Logger LOGGER = Logger.getLogger(Account.class);
 
-    private Account(AttrRepo        attrRepo,
-                    CurPageRepo     curPageRepo,
-                    HistPageRepo    histPageRepo) {
-        this.attrRepo = attrRepo;
-        this.curPageRepo = curPageRepo;
-        this.histPageRepo = histPageRepo;
+    private Account(Ledger ledger) {
+        this.ledger = ledger;
     }
 
-    public static Account getExisting(Long          accountId,
-                                      AttrRepo      attrRepo,
-                                      CurPageRepo   curPageRepo,
-                                      HistPageRepo  histPageRepo) throws LedgerException {
-        if (attrRepo.getById(accountId)==null) {
-            throw LedgerException.invalidAccount(accountId);
+    public static Account getExistingById(Ledger        ledger,
+                                          Long          accountId) throws LedgerException {
+        if (ledger.getAttrRepo().getById(accountId)==null) {
+            throw LedgerException.invalidAccount(accountId.toString());
         }
-        final Account account = new Account(attrRepo, curPageRepo, histPageRepo);
+        final Account account = new Account(ledger);
         account.accountId = accountId;
         return account;
     }
 
-    public static Account openNew(String          accountNumber,
+    public static Account getExistingByAccountNumber(Ledger        ledger,
+                                                     String        accountNumber) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByAccountNumber(accountNumber);
+        if (aa==null) {
+            throw LedgerException.invalidAccount(accountNumber);
+        }
+        final Account account = new Account(ledger);
+        account.accountId = aa.getId();
+        return account;
+    }
+
+    public static Account getExistingByIban(Ledger        ledger,
+                                            String        iban) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByIban(iban);
+        if (aa==null) {
+            throw LedgerException.invalidAccount(iban);
+        }
+        final Account account = new Account(ledger);
+        account.accountId = aa.getId();
+        return account;
+    }
+
+    public static Account openNew(Ledger          ledger,
+                                  String          accountNumber,
                                   String          iban,
-                                  AccountType     accountType,
-                                  AttrRepo        attrRepo,
-                                  CurPageRepo     curPageRepo,
-                                  HistPageRepo    histPageRepo) {
+                                  AccountType     accountType) {
         final AccountAttributes attributes = AccountAttributes.createNew(accountNumber, iban, accountType);
         final Page page = Page.create(BigDecimal.ZERO);
-        final Account account = new Account(attrRepo, curPageRepo, histPageRepo);
-        final Long accountId = attrRepo.insert(attributes);
+        final Account account = new Account(ledger);
+        final Long accountId = ledger.getAttrRepo().insert(attributes);
         account.accountId = accountId;
         final IdentifiedEntity<Page> identifiedPage = new IdentifiedEntity<Page>(accountId, page);
-        curPageRepo.put(identifiedPage);
+        ledger.getCurPageRepo().put(identifiedPage);
         return account;
     }
 
@@ -69,7 +77,8 @@ public class Account {
         if (currentPage.getEntity().contains(at)) {
             return currentPage.getEntity().getBalanceAt(at);
         } else {
-            final IdentifiedEntity<Page> historicalPage = histPageRepo.getByAccountId(attributes.getId(), at);
+            final IdentifiedEntity<Page> historicalPage = this.ledger.getHistPageRepo()
+                    .getByAccountId(attributes.getId(), at);
             if (historicalPage == null) {
                 throw LedgerException.invalidHistoricalData(this, at);
             } else {
@@ -100,11 +109,12 @@ public class Account {
      * @throws LedgerException
      */
     private void registerPost(Post post) throws LedgerException {
-        final IdentifiedEntity<AccountAttributes> attributes = this.attrRepo.getByIdExclusive(this.accountId);
+        final IdentifiedEntity<AccountAttributes> attributes = this.ledger.getAttrRepo()
+                .getByIdExclusive(this.accountId);
         if (attributes == null) {
-            throw LedgerException.invalidAccount(this.accountId);
+            throw LedgerException.invalidAccount(this.accountId.toString());
         }
-        final IdentifiedEntity<Page> currentPage = this.curPageRepo.getByIdExclusive(this.accountId);
+        final IdentifiedEntity<Page> currentPage = this.ledger.getCurPageRepo().getByIdExclusive(this.accountId);
         final BigDecimal newBalance = attributes.getEntity().getBalance().add(post.getAmount());
         if (!isValidBalance(attributes.getEntity(), newBalance)) {
             throw LedgerException.redBalance(attributes.getEntity().getAccountNumber());
@@ -112,17 +122,17 @@ public class Account {
             attributes.getEntity().setBalance(newBalance);
             if (currentPage.getEntity().hasNext()) {
                 currentPage.getEntity().addPost(post);
-                this.curPageRepo.put(currentPage);
+                this.ledger.getCurPageRepo().put(currentPage);
             } else {
                 final Page hPage = currentPage.getEntity();
                 final Page cPage = Page.create(hPage.getFinishedAt(),
                         hPage.getRepFinishedOn(), hPage.getFinishBalance());
                 cPage.addPost(post);
                 final IdentifiedEntity<Page> cidPage = new IdentifiedEntity<>(this.accountId, cPage);
-                this.curPageRepo.put(cidPage);
-                this.histPageRepo.insert(this.accountId, hPage);
+                this.ledger.getCurPageRepo().put(cidPage);
+                this.ledger.getHistPageRepo().insert(this.accountId, hPage);
             }
-            this.attrRepo.update(attributes);
+            this.ledger.getAttrRepo().update(attributes);
         }
     }
 
@@ -167,9 +177,10 @@ public class Account {
      */
     public BigDecimal reserveDebit(BigDecimal amount) throws LedgerException {
         // 1. Calculate new reservedAmount
-        final IdentifiedEntity<AccountAttributes> iAttributes = this.attrRepo.getByIdExclusive(this.accountId);
+        final IdentifiedEntity<AccountAttributes> iAttributes = this.ledger.getAttrRepo()
+                .getByIdExclusive(this.accountId);
         if (iAttributes==null) {
-            throw LedgerException.invalidAccount(this.accountId);
+            throw LedgerException.invalidAccount(this.accountId.toString());
         }
         if (amount.signum() == -1) {
             throw LedgerException.invalidReservationAmount(amount);
@@ -185,7 +196,7 @@ public class Account {
         // 3. Change reservedAmount
         attributes.setReservedDebit(newReserved);
         final IdentifiedEntity<AccountAttributes> oAttr = new IdentifiedEntity<>(this.accountId, attributes);
-        this.attrRepo.update(oAttr);
+        this.ledger.getAttrRepo().update(oAttr);
         return newReserved;
     }
 
@@ -198,9 +209,10 @@ public class Account {
      */
     public BigDecimal reserveCredit(BigDecimal amount) throws LedgerException {
         // 1. Calculate new reservedAmount
-        final IdentifiedEntity<AccountAttributes> iAttributes = this.attrRepo.getByIdExclusive(this.accountId);
+        final IdentifiedEntity<AccountAttributes> iAttributes = this.ledger.getAttrRepo()
+                .getByIdExclusive(this.accountId);
         if (iAttributes==null) {
-            throw LedgerException.invalidAccount(this.accountId);
+            throw LedgerException.invalidAccount(this.accountId.toString());
         }
         if (amount.signum() == -1) {
             throw LedgerException.invalidReservationAmount(amount);
@@ -216,7 +228,7 @@ public class Account {
         // 3. Change reservedAmount
         attributes.setReservedCredit(newReserved);
         final IdentifiedEntity<AccountAttributes> oAttr = new IdentifiedEntity<>(this.accountId, attributes);
-        this.attrRepo.update(oAttr);
+        this.ledger.getAttrRepo().update(oAttr);
         return newReserved;
     }
 
@@ -227,11 +239,11 @@ public class Account {
     public Boolean canBeOperated() {return true;}
 
     public IdentifiedEntity<AccountAttributes> getAttributes() {
-        return this.attrRepo.getById(this.accountId);
+        return this.ledger.getAttrRepo().getById(this.accountId);
     }
 
     public IdentifiedEntity<Page> getCurrentPage() {
-        return this.curPageRepo.getById(this.accountId);
+        return this.ledger.getCurPageRepo().getById(this.accountId);
     }
 
     public Long getAccountId() {

@@ -1,6 +1,7 @@
 package com.virhon.fintech.gl.repo.mysql.transfer;
 
 import com.virhon.fintech.gl.model.Transfer;
+import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -19,14 +20,13 @@ public class MySQLTransferRepoTest {
         for (int i=0;i<10;i++) {
             final Transfer transfer = new Transfer();
             transfer.setTransferRef("ref-".concat(new Integer(i).toString()));
-            transfer.setCreatedAt(ZonedDateTime.now());
             transfer.setPostedAt(ZonedDateTime.now());
             transfer.setReportedOn(LocalDate.now());
             transfer.setAmount(BigDecimal.valueOf(i+2.37374));
             transfer.setLocalAmount(BigDecimal.valueOf(i+2.37374));
             transfer.setDescription("Transfer #".concat(Integer.valueOf(i).toString()));
-            final Long id = repo.insert(transfer);
-            ids.add(id);
+            final IdentifiedEntity<Transfer> iTr = repo.insert(transfer);
+            ids.add(iTr.getId());
         }
         repo.commit();
         final Long id = ids.get(3);

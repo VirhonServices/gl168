@@ -42,8 +42,8 @@ create table uah_transfer (
 
 create table uah_reservation (
     id              bigint      not null AUTO_INCREMENT,
-    expireAt        datetime    not null,
-    closedAt        datetime,
+    expire_at       datetime    not null,
+    closed_at       datetime,
     reason          varchar(10),
     data            text,
 

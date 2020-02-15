@@ -38,8 +38,8 @@ public class LedgerException extends Exception {
         return new LedgerException(210, "The balance of the account ".concat(accountNumber).concat(" is not enough to make a reservation"));
     }
 
-    public static LedgerException invalidAccount(Long accountId) {
-        return new LedgerException(300, "The account id=".concat(accountId.toString()).concat(" doesn't exist"));
+    public static LedgerException invalidAccount(String account) {
+        return new LedgerException(300, "The account id=".concat(account).concat(" doesn't exist"));
     }
 
     public static LedgerException invalidHistoricalData(Account account, ZonedDateTime at) {

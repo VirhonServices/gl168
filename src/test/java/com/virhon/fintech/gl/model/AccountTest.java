@@ -3,6 +3,8 @@ package com.virhon.fintech.gl.model;
 import com.virhon.fintech.gl.Config;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
+import com.virhon.fintech.gl.repo.LedgerRepoFactory;
+import com.virhon.fintech.gl.repo.mysql.MySQLLedgerRepoFactory;
 import com.virhon.fintech.gl.repo.mysql.accountattribute.MySQLAttrRepo;
 import com.virhon.fintech.gl.repo.mysql.currentpage.MySQLCurrentPageRepo;
 import com.virhon.fintech.gl.repo.mysql.historicalpage.MySQLHistoricalPageRepo;
@@ -22,6 +24,9 @@ public class AccountTest {
     private MySQLCurrentPageRepo        cRepo = new MySQLCurrentPageRepo("uah_current_page");
     private MySQLHistoricalPageRepo     hRepo = new MySQLHistoricalPageRepo("uah_historical_page");
 
+    private LedgerRepoFactory factory = new MySQLLedgerRepoFactory("UAH");
+    private Ledger ledger = new Ledger(factory);
+
     public AccountTest() throws IOException {
     }
 
@@ -32,7 +37,7 @@ public class AccountTest {
         for (long i=0;i<4;i++) {
             final String accountNumber = "260010987654321".concat(Long.valueOf(1562L + (new Random().nextInt(1000))).toString());
             final String iban = "UA56305299".concat(accountNumber);
-            final Account account = Account.openNew(accountNumber, iban, AccountType.PASSIVE, attrRepo, cRepo, hRepo);
+            final Account account = Account.openNew(ledger, accountNumber, iban, AccountType.PASSIVE);
             if (i%2==1) {
                 accountIds.add(account.getAccountId());
             }
@@ -45,7 +50,7 @@ public class AccountTest {
         LocalDate reportedOn = LocalDate.now();
         for (int i=0;i<accountIds.size();i++) {
             final Long accountId = accountIds.get(i);
-            final Account account = Account.getExisting(accountId, attrRepo, cRepo, hRepo);
+            final Account account = Account.getExistingById(ledger, accountId);
             for (Long j=0L;j<limit;j++) {
                 if (j%2==0) {
                     account.credit(j, postedAt, reportedOn, new BigDecimal("7.00"));
@@ -58,7 +63,7 @@ public class AccountTest {
             }
         }
         // 3. Check the final balance
-        final Account account = Account.getExisting(accountIds.get(0), attrRepo, cRepo, hRepo);
+        final Account account = Account.getExistingById(ledger, accountIds.get(0));
         final AccountAttributes attributes = account.getAttributes().getEntity();
         final BigDecimal targetBalance = new BigDecimal(limit * 2);
         Assert.assertTrue(attributes.getBalance().compareTo(targetBalance.negate())==0);

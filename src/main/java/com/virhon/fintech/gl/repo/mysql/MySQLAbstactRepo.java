@@ -31,25 +31,40 @@ public abstract class MySQLAbstactRepo<T> {
             .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
                 @Override
                 public void write(JsonWriter out, ZonedDateTime value) throws IOException {
-                    out.value(value.toString());
+                    if (value != null) {
+                        out.value(value.toString());
+                    } else {
+                        out.value("null");
+                    }
                 }
-
                 @Override
                 public ZonedDateTime read(JsonReader in) throws IOException {
-                    return ZonedDateTime.parse(in.nextString());
+                    if (in != null) {
+                        return ZonedDateTime.parse(in.nextString());
+                    } else {
+                        return null;
+                    }
                 }
             })
             .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
                 @Override
                 public void write(JsonWriter out, LocalDate value) throws IOException {
-                    out.value(value.toString());
+                    if (value != null) {
+                        out.value(value.toString());
+                    } else {
+                        out.value("null");
+                    }
                 }
-
                 @Override
                 public LocalDate read(JsonReader in) throws IOException {
-                    return LocalDate.parse(in.nextString());
+                    if (in != null) {
+                        return LocalDate.parse(in.nextString());
+                    } else {
+                        return null;
+                    }
                 }
             })
+            .serializeNulls()
             .enableComplexMapKeySerialization()
             .create();
 

@@ -24,7 +24,7 @@
         `reason`,
         `data`
         ) VALUES (
-        #{pojo.expire_at},
+        #{pojo.expireAt},
         #{pojo.closedAt},
         #{pojo.reason},
         #{pojo.data}

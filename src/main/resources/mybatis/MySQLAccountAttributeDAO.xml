@@ -57,8 +57,24 @@
         select * from ${tablename} where uuid = #{uuid}
     </select>
 
+    <select id="selectByAccountNumber" parameterType="string" resultType="account_attribute">
+        select * from ${tablename} where account_number = #{accountNumber}
+    </select>
+
+    <select id="selectByIban" parameterType="string" resultType="account_attribute">
+        select * from ${tablename} where iban = #{iban}
+    </select>
+
     <select id="selectByIdExclusive" parameterType="long" resultType="account_attribute">
         select * from ${tablename} where id = #{id} for update
+    </select>
+
+    <select id="selectByAccountNumberExclusive" parameterType="string" resultType="account_attribute">
+        select * from ${tablename} where account_number = #{accountNumber} for update
+    </select>
+
+    <select id="selectByIbanExclusive" parameterType="string" resultType="account_attribute">
+        select * from ${tablename} where iban = #{iban} for update
     </select>
 
 </mapper>

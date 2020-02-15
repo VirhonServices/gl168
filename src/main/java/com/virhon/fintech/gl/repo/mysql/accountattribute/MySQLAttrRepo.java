@@ -17,8 +17,33 @@ public class MySQLAttrRepo extends MySQLAbstactRepo<MySQLAccountAttributeDAO> im
     public IdentifiedEntity<AccountAttributes> getById(Long accountId) {
         final MySQLAccountAttributeRecord record = getMapper().selectById(getTablename(), accountId);
         if (record != null) {
-            final AccountAttributes accountAttributes = getConverter().fromJson(record.getData(), AccountAttributes.class);
+            final AccountAttributes accountAttributes =
+                    getConverter().fromJson(record.getData(), AccountAttributes.class);
             return new IdentifiedEntity<>(accountId, accountAttributes);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public IdentifiedEntity<AccountAttributes> getByAccountNumber(String accountNumber) {
+        final MySQLAccountAttributeRecord record = getMapper().selectByAccountNumber(getTablename(), accountNumber);
+        if (record != null) {
+            final AccountAttributes accountAttributes =
+                    getConverter().fromJson(record.getData(), AccountAttributes.class);
+            return new IdentifiedEntity<>(record.getId(), accountAttributes);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public IdentifiedEntity<AccountAttributes> getByIban(String iban) {
+        final MySQLAccountAttributeRecord record = getMapper().selectByIban(getTablename(), iban);
+        if (record != null) {
+            final AccountAttributes accountAttributes =
+                    getConverter().fromJson(record.getData(), AccountAttributes.class);
+            return new IdentifiedEntity<>(record.getId(), accountAttributes);
         } else {
             return null;
         }
@@ -28,8 +53,34 @@ public class MySQLAttrRepo extends MySQLAbstactRepo<MySQLAccountAttributeDAO> im
     public IdentifiedEntity<AccountAttributes> getByIdExclusive(Long accountId) {
         final MySQLAccountAttributeRecord record = getMapper().selectByIdExclusive(getTablename(), accountId);
         if (record != null) {
-            final AccountAttributes accountAttributes = getConverter().fromJson(record.getData(), AccountAttributes.class);
+            final AccountAttributes accountAttributes =
+                    getConverter().fromJson(record.getData(), AccountAttributes.class);
             return new IdentifiedEntity<>(accountId, accountAttributes);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public IdentifiedEntity<AccountAttributes> getByAccountNumberExclusive(String accountNumber) {
+        final MySQLAccountAttributeRecord record =
+                getMapper().selectByAccountNumberExclusive(getTablename(), accountNumber);
+        if (record != null) {
+            final AccountAttributes accountAttributes =
+                    getConverter().fromJson(record.getData(), AccountAttributes.class);
+            return new IdentifiedEntity<>(record.getId(), accountAttributes);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public IdentifiedEntity<AccountAttributes> getByIbanExclusive(String iban) {
+        final MySQLAccountAttributeRecord record = getMapper().selectByIbanExclusive(getTablename(), iban);
+        if (record != null) {
+            final AccountAttributes accountAttributes =
+                    getConverter().fromJson(record.getData(), AccountAttributes.class);
+            return new IdentifiedEntity<>(record.getId(), accountAttributes);
         } else {
             return null;
         }
