@@ -11,5 +11,4 @@ public interface AttrRepo {
     IdentifiedEntity<AccountAttributes> getByIbanExclusive(String iban);
     Long insert(AccountAttributes attributes);
     void update(IdentifiedEntity<AccountAttributes> attributes);
-    void commit();
 }

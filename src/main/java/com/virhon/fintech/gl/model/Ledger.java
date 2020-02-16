@@ -27,6 +27,50 @@ public class Ledger {
         this.reservationRepo = factory.getReservationRepository();
     }
 
+    public Account getExistingById(Long accountId) throws LedgerException {
+        if (this.getAttrRepo().getById(accountId)==null) {
+            throw LedgerException.invalidAccount(accountId.toString());
+        }
+        final Account account = new Account(this);
+        account.setAccountId(accountId);
+        return account;
+    }
+
+    public static Account getExistingByAccountNumber(Ledger        ledger,
+                                                     String        accountNumber) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByAccountNumber(accountNumber);
+        if (aa==null) {
+            throw LedgerException.invalidAccount(accountNumber);
+        }
+        final Account account = new Account(ledger);
+        account.setAccountId(aa.getId());
+        return account;
+    }
+
+    public static Account getExistingByIban(Ledger        ledger,
+                                            String        iban) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByIban(iban);
+        if (aa==null) {
+            throw LedgerException.invalidAccount(iban);
+        }
+        final Account account = new Account(ledger);
+        account.setAccountId(aa.getId());
+        return account;
+    }
+
+    public Account openNew(String          accountNumber,
+                                  String          iban,
+                                  AccountType     accountType) {
+        final AccountAttributes attributes = AccountAttributes.createNew(accountNumber, iban, accountType);
+        final Page page = Page.create(BigDecimal.ZERO);
+        final Account account = new Account(this);
+        final Long accountId = getAttrRepo().insert(attributes);
+        account.setAccountId(accountId);
+        final IdentifiedEntity<Page> identifiedPage = new IdentifiedEntity<Page>(accountId, page);
+        getCurPageRepo().put(identifiedPage);
+        return account;
+    }
+
     IdentifiedEntity<Transfer> transferFunds(final String     transferRef,
                                              final Long       debitId,
                                              final Long       creditId,
@@ -41,8 +85,8 @@ public class Ledger {
             throw LedgerException.invalidTransferAmount(amount);
         }
         // 2. Get accounts
-        final Account debit  = Account.getExistingById(this, debitId);
-        final Account credit = Account.getExistingById(this, creditId);
+        final Account debit  = getExistingById(debitId);
+        final Account credit = getExistingById(creditId);
         // 3. Check if the transfer is possible
         if (!debit.canBeOperated()) {
             throw LedgerException.accountCantBeOperated(debitId);
@@ -82,8 +126,8 @@ public class Ledger {
         reservation.setDescription(description);
         final IdentifiedEntity<Reservation> iReservation = this.reservationRepo.insert(reservation);
         // 2. Reserve funds
-        final Account debit = Account.getExistingById(this, debitId);
-        final Account credit = Account.getExistingById(this, creditId);
+        final Account debit = getExistingById(debitId);
+        final Account credit = getExistingById(creditId);
         debit.reserveDebit(amount);
         credit.reserveCredit(amount);
         return iReservation;
@@ -107,14 +151,6 @@ public class Ledger {
 
     void cancelReservation(Long id) {
         this.reservationRepo.delete(id);
-    }
-
-    void commit() {
-        this.attrRepo.commit();
-        this.curPageRepo.commit();
-        this.histPageRepo.commit();
-        this.transferRepo.commit();
-        this.reservationRepo.commit();
     }
 
     public AttrRepo getAttrRepo() {

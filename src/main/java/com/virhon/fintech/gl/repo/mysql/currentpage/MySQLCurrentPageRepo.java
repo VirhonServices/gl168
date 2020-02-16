@@ -47,9 +47,4 @@ public class MySQLCurrentPageRepo extends MySQLAbstactRepo<MySQLCurrentPageDAO> 
             getMapper().update(getTablename(), record);
         }
     }
-
-    @Override
-    public void commit() {
-        getSession().commit();
-    }
 }

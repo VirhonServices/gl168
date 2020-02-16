@@ -4,6 +4,7 @@ import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Page;
 import com.virhon.fintech.gl.model.PageTest;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
+import com.virhon.fintech.gl.repo.mysql.MySQLStorageSession;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -16,13 +17,13 @@ public class MySQLCurrentPageRepoTest {
     }
 
     @Test(enabled = false)
-    void testCreating() throws LedgerException {
+    void testCreating() throws LedgerException, IOException {
         for (long i=0;i<100;i++) {
             final Page page = PageTest.createTestPage();
             final IdentifiedEntity<Page> identifiedPage = new IdentifiedEntity<Page>(i, page);
             repo.put(identifiedPage);
         }
-        repo.commit();
+        MySQLStorageSession.getInstance().commit();
     }
 
     @Test(enabled = false)

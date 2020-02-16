@@ -48,8 +48,4 @@ public class MySQLReservationRepo extends MySQLAbstactRepo<MySQLReservationDAO> 
         getMapper().delete(getTablename(), id);
     }
 
-    @Override
-    public void commit() {
-        getSession().commit();
-    }
 }

@@ -14,54 +14,8 @@ public class Account {
 
     final static Logger LOGGER = Logger.getLogger(Account.class);
 
-    private Account(Ledger ledger) {
+    public Account(Ledger ledger) {
         this.ledger = ledger;
-    }
-
-    public static Account getExistingById(Ledger        ledger,
-                                          Long          accountId) throws LedgerException {
-        if (ledger.getAttrRepo().getById(accountId)==null) {
-            throw LedgerException.invalidAccount(accountId.toString());
-        }
-        final Account account = new Account(ledger);
-        account.accountId = accountId;
-        return account;
-    }
-
-    public static Account getExistingByAccountNumber(Ledger        ledger,
-                                                     String        accountNumber) throws LedgerException {
-        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByAccountNumber(accountNumber);
-        if (aa==null) {
-            throw LedgerException.invalidAccount(accountNumber);
-        }
-        final Account account = new Account(ledger);
-        account.accountId = aa.getId();
-        return account;
-    }
-
-    public static Account getExistingByIban(Ledger        ledger,
-                                            String        iban) throws LedgerException {
-        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByIban(iban);
-        if (aa==null) {
-            throw LedgerException.invalidAccount(iban);
-        }
-        final Account account = new Account(ledger);
-        account.accountId = aa.getId();
-        return account;
-    }
-
-    public static Account openNew(Ledger          ledger,
-                                  String          accountNumber,
-                                  String          iban,
-                                  AccountType     accountType) {
-        final AccountAttributes attributes = AccountAttributes.createNew(accountNumber, iban, accountType);
-        final Page page = Page.create(BigDecimal.ZERO);
-        final Account account = new Account(ledger);
-        final Long accountId = ledger.getAttrRepo().insert(attributes);
-        account.accountId = accountId;
-        final IdentifiedEntity<Page> identifiedPage = new IdentifiedEntity<Page>(accountId, page);
-        ledger.getCurPageRepo().put(identifiedPage);
-        return account;
     }
 
     /**

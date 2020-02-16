@@ -7,5 +7,4 @@ public interface ReservationRepo {
     IdentifiedEntity<Reservation> getByIdExclusive(Long id);
     IdentifiedEntity<Reservation> insert(Reservation reservation);
     void delete(Long id);
-    void commit();
 }

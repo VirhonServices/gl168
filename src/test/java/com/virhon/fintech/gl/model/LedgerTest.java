@@ -4,6 +4,7 @@ import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.LedgerRepoFactory;
 import com.virhon.fintech.gl.repo.mysql.MySQLLedgerRepoFactory;
+import com.virhon.fintech.gl.repo.mysql.MySQLStorageSession;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -27,29 +28,29 @@ public class LedgerTest {
     }
 
     @Test(enabled = false)
-    public void createAccounts() {
-        this.account1 = Account.openNew(uahLedger, "1001200048475", "UA673052991001200048475",
+    public void createAccounts() throws IOException {
+        this.account1 = uahLedger.openNew("1001200048475", "UA673052991001200048475",
                 AccountType.ACTIVE);
-        this.account2 = Account.openNew(uahLedger, "2600100003894", "UA673052992600100003894",
+        this.account2 = uahLedger.openNew("2600100003894", "UA673052992600100003894",
                 AccountType.PASSIVE);
-        this.account3 = Account.openNew(uahLedger, "1002900013423", "UA223052991002900013423",
+        this.account3 = uahLedger.openNew("1002900013423", "UA223052991002900013423",
                 AccountType.ACTIVE);
-        this.account4 = Account.openNew(uahLedger, "2602100009203", "UA673052992602100009203",
+        this.account4 = uahLedger.openNew("2602100009203", "UA673052992602100009203",
                 AccountType.PASSIVE);
-        uahLedger.commit();
+        MySQLStorageSession.getInstance().commit();
     }
 
     @Test
-    public void testTransferFunds() throws LedgerException {
+    public void testTransferFunds() throws LedgerException, IOException {
         final BigDecimal amount = new BigDecimal("100.00");
-        final Account debit = Account.getExistingByIban(this.uahLedger, "UA673052991001200048475");
+        final Account debit = uahLedger.getExistingByIban(this.uahLedger, "UA673052991001200048475");
         final BigDecimal debitBalBefore = debit.getAttributes().getEntity().getBalance();
-        final Account credit = Account.getExistingByIban(this.uahLedger, "UA673052992600100003894");
+        final Account credit = uahLedger.getExistingByIban(this.uahLedger, "UA673052992600100003894");
         final BigDecimal creditBalBefore = credit.getAttributes().getEntity().getBalance();
         final IdentifiedEntity<Transfer> tr = uahLedger.transferFunds("TEST-REF-1", debit.getAccountId(),
                 credit.getAccountId(), amount, amount,
                 LocalDate.now(), "Testing transfer");
-        uahLedger.commit();
+        MySQLStorageSession.getInstance().commit();
         final BigDecimal debitBalAfter = debit.getAttributes().getEntity().getBalance();
         final BigDecimal creditBalAfter = credit.getAttributes().getEntity().getBalance();
         Assert.assertEquals(debitBalAfter.subtract(debitBalBefore), amount);
@@ -59,9 +60,9 @@ public class LedgerTest {
     @Test(expectedExceptions = LedgerException.class)
     public void testRedSaldo() throws LedgerException {
         final BigDecimal amount = new BigDecimal("10000.00");
-        final Account debit = Account.getExistingByIban(this.uahLedger, "UA673052991001200048475");
+        final Account debit = uahLedger.getExistingByIban(this.uahLedger, "UA673052991001200048475");
         final BigDecimal debitBalBefore = debit.getAttributes().getEntity().getBalance();
-        final Account credit = Account.getExistingByIban(this.uahLedger, "UA673052992600100003894");
+        final Account credit = uahLedger.getExistingByIban(this.uahLedger, "UA673052992600100003894");
         final BigDecimal creditBalBefore = credit.getAttributes().getEntity().getBalance();
         final IdentifiedEntity<Transfer> tr = uahLedger.transferFunds("TEST-REF-1", credit.getAccountId(),
                 debit.getAccountId(), amount, amount,
@@ -70,8 +71,8 @@ public class LedgerTest {
 
     @Test(expectedExceptions = LedgerException.class)
     public void testReservation() throws LedgerException {
-        final Account debit  = Account.getExistingByIban(this.uahLedger, "UA673052992600100003894");
-        final Account credit = Account.getExistingByIban(this.uahLedger, "UA673052991001200048475");
+        final Account debit  = uahLedger.getExistingByIban(this.uahLedger, "UA673052992600100003894");
+        final Account credit = uahLedger.getExistingByIban(this.uahLedger, "UA673052991001200048475");
         final BigDecimal balance = debit.getAttributes().getEntity().getBalance();
         final BigDecimal successAmount = balance.multiply(new BigDecimal("0.5")).negate();
         uahLedger.reserveFunds("RESERVATION_REF1",debit.getAccountId(), credit.getAccountId(), successAmount,
@@ -83,8 +84,8 @@ public class LedgerTest {
     @Test
     public void testCancelReservation() throws LedgerException {
         final List<IdentifiedEntity<Reservation>> res = new ArrayList<>();
-        final Account debit  = Account.getExistingByIban(this.uahLedger, "UA673052992600100003894");
-        final Account credit = Account.getExistingByIban(this.uahLedger, "UA673052991001200048475");
+        final Account debit  = uahLedger.getExistingByIban(this.uahLedger, "UA673052992600100003894");
+        final Account credit = uahLedger.getExistingByIban(this.uahLedger, "UA673052991001200048475");
         final BigDecimal balance = debit.getAttributes().getEntity().getBalance();
         for (Integer i=0;i<10;i++) {
             final BigDecimal amount = new BigDecimal(i.toString());

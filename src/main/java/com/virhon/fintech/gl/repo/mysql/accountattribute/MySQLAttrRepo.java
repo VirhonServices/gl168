@@ -110,8 +110,4 @@ public class MySQLAttrRepo extends MySQLAbstactRepo<MySQLAccountAttributeDAO> im
         return record.getId();
     }
 
-    @Override
-    public void commit() {
-        getSession().commit();
-    }
 }

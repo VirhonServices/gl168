@@ -6,5 +6,4 @@ public interface CurPageRepo {
     IdentifiedEntity<Page> getById(Long accountId);
     IdentifiedEntity<Page> getByIdExclusive(Long accountId);
     void put(IdentifiedEntity<Page> page);
-    void commit();
 }

@@ -1,10 +1,14 @@
 package com.virhon.fintech.gl;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 public class Config {
     private static Config INSTANCE = null;
     private int maxNumPostsInBlock = 120;
+
+    public Config() {
+    }
 
     public static Config getInstance() {
         if (INSTANCE == null) {

@@ -77,9 +77,4 @@ public class MySQLHistoricalPageRepo extends MySQLAbstactRepo<MySQLHitoricalPage
         getMapper().insert(getTablename(), record);
         return record.getId();
     }
-
-    @Override
-    public void commit() {
-        getSession().commit();
-    }
 }

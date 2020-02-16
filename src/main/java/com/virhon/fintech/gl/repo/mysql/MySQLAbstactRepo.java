@@ -5,26 +5,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import org.apache.ibatis.session.TransactionIsolationLevel;
+import com.virhon.fintech.gl.Config;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-import static java.lang.System.getProperties;
-
 public abstract class MySQLAbstactRepo<T> {
-    public static final String CONFIGURATION_XML = "mybatis/mybatis-config.xml";
-    private InputStream inputStream = Resources.getResourceAsStream(CONFIGURATION_XML);
-    private SqlSessionFactory sqlMapper = new SqlSessionFactoryBuilder().build(inputStream, getProperties());
-    private SqlSession session = sqlMapper.openSession(TransactionIsolationLevel.READ_COMMITTED);
     private T mapper;
-
     private String tablename;
 
     private Gson converter = new GsonBuilder()
@@ -70,15 +58,11 @@ public abstract class MySQLAbstactRepo<T> {
 
     protected MySQLAbstactRepo(String tablename, Class<T> aClass) throws IOException {
         this.tablename = tablename;
-        this.mapper = this.session.getMapper(aClass);
+        this.mapper = MySQLStorageSession.getInstance().getSession().getMapper(aClass);
     }
 
     public String getTablename() {
         return this.tablename;
-    }
-
-    public SqlSession getSession() {
-        return this.session;
     }
 
     public T getMapper() {

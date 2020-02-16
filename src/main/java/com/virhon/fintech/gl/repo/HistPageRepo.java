@@ -22,5 +22,4 @@ public interface HistPageRepo {
     List<IdentifiedEntity<Page>> getHistory(Long accountId);
     Long insert(Long accountId, Page page);
     Long update(Long accountId, IdentifiedEntity<Page> page);
-    void commit();
 }

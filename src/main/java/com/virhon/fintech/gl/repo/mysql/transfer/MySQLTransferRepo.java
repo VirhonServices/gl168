@@ -53,8 +53,4 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
         getMapper().update(getTablename(), record);
     }
 
-    @Override
-    public void commit() {
-        this.getSession().commit();
-    }
 }

@@ -7,5 +7,4 @@ public interface TransferRepo {
     IdentifiedEntity<Transfer> getByIdExclusive(Long id);
     IdentifiedEntity<Transfer> insert(Transfer transfer);
     void update(IdentifiedEntity<Transfer> transfer);
-    void commit();
 }
