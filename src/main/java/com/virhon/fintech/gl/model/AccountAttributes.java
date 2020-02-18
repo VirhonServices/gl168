@@ -3,6 +3,7 @@ package com.virhon.fintech.gl.model;
 import com.virhon.fintech.gl.exception.LedgerException;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class AccountAttributes {
@@ -14,6 +15,8 @@ public class AccountAttributes {
     private BigDecimal      localBalance;
     private BigDecimal      reservedDebit;
     private BigDecimal      reservedCredit;
+    private ZonedDateTime   openedAt;
+    private ZonedDateTime   closedAt;
 
     private AccountAttributes() {
     }
@@ -35,6 +38,7 @@ public class AccountAttributes {
         result.localBalance = BigDecimal.ZERO;
         result.reservedDebit = BigDecimal.ZERO;
         result.reservedCredit = BigDecimal.ZERO;
+        result.openedAt = ZonedDateTime.now();
         return result;
     }
 
@@ -64,6 +68,14 @@ public class AccountAttributes {
 
     public BigDecimal getReservedCredit() {
         return reservedCredit;
+    }
+
+    public ZonedDateTime getOpenedAt() {
+        return openedAt;
+    }
+
+    public ZonedDateTime getClosedAt() {
+        return closedAt;
     }
 
     public void setBalance(BigDecimal balance) {
