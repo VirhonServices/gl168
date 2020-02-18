@@ -2,8 +2,10 @@
 
 ## Table of Contents
 
-- [General Information](# General Information)
-- [API Reference] (#API reference)
+- [General Information](#General Information)
+- [API Reference](#API reference)
+    * [Accounts /v1/gl/accounts](#Accounts)
+    * [Getting account's information /v1/gl/accounts/{accountUuid}](#Getting account's information) 
 
 ## General Information
 
