@@ -105,8 +105,8 @@ public class Ledger {
         transfer.setPostedAt(postedAt);
         final IdentifiedEntity<Transfer> iTransfer = this.transferRepo.insert(transfer);
         final Long transferId = iTransfer.getId();
-        debit.debit(transferId, postedAt, reportedOn, amount);
-        credit.credit(transferId, postedAt, reportedOn, amount);
+        debit.debit(transferId, postedAt, reportedOn, amount, localAmount);
+        credit.credit(transferId, postedAt, reportedOn, amount, localAmount);
         LOGGER.info(" Transferring ".concat(transferRef).concat(" SUCCEED"));
         return iTransfer;
     }

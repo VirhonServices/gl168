@@ -9,6 +9,7 @@ public class Post {
     private ZonedDateTime   postedAt;
     private LocalDate       reportedOn;
     private BigDecimal      amount;
+    private BigDecimal      localAmount;
 
     /**
      * Post is used only as a part of a account's page
@@ -17,12 +18,18 @@ public class Post {
      * @param postedAt              - calendar zoned datetime when the post was made
      * @param reportedOn            - financial date the post linked with
      * @param amount                - negative says about credit turnover, positive - about debit
+     * @param localAmount           - the amount in local currency
      */
-    public Post(Long transferId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount) {
+    public Post(Long            transferId,
+                ZonedDateTime   postedAt,
+                LocalDate       reportedOn,
+                BigDecimal      amount,
+                BigDecimal      localAmount) {
         this.transferId = transferId;
         this.postedAt = postedAt;
         this.reportedOn = reportedOn;
         this.amount = amount;
+        this.localAmount = localAmount;
     }
 
     public Long getTransferId() {
@@ -39,5 +46,9 @@ public class Post {
 
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    public BigDecimal getLocalAmount() {
+        return localAmount;
     }
 }

@@ -11,6 +11,7 @@ public class AccountAttributes {
     private String          accountNumber;
     private String          iban;
     private BigDecimal      balance;
+    private BigDecimal      localBalance;
     private BigDecimal      reservedDebit;
     private BigDecimal      reservedCredit;
 
@@ -31,6 +32,7 @@ public class AccountAttributes {
         result.accountUUID = UUID.randomUUID().toString();
         result.iban = iban;
         result.balance = BigDecimal.ZERO;
+        result.localBalance = BigDecimal.ZERO;
         result.reservedDebit = BigDecimal.ZERO;
         result.reservedCredit = BigDecimal.ZERO;
         return result;
@@ -52,6 +54,10 @@ public class AccountAttributes {
         return this.balance;
     }
 
+    public BigDecimal getLocalBalance() {
+        return localBalance;
+    }
+
     public BigDecimal getReservedDebit() {
         return this.reservedDebit;
     }
@@ -62,6 +68,10 @@ public class AccountAttributes {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public void setLocalBalance(BigDecimal localBalance) {
+        this.localBalance = localBalance;
     }
 
     public String getIban() {

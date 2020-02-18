@@ -48,14 +48,16 @@ public class AccountTest {
         int perDay = limit/3;
         ZonedDateTime postedAt = ZonedDateTime.now();
         LocalDate reportedOn = LocalDate.now();
+        final BigDecimal seven = new BigDecimal("7.00");
+        final BigDecimal three = new BigDecimal("3.00");
         for (int i=0;i<accountIds.size();i++) {
             final Long accountId = accountIds.get(i);
             final Account account = ledger.getExistingById(accountId);
             for (Long j=0L;j<limit;j++) {
                 if (j%2==0) {
-                    account.credit(j, postedAt, reportedOn, new BigDecimal("7.00"));
+                    account.credit(j, postedAt, reportedOn, seven, seven);
                 } else {
-                    account.debit(j, postedAt, reportedOn, new BigDecimal("3.00"));
+                    account.debit(j, postedAt, reportedOn, three, three);
                 }
                 postedAt = postedAt.plusMinutes(1);
                 int days = (int)(j / perDay);

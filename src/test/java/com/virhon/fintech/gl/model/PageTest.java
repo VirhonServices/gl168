@@ -19,7 +19,7 @@ public class PageTest {
             final ZonedDateTime postedAt = startedAt.plusSeconds(i*i);
             final BigDecimal currentBalance =
                     startedBalance.add(new BigDecimal("1.29384858599").multiply(new BigDecimal(i)));
-            final Post post = new Post(0L, postedAt, reportedAt, currentBalance);
+            final Post post = new Post(0L, postedAt, reportedAt, currentBalance, currentBalance);
             page.addPost(post);
         }
         return page;
@@ -37,7 +37,7 @@ public class PageTest {
             final ZonedDateTime postedAt = startedAt.plusSeconds(i*i);
             final BigDecimal currentBalance =
                     startedBalance.add(new BigDecimal("1.29384858599").multiply(new BigDecimal(i)));
-            final Post post = new Post(0L, postedAt, reportedAt, currentBalance);
+            final Post post = new Post(0L, postedAt, reportedAt, currentBalance, currentBalance);
             page.addPost(post);
             if (i==5) {
                 fixedDateTimeAt = postedAt;

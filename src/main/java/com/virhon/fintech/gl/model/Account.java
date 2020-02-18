@@ -99,25 +99,37 @@ public class Account {
      * @param amount        positive says about debiting, negative says about crediting
      * @return              resulted account balance
      */
-    private BigDecimal operate(Long transferId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
+    private BigDecimal operate(Long             transferId,
+                               ZonedDateTime    postedAt,
+                               LocalDate        reportedOn,
+                               BigDecimal       amount,
+                               BigDecimal       localAmount)
             throws LedgerException {
-        Post post = new Post(transferId, postedAt, reportedOn, amount);
+        Post post = new Post(transferId, postedAt, reportedOn, amount, localAmount);
         registerPost(post);
         return getAttributes().getEntity().getBalance();
     }
 
-    public BigDecimal credit(Long transferId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
+    public BigDecimal credit(Long           transferId,
+                             ZonedDateTime  postedAt,
+                             LocalDate      reportedOn,
+                             BigDecimal     amount,
+                             BigDecimal     localAmount)
             throws LedgerException {
         LOGGER.info("Crediting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
-        final BigDecimal balance = operate(transferId, postedAt, reportedOn, amount.negate());
+        final BigDecimal balance = operate(transferId, postedAt, reportedOn, amount.negate(), localAmount);
         LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
         return balance;
     }
 
-    public BigDecimal debit(Long transferId, ZonedDateTime postedAt, LocalDate reportedOn, BigDecimal amount)
+    public BigDecimal debit(Long            transferId,
+                            ZonedDateTime   postedAt,
+                            LocalDate       reportedOn,
+                            BigDecimal      amount,
+                            BigDecimal      localAmount)
             throws LedgerException {
         LOGGER.info("Debting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
-        final BigDecimal balance = operate(transferId, postedAt, reportedOn, amount);
+        final BigDecimal balance = operate(transferId, postedAt, reportedOn, amount, localAmount);
         LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
         return balance;
     }
