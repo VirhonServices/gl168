@@ -1,11 +1,11 @@
 # Virhon General Ledger 24/7
 
-* [General Information] (# General)
+## Table of Contents
 
-<!-- toc -->
+- [General Information](# General Information)
+- [API Reference] (#API reference)
 
-
-## General
+## General Information
 
 ### Types of account
  |Parameter| Description|
