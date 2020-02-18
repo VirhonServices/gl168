@@ -1,6 +1,10 @@
 # Virhon General Ledger 24/7
 
-## General Information
+* [General Information] (# General)
+
+<!-- toc -->
+
+## General
 
 ### Types of account
  |Parameter| Description|
