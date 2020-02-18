@@ -4,8 +4,13 @@
 
 - [General Information](#general-information)
 - [API Reference](#api-reference)
-    * [Accounts /v1/gl/accounts](#accounts)
-    * [Getting account's information /v1/gl/accounts/{accountUuid}](#getting-account's-information) 
+    * [Open a new account](#open-a-new-account-post)
+    * [Get the information](#get-the-information-get)
+    * [Get account's balance at the posting moment](#getting-accounts-balance-at-the-particular-posting-moment)
+    * [Get account's starting balance on a particular reporting day](#get-accounts-starting-balance-on-a-particular-reporting-day-get)
+    * [Get account's finishing balance at the particular reporting day](#get-accounts-finishing-balance-at-the-particular-reporting-day-get)
+    * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
+    * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
 
 ## General Information
 
@@ -96,7 +101,7 @@ the both values are strictly increasing.
  |---------|------------|----|----------
  |accountUuid| A uuid of the account|UUID|Yes
 
-#### Get account's balance at a particular posting moment [GET]
+#### Get account's balance at the posting moment [GET]
 
 ##### Request
 You need to pass separated DateTime value in server's timezone
@@ -127,7 +132,7 @@ You need to pass separated DateTime value in server's timezone
 }
 ````
 
-### Getting account's starting balance at the particular reporting day
+### Getting account's starting balance
 ````
 /v1/gl/accounts/{accountUuid}/reporting/balance/begin
 ````
@@ -135,7 +140,7 @@ You need to pass separated DateTime value in server's timezone
  |---------|------------|----|----------
  |accountUuid| A uuid of the account|UUID|Yes
 
-#### Get account's balance on a particular reporting day [GET]
+#### Get account's starting balance on a particular reporting day [GET]
 
 ##### Request
 You need to pass separated LocalDate value
@@ -162,7 +167,7 @@ You need to pass separated LocalDate value
 }
 ````
 
-### Getting account's finishing balance at the particular reporting day
+### Getting account's finishing balance
 ````
 /v1/gl/accounts/{accountUuid}/reporting/balance/finish
 ````
@@ -170,7 +175,7 @@ You need to pass separated LocalDate value
  |---------|------------|----|----------
  |accountUuid| A uuid of the account|UUID|Yes
 
-#### Get account's balance on a particular reporting day [GET]
+#### Get account's finishing balance at the particular reporting day [GET]
 
 ##### Request
 You need to pass separated LocalDate value
@@ -197,13 +202,15 @@ You need to pass separated LocalDate value
 }
 ````
 
-### Getting account's transfers list (by posting moment)
+### Getting account's transfers list (by posting period)
 ````
 /v1/gl/accounts/{accountUuid}/posted/transfers
 ````
  |Parameter| Description|Type|Mandatory|
  |---------|------------|----|----------
  |accountUuid| A uuid of the account|UUID|Yes
+
+#### Get account's transfers by posting period [GET]
 
 ##### Request
 ````json
@@ -258,7 +265,7 @@ You need to pass separated LocalDate value
 }
 ````
 
-### Getting account's transfers list (by reporting date)
+### Getting account's transfers list (by reporting period)
 Get all the transfers of the account that was reported on the specified period
 ````
 /v1/gl/accounts/{accountUuid}/reported/transfers
@@ -266,6 +273,8 @@ Get all the transfers of the account that was reported on the specified period
  |Parameter| Description|Type|Mandatory|
  |---------|------------|----|----------
  |accountUuid| A uuid of the account|UUID|Yes
+
+#### Get account's transfers list by reporting period [GET]
 
 ##### Request
  |Field| Description|Type|Mandatory|
