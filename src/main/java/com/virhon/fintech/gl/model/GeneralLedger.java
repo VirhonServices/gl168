@@ -17,5 +17,7 @@ public class GeneralLedger {
         }
     }
 
-
+    public Map<String, Ledger> getLedgers() {
+        return ledgers;
+    }
 }

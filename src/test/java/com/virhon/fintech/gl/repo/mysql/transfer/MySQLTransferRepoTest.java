@@ -2,7 +2,7 @@ package com.virhon.fintech.gl.repo.mysql.transfer;
 
 import com.virhon.fintech.gl.model.Transfer;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
-import com.virhon.fintech.gl.repo.mysql.MySQLStorageSession;
+import com.virhon.fintech.gl.repo.mysql.MySQLStorageConnection;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,7 +29,7 @@ public class MySQLTransferRepoTest {
             final IdentifiedEntity<Transfer> iTr = repo.insert(transfer);
             ids.add(iTr.getId());
         }
-        MySQLStorageSession.getInstance().commit();
+        MySQLStorageConnection.getInstance().commit();
         final Long id = ids.get(3);
         final Transfer tr = repo.getById(id).getEntity();
         Assert.assertEquals(tr.getDescription(), "Transfer #3");

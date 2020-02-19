@@ -4,7 +4,7 @@ import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.LedgerRepoFactory;
 import com.virhon.fintech.gl.repo.mysql.MySQLLedgerRepoFactory;
-import com.virhon.fintech.gl.repo.mysql.MySQLStorageSession;
+import com.virhon.fintech.gl.repo.mysql.MySQLStorageConnection;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.testng.Assert.*;
 
 public class LedgerTest {
     private LedgerRepoFactory uahFactory = new MySQLLedgerRepoFactory("UAH");
@@ -27,7 +25,7 @@ public class LedgerTest {
     public LedgerTest() throws IOException {
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void createAccounts() throws IOException {
         this.account1 = uahLedger.openNew("1001200048475", "UA673052991001200048475",
                 AccountType.ACTIVE);
@@ -37,7 +35,7 @@ public class LedgerTest {
                 AccountType.ACTIVE);
         this.account4 = uahLedger.openNew("2602100009203", "UA673052992602100009203",
                 AccountType.PASSIVE);
-        MySQLStorageSession.getInstance().commit();
+        MySQLStorageConnection.getInstance().commit();
     }
 
     @Test
@@ -50,7 +48,7 @@ public class LedgerTest {
         final IdentifiedEntity<Transfer> tr = uahLedger.transferFunds("TEST-REF-1", debit.getAccountId(),
                 credit.getAccountId(), amount, amount,
                 LocalDate.now(), "Testing transfer");
-        MySQLStorageSession.getInstance().commit();
+        MySQLStorageConnection.getInstance().commit();
         final BigDecimal debitBalAfter = debit.getAttributes().getEntity().getBalance();
         final BigDecimal creditBalAfter = credit.getAttributes().getEntity().getBalance();
         Assert.assertEquals(debitBalAfter.subtract(debitBalBefore), amount);

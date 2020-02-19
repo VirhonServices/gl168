@@ -93,6 +93,7 @@ public class MySQLAttrRepo extends MySQLAbstactRepo<MySQLAccountAttributeDAO> im
         record.setAccountNumber(attributes.getEntity().getAccountNumber());
         record.setIban(attributes.getEntity().getIban());
         record.setUuid(attributes.getEntity().getAccountUUID());
+        record.setClosedAt(attributes.getEntity().getClosedAt());
         final String json = getConverter().toJson(attributes.getEntity());
         record.setData(json);
         getMapper().update(getTablename(), record);
@@ -104,6 +105,7 @@ public class MySQLAttrRepo extends MySQLAbstactRepo<MySQLAccountAttributeDAO> im
         record.setAccountNumber(attributes.getAccountNumber());
         record.setIban(attributes.getIban());
         record.setUuid(attributes.getAccountUUID());
+        record.setClosedAt(attributes.getClosedAt());
         final String json = getConverter().toJson(attributes);
         record.setData(json);
         getMapper().insert(getTablename(), record);

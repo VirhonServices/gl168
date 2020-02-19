@@ -3,7 +3,7 @@ package com.virhon.fintech.gl.repo.mysql.accountattribute;
 import com.virhon.fintech.gl.model.AccountAttributes;
 import com.virhon.fintech.gl.model.AccountType;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
-import com.virhon.fintech.gl.repo.mysql.MySQLStorageSession;
+import com.virhon.fintech.gl.repo.mysql.MySQLStorageConnection;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -38,7 +38,7 @@ public class MySQLAttrRepoTest {
             final Long id = this.repo.insert(attributes);
             Assert.assertNotNull(id);
         }
-        MySQLStorageSession.getInstance().commit();
+        MySQLStorageConnection.getInstance().commit();
     }
 
 }

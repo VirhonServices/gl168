@@ -1,10 +1,13 @@
 package com.virhon.fintech.gl.repo.mysql.accountattribute;
 
+import java.time.ZonedDateTime;
+
 public class MySQLAccountAttributeRecord {
     private Long                id;
     private String              uuid;
     private String              accountNumber;
     private String              iban;
+    private ZonedDateTime       closedAt;
     private String              data;
 
     public Long getId() {
@@ -37,6 +40,14 @@ public class MySQLAccountAttributeRecord {
 
     public void setIban(String iban) {
         this.iban = iban;
+    }
+
+    public ZonedDateTime getClosedAt() {
+        return closedAt;
+    }
+
+    public void setClosedAt(ZonedDateTime closedAt) {
+        this.closedAt = closedAt;
     }
 
     public String getData() {

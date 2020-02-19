@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import com.virhon.fintech.gl.Config;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -58,7 +57,7 @@ public abstract class MySQLAbstactRepo<T> {
 
     protected MySQLAbstactRepo(String tablename, Class<T> aClass) throws IOException {
         this.tablename = tablename;
-        this.mapper = MySQLStorageSession.getInstance().getSession().getMapper(aClass);
+        this.mapper = MySQLStorageConnection.getInstance().getSession().getMapper(aClass);
     }
 
     public String getTablename() {

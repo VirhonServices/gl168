@@ -133,17 +133,19 @@ public class Ledger {
         return iReservation;
     }
 
-    IdentifiedEntity<Transfer> postReservation(Long id, BigDecimal localAmount, LocalDate reportedOn) throws LedgerException {
+    IdentifiedEntity<Transfer> postReservation(Long         id,
+                                               BigDecimal   localAmount,
+                                               LocalDate    reportedOn) throws LedgerException {
         // 1. Get the reservation
         final IdentifiedEntity<Reservation> reservation = reservationRepo.getById(id);
         // 2. Make new transfer
         final IdentifiedEntity<Transfer> transfer = transferFunds(reservation.getEntity().getTransferRef(),
-                                                                    reservation.getEntity().getDebitId(),
-                                                                    reservation.getEntity().getCreditId(),
-                                                                    reservation.getEntity().getAmount(),
-                                                                    localAmount,
-                                                                    reportedOn,
-                                                                    reservation.getEntity().getDescription());
+                                                                  reservation.getEntity().getDebitId(),
+                                                                  reservation.getEntity().getCreditId(),
+                                                                  reservation.getEntity().getAmount(),
+                                                                  localAmount,
+                                                                  reportedOn,
+                                                                  reservation.getEntity().getDescription());
         // 3. Delete the reservation
         this.reservationRepo.delete(reservation.getId());
         return transfer;

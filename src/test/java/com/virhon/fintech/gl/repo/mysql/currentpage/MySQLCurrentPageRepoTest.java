@@ -4,7 +4,7 @@ import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Page;
 import com.virhon.fintech.gl.model.PageTest;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
-import com.virhon.fintech.gl.repo.mysql.MySQLStorageSession;
+import com.virhon.fintech.gl.repo.mysql.MySQLStorageConnection;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -23,7 +23,7 @@ public class MySQLCurrentPageRepoTest {
             final IdentifiedEntity<Page> identifiedPage = new IdentifiedEntity<Page>(i, page);
             repo.put(identifiedPage);
         }
-        MySQLStorageSession.getInstance().commit();
+        MySQLStorageConnection.getInstance().commit();
     }
 
     @Test(enabled = false)
