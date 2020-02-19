@@ -6,7 +6,7 @@
     <artifactId>gl</artifactId>
     <packaging>jar</packaging>
     <name>Virhon General Ledger 24/7</name>
-    <version>0.0.1</version>
+    <version>0.1-SNAPSHOT</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
