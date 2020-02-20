@@ -33,7 +33,7 @@
     <update id="update">
         UPDATE ${tablename}
         <set>
-            <if test="pojo.uuid != null"> `data` = #{pojo.uuid} </if>
+            <if test="pojo.uuid != null"> `uuid` = #{pojo.uuid} </if>
             <if test="pojo.data != null"> `data` = #{pojo.data} </if>
         </set>
         WHERE id = #{pojo.id}

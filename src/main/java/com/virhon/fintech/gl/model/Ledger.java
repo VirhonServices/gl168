@@ -60,8 +60,8 @@ public class Ledger {
     }
 
     public Account openNew(String          accountNumber,
-                                  String          iban,
-                                  AccountType     accountType) {
+                           String          iban,
+                           AccountType     accountType) {
         final AccountAttributes attributes = AccountAttributes.createNew(accountNumber, iban, accountType);
         final Page page = Page.create(BigDecimal.ZERO);
         final Account account = new Account(this);
