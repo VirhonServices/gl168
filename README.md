@@ -304,24 +304,20 @@ Get all the transfers of the account that was reported on the specified period
 {
     "transfers": [
         {
+          "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
           "transferRef": "qw7663837jnn0094948-003",
           "postedAt": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
           "reportedOn": "2020-02-16",
           "currency": "UAH",
+          "transactionType": "CREDIT",
           "amount": 100.00,
           "repAmount": 100.00,
           "description": "Purchasing goods in MEGAMART",
-          "debit": {
+          "corresponding": {
               "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
               "accNumber": "1001200038767",
               "iban": "UA893052991001200038767",
               "accType": "ACTIVE"
-          },
-          "credit": {
-              "accUuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
-              "accNumber": "26003000078365",
-              "iban": "UA5630529926003000078365",
-              "accType": "PASSIVE"
           }
         }
     ]

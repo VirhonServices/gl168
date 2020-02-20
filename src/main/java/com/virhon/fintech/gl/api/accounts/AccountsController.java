@@ -45,6 +45,9 @@ public class AccountsController {
             LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
             return new ResponseEntity<>(new LedgerError(900,"Invalid account type "
                     .concat(request.getAccType())), HttpStatus.BAD_REQUEST);
+        } catch (NullPointerException e) {
+            LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
+            return new ResponseEntity<>(new LedgerError(910, e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
             return new ResponseEntity<>(new LedgerError(500,"Something went wrong"),
