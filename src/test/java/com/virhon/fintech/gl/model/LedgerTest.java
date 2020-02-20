@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class LedgerTest {
     public LedgerTest() throws IOException {
     }
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void createAccounts() throws IOException {
         this.account1 = uahLedger.openNew("1001200048475", "UA673052991001200048475",
                 AccountType.ACTIVE);
@@ -38,7 +39,7 @@ public class LedgerTest {
         MySQLStorageConnection.getInstance().commit();
     }
 
-    @Test
+    @Test(priority = 1)
     public void testTransferFunds() throws LedgerException, IOException {
         final BigDecimal amount = new BigDecimal("100.00");
         final Account debit = uahLedger.getExistingByIban(this.uahLedger, "UA673052991001200048475");
@@ -55,7 +56,7 @@ public class LedgerTest {
         Assert.assertEquals(creditBalAfter.subtract(creditBalBefore), amount.negate());
     }
 
-    @Test(expectedExceptions = LedgerException.class)
+    @Test(priority = 2, expectedExceptions = LedgerException.class)
     public void testRedSaldo() throws LedgerException {
         final BigDecimal amount = new BigDecimal("10000.00");
         final Account debit = uahLedger.getExistingByIban(this.uahLedger, "UA673052991001200048475");
@@ -67,7 +68,7 @@ public class LedgerTest {
                 LocalDate.now(), "Testing transfer");
     }
 
-    @Test(expectedExceptions = LedgerException.class)
+    @Test(priority = 3, expectedExceptions = LedgerException.class)
     public void testReservation() throws LedgerException {
         final Account debit  = uahLedger.getExistingByIban(this.uahLedger, "UA673052992600100003894");
         final Account credit = uahLedger.getExistingByIban(this.uahLedger, "UA673052991001200048475");
@@ -79,7 +80,7 @@ public class LedgerTest {
                 balance.negate(),"reservation-failed");
     }
 
-    @Test
+    @Test(priority = 4)
     public void testCancelReservation() throws LedgerException {
         final List<IdentifiedEntity<Reservation>> res = new ArrayList<>();
         final Account debit  = uahLedger.getExistingByIban(this.uahLedger, "UA673052992600100003894");

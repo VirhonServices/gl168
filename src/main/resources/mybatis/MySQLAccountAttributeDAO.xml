@@ -7,6 +7,7 @@
         <result column="uuid" property="uuid"/>
         <result column="account_number" property="accountNumber"/>
         <result column="iban" property="iban"/>
+        <result column="closed_at" property="closedAt"/>
         <result column="data" property="data"/>
     </resultMap>
 
@@ -16,6 +17,7 @@
         `uuid`,
         `account_number`,
         `iban`,
+        `closed_at`,
         `data`
     </sql>
 
@@ -44,6 +46,7 @@
             <if test="pojo.uuid != null"> `uuid` = #{pojo.uuid}, </if>
             <if test="pojo.accountNumber != null"> `account_number` = #{pojo.accountNumber}, </if>
             <if test="pojo.iban != null"> `iban` = #{pojo.iban}, </if>
+            <if test="pojo.closedAt != null"> `closed_at` = #{pojo.closedAt} </if>
             <if test="pojo.data != null"> `data` = #{pojo.data} </if>
         </set>
         WHERE id = #{pojo.id}

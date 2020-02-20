@@ -9,7 +9,7 @@ create table uah_account_attribute (
     uuid            varchar(36) not null unique,
     account_number  varchar(30),
     iban            varchar(34),
-    closedAt        datetime,
+    closed_at       datetime,
     data            text,
 
     primary key (id)
@@ -36,6 +36,7 @@ create table uah_historical_page (
 
 create table uah_transfer (
     id              bigint      not null AUTO_INCREMENT,
+    uuid            varchar(36) not null,
     data            text,
 
     primary key (id)
@@ -59,7 +60,7 @@ create table usd_account_attribute (
     uuid            varchar(36) not null unique,
     account_number  varchar(30),
     iban            varchar(34),
-    closedAt        datetime,
+    closed_at       datetime,
     data            text,
 
 primary key (id)
@@ -86,6 +87,7 @@ primary key (id)
 
 create table usd_transfer (
     id              bigint      not null AUTO_INCREMENT,
+    uuid            varchar(36) not null,
     data            text,
 
 primary key (id)
@@ -104,13 +106,12 @@ primary key (id)
 /*
                 EUR
 */
-
 create table eur_account_attribute (
     id              bigint      not null AUTO_INCREMENT,
     uuid            varchar(36) not null unique,
     account_number  varchar(30),
     iban            varchar(34),
-    closedAt        datetime,
+    closed_at       datetime,
     data            text,
 
     primary key (id)
@@ -137,6 +138,7 @@ create table eur_historical_page (
 
 create table eur_transfer (
     id              bigint      not null AUTO_INCREMENT,
+    uuid            varchar(36) not null,
     data            text,
 
     primary key (id)

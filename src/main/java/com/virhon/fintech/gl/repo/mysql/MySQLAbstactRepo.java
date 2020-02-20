@@ -26,8 +26,9 @@ public abstract class MySQLAbstactRepo<T> {
                 }
                 @Override
                 public ZonedDateTime read(JsonReader in) throws IOException {
-                    if (in != null) {
-                        return ZonedDateTime.parse(in.nextString());
+                    final String value = in.nextString();
+                    if (value != null && !value.toLowerCase().equals("null")) {
+                        return ZonedDateTime.parse(value);
                     } else {
                         return null;
                     }
@@ -44,8 +45,9 @@ public abstract class MySQLAbstactRepo<T> {
                 }
                 @Override
                 public LocalDate read(JsonReader in) throws IOException {
-                    if (in != null) {
-                        return LocalDate.parse(in.nextString());
+                    final String value = in.nextString();
+                    if (value != null && !value.toLowerCase().equals("null")) {
+                        return LocalDate.parse(value);
                     } else {
                         return null;
                     }

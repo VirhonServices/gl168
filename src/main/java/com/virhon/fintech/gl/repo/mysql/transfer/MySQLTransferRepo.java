@@ -38,6 +38,7 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
     @Override
     public IdentifiedEntity<Transfer> insert(Transfer transfer) {
         final MySQLTransferRecord record = new MySQLTransferRecord();
+        record.setUuid(transfer.getUuid());
         final String data = getConverter().toJson(transfer);
         record.setData(data);
         getMapper().insert(getTablename(), record);
@@ -48,6 +49,7 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
     public void update(IdentifiedEntity<Transfer> transfer) {
         final MySQLTransferRecord record = new MySQLTransferRecord();
         record.setId(transfer.getId());
+        record.setUuid(transfer.getEntity().getUuid());
         final String data = getConverter().toJson(transfer.getEntity());
         record.setData(data);
         getMapper().update(getTablename(), record);

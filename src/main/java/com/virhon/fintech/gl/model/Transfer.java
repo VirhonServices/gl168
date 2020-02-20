@@ -5,12 +5,21 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public class Transfer {
+    private String          uuid;
     private String          transferRef;
     private ZonedDateTime   postedAt;
     private BigDecimal      amount;
     private BigDecimal      localAmount;
     private LocalDate       reportedOn;
     private String          description;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getTransferRef() {
         return transferRef;

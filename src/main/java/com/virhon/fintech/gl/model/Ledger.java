@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 public class Ledger {
     private AttrRepo attrRepo;
@@ -98,6 +99,7 @@ public class Ledger {
         final ZonedDateTime postedAt = ZonedDateTime.now();
         final Transfer transfer = new Transfer();
         transfer.setTransferRef(transferRef);
+        transfer.setUuid(UUID.randomUUID().toString());
         transfer.setAmount(amount);
         transfer.setLocalAmount(localAmount);
         transfer.setReportedOn(reportedOn);
