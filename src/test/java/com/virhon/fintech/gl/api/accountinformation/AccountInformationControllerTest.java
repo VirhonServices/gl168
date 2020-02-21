@@ -1,6 +1,5 @@
-package com.virhon.fintech.gl.api.accounts;
+package com.virhon.fintech.gl.api.accountinformation;
 
-import com.google.gson.Gson;
 import com.virhon.fintech.gl.api.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,8 +15,7 @@ import org.testng.annotations.Test;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = Application.class)
-public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
-    private Gson gson = new Gson();
+public class AccountInformationControllerTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -30,34 +28,30 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
     }
 
     @Test
-    public void openNewAccountSuccessTest() throws Exception {
-        final NewAccountRequestBody request = new NewAccountRequestBody();
-        request.setAccType("PASSIVE");
-        request.setAccNumber("26003000078365");
-        request.setIban("UA5630529926003000078365");
-        final String req = gson.toJson(request);
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts")
-                .content(req)
-                .contentType(MediaType.APPLICATION_JSON)
+    public void testGet200() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/uah/accounts/03bb9d86-3716-4018-883e-78bd2222ddee")
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.accNumber").value("26003000078365"));
     }
 
     @Test
-    public void openNewAccountFailedNullTest() throws Exception {
-        final NewAccountRequestBody request = new NewAccountRequestBody();
-        request.setAccNumber("26003000078365");
-        request.setIban("UA5630529926003000078365");
-        final String req = gson.toJson(request);
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts")
-                .content(req)
-                .contentType(MediaType.APPLICATION_JSON)
+    public void testGetInvalidCurrency() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/bhd/accounts/03bb9d86-3716-4018-883e-78bd2222ddee")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.code").value(910));
+                .andExpect(jsonPath("$.code").value(150));
+    }
+
+    @Test
+    public void testGetInvalidAccount() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/uah/accounts/wrong-uuid")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(jsonPath("$.code").value(300));
     }
 
 }

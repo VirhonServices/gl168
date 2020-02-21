@@ -8,7 +8,6 @@ public class NewAccountRequestBody {
     private String accNumber;
     private String iban;
     @NotNull(message = "Account's currency must be defined")
-    private String currency;
 
     public String getAccType() {
         return accType;
@@ -32,13 +31,5 @@ public class NewAccountRequestBody {
 
     public void setIban(String iban) {
         this.iban = iban;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 }

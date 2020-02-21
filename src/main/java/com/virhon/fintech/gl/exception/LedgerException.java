@@ -30,6 +30,14 @@ public class LedgerException extends Exception {
         return new LedgerException(130, "The negative amount ".concat(amount.toString()).concat(" can't be transferred"));
     }
 
+    public static LedgerException invalidTypeOfAccount(String accountType) {
+        return new LedgerException(140, "Invalid type of account ".concat(accountType));
+    }
+
+    public static LedgerException notSupportedCurrency(String currency) {
+        return new LedgerException(150, "Currency ".concat(currency).concat(" not supported"));
+    }
+
     public static LedgerException redBalance(String accountNumber) {
         return new LedgerException(200, "Red balance on the account ".concat(accountNumber));
     }
@@ -39,7 +47,7 @@ public class LedgerException extends Exception {
     }
 
     public static LedgerException invalidAccount(String account) {
-        return new LedgerException(300, "The account id=".concat(account).concat(" doesn't exist"));
+        return new LedgerException(300, "The account identified by ".concat(account).concat(" doesn't exist"));
     }
 
     public static LedgerException invalidHistoricalData(Account account, ZonedDateTime at) {
@@ -56,4 +64,7 @@ public class LedgerException extends Exception {
                 .concat(account.getAttributes().getEntity().getAccountNumber()));
     }
 
+    public int getCode() {
+        return code;
+    }
 }

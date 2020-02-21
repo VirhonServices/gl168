@@ -1,5 +1,6 @@
 package com.virhon.fintech.gl.model;
 
+import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.LedgerRepoFactory;
 import com.virhon.fintech.gl.repo.mysql.MySQLLedgerRepoFactory;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,11 @@ public class GeneralLedger {
         }
     }
 
-    public Map<String, Ledger> getLedgers() {
-        return ledgers;
+    public Ledger getLedger(String currency) throws LedgerException {
+        final String cur = currency.toUpperCase();
+        if (!this.ledgers.keySet().contains(cur)) {
+            throw LedgerException.notSupportedCurrency(currency);
+        }
+        return ledgers.get(cur);
     }
 }

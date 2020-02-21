@@ -26,6 +26,18 @@ public class MySQLAttrRepo extends MySQLAbstactRepo<MySQLAccountAttributeDAO> im
     }
 
     @Override
+    public IdentifiedEntity<AccountAttributes> getByUuid(String uuid) {
+        final MySQLAccountAttributeRecord record = getMapper().selectByUuid(getTablename(), uuid);
+        if (record != null) {
+            final AccountAttributes accountAttributes =
+                    getConverter().fromJson(record.getData(), AccountAttributes.class);
+            return new IdentifiedEntity<>(record.getId(), accountAttributes);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public IdentifiedEntity<AccountAttributes> getByAccountNumber(String accountNumber) {
         final MySQLAccountAttributeRecord record = getMapper().selectByAccountNumber(getTablename(), accountNumber);
         if (record != null) {

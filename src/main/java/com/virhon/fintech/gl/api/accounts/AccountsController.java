@@ -1,21 +1,18 @@
 package com.virhon.fintech.gl.api.accounts;
 
 import com.virhon.fintech.gl.api.LedgerError;
+import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.*;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
-import com.virhon.fintech.gl.repo.StorageConnection;
 import com.virhon.fintech.gl.repo.mysql.MySQLStorageConnection;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/v1/gl/accounts")
+@RequestMapping("/v1/gl/{currencyCode}/accounts")
 public class AccountsController {
     final static Logger LOGGER = Logger.getLogger(AccountsController.class);
 
@@ -23,9 +20,9 @@ public class AccountsController {
     GeneralLedger gl;
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> openNewAccount(@RequestBody NewAccountRequestBody request) {
-        final String cur = request.getCurrency();
-        final Ledger ledger = gl.getLedgers().get(cur);
+    public ResponseEntity<?> openNewAccount(@PathVariable String currencyCode,
+                                            @RequestBody NewAccountRequestBody request) throws LedgerException {
+        final Ledger ledger = gl.getLedger(currencyCode);
         try {
             final Account account =
                     ledger.openNew(request.getAccNumber(), request.getIban(), AccountType.valueOf(request.getAccType()));
@@ -36,7 +33,7 @@ public class AccountsController {
             response.setAccNumber(attr.getEntity().getAccountNumber());
             response.setAccType(attr.getEntity().getAccountType().toString());
             response.setIban(attr.getEntity().getIban());
-            response.setCurrency(cur.toUpperCase());
+            response.setCurrency(currencyCode.toUpperCase());
             response.setOpenedAt(attr.getEntity().getOpenedAt().toString());
             LOGGER.info("Account ".concat(attr.getEntity().getIban().concat(" has been opened")));
             final ResponseEntity<NewAccountResponseBody> res = new ResponseEntity<>(response, HttpStatus.CREATED);

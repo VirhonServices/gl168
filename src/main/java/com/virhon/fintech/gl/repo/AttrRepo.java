@@ -4,6 +4,7 @@ import com.virhon.fintech.gl.model.AccountAttributes;
 
 public interface AttrRepo {
     IdentifiedEntity<AccountAttributes> getById(Long accountId);
+    IdentifiedEntity<AccountAttributes> getByUuid(String uuid);
     IdentifiedEntity<AccountAttributes> getByAccountNumber(String accountNumber);
     IdentifiedEntity<AccountAttributes> getByIban(String iban);
     IdentifiedEntity<AccountAttributes> getByIdExclusive(Long accountId);

@@ -43,8 +43,12 @@ the both values are strictly increasing.
 
 ### Accounts
 ````
-/v1/gl/accounts
+/v1/gl/{currencyCode}/accounts
 ````
+ |Parameter| Description|
+ |---------|------------|
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
+
 #### Open a new account [POST]
 
 ##### Request
@@ -52,8 +56,7 @@ the both values are strictly increasing.
 {
   "accType": "PASSIVE",
   "accNumber": "26003000078365",
-  "iban": "UA5630529926003000078365",
-  "currency": "UAH"
+  "iban": "UA5630529926003000078365"
 }
 ```
 ##### Response 201
@@ -70,10 +73,11 @@ the both values are strictly increasing.
 
 ### Getting account's information
  ````
- /v1/gl/accounts/{accountUuid}
+ /v1/gl/{currencyCode}/accounts/{accountUuid}
  ````
  |Parameter| Description|
  |---------|------------|
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account
  
 #### Get the information [GET]
@@ -97,11 +101,13 @@ the both values are strictly increasing.
 
 ### Getting account's balance at the particular posting moment
 ````
-/v1/gl/accounts/{accountUuid}/posting/balance
+/v1/gl/{currencyCode}/accounts/{accountUuid}/posting/balance
 ````
  |Parameter| Description|Type|Mandatory|
  |---------|------------|----|----------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account|UUID|Yes
+
 
 #### Get account's balance at the posting moment [GET]
 
@@ -136,10 +142,11 @@ You need to pass separated DateTime value in server's timezone
 
 ### Getting account's starting balance
 ````
-/v1/gl/accounts/{accountUuid}/reporting/balance/begin
+/v1/gl/currencyCode/accounts/{accountUuid}/reporting/balance/begin
 ````
  |Parameter| Description|Type|Mandatory|
  |---------|------------|----|----------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account|UUID|Yes
 
 #### Get account's starting balance on a particular reporting day [GET]
@@ -171,10 +178,11 @@ You need to pass separated LocalDate value
 
 ### Getting account's finishing balance
 ````
-/v1/gl/accounts/{accountUuid}/reporting/balance/finish
+/v1/gl/{currencyCode}/accounts/{accountUuid}/reporting/balance/finish
 ````
  |Parameter| Description|Type|Mandatory|
  |---------|------------|----|----------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account|UUID|Yes
 
 #### Get account's finishing balance at the particular reporting day [GET]
@@ -206,10 +214,11 @@ You need to pass separated LocalDate value
 
 ### Getting account's transfers list (by posting period)
 ````
-/v1/gl/accounts/{accountUuid}/posted/transfers
+/v1/gl/{currencyCode}/accounts/{accountUuid}/posted/transfers
 ````
  |Parameter| Description|Type|Mandatory|
  |---------|------------|----|----------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account|UUID|Yes
 
 #### Get account's transfers by posting period [GET]
@@ -270,10 +279,11 @@ You need to pass separated LocalDate value
 ### Getting account's transfers list (by reporting period)
 Get all the transfers of the account that was reported on the specified period
 ````
-/v1/gl/accounts/{accountUuid}/reported/transfers
+/v1/gl/{currencyCode}/accounts/{accountUuid}/reported/transfers
 ````
  |Parameter| Description|Type|Mandatory|
  |---------|------------|----|----------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account|UUID|Yes
 
 #### Get account's transfers list by reporting period [GET]
