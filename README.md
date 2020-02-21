@@ -103,8 +103,8 @@ the both values are strictly increasing.
 ````
 /v1/gl/{currencyCode}/accounts/{accountUuid}/posting/balance
 ````
- |Parameter| Description|Type|Mandatory|
- |---------|------------|----|----------
+ |Variable| Description
+ |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account|UUID|Yes
 
@@ -142,12 +142,12 @@ You need to pass separated DateTime value in server's timezone
 
 ### Getting account's reporting balance for the period
 ````
-/v1/gl/currencyCode/accounts/{accountUuid}/reporting/balance
+/v1/gl/{currencyCode}/accounts/{accountUuid}/reporting/balance
 ````
- |Parameter| Description|Type|Mandatory|
- |---------|------------|----|----------
+ |Variable| Description
+ |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account|UUID|Yes
+ |accountUuid| A uuid of the account
 
 #### Get account's open and closed balances on a particular reporting period [GET]
 
@@ -190,10 +190,10 @@ You need to pass separated parts of LocalDate values
 ````
 /v1/gl/{currencyCode}/accounts/{accountUuid}/posted/transfers
 ````
- |Parameter| Description|Type|Mandatory|
- |---------|------------|----|----------
+ |Variable| Description
+ |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account|UUID|Yes
+ |accountUuid| A uuid of the account
 
 #### Get account's transfers by posting period [GET]
 
@@ -255,10 +255,10 @@ Get all the transfers of the account that was reported on the specified period
 ````
 /v1/gl/{currencyCode}/accounts/{accountUuid}/reported/transfers
 ````
- |Parameter| Description|Type|Mandatory|
- |---------|------------|----|----------
+ |Variable| Description
+ |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account|UUID|Yes
+ |accountUuid| A uuid of the account
 
 #### Get account's transfers list by reporting period [GET]
 
