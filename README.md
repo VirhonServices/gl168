@@ -140,78 +140,52 @@ You need to pass separated DateTime value in server's timezone
 }
 ````
 
-### Getting account's starting balance
+### Getting account's reporting balance for the period
 ````
-/v1/gl/currencyCode/accounts/{accountUuid}/reporting/balance/begin
-````
- |Parameter| Description|Type|Mandatory|
- |---------|------------|----|----------
- |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account|UUID|Yes
-
-#### Get account's starting balance on a particular reporting day [GET]
-
-##### Request
-You need to pass separated LocalDate value
-````json
-{
-    "year": 2020,
-    "month": 2,
-    "day": 16
-}
-````
-
-##### Response 200
-````json
-{
-   "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
-   "at": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
-   "accType": "PASSIVE",
-   "accNumber": "26003000078365",
-   "iban": "UA5630529926003000078365",
-   "currency": "UAH",
-   "balance": 1267.89,
-   "repBalance": 1267.89,
-   "balType": "CREDIT"
-}
-````
-
-### Getting account's finishing balance
-````
-/v1/gl/{currencyCode}/accounts/{accountUuid}/reporting/balance/finish
+/v1/gl/currencyCode/accounts/{accountUuid}/reporting/balance
 ````
  |Parameter| Description|Type|Mandatory|
  |---------|------------|----|----------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account|UUID|Yes
 
-#### Get account's finishing balance at the particular reporting day [GET]
+#### Get account's open and closed balances on a particular reporting period [GET]
 
 ##### Request
-You need to pass separated LocalDate value
+You need to pass separated parts of LocalDate values
 ````json
-{
-    "year": 2020,
-    "month": 2,
-    "day": 16
-}
-````
+ {
+   "beginOn": {
+       "year": 2020,
+       "month": 2,
+       "day": 14
+   },
+   "finishOn": {
+       "year": 2020,
+       "month": 2,
+       "day": 16
+   }
+ }
+ ````
 
 ##### Response 200
 ````json
 {
-   "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
-   "at": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
-   "accType": "PASSIVE",
-   "accNumber": "26003000078365",
-   "iban": "UA5630529926003000078365",
-   "currency": "UAH",
-   "balance": 1267.89,
-   "repBalance": 1267.89,
-   "balType": "CREDIT"
+  "accType": "PASSIVE",
+  "accNumber": "26003000078365",
+  "iban": "UA5630529926003000078365",
+  "open": {
+       "balance": 1267.89,
+       "repBalance": 1267.89,
+       "balType": "CREDIT"
+   },
+   "closed": {
+       "balance": 1267.89,
+       "repBalance": 1267.89,
+       "balType": "CREDIT"   
+   }
 }
 ````
-
 ### Getting account's transfers list (by posting period)
 ````
 /v1/gl/{currencyCode}/accounts/{accountUuid}/posted/transfers
