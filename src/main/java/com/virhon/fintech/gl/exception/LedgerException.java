@@ -35,7 +35,7 @@ public class LedgerException extends Exception {
     }
 
     public static LedgerException notSupportedCurrency(String currency) {
-        return new LedgerException(150, "Currency ".concat(currency).concat(" not supported"));
+        return new LedgerException(150, "Currency ".concat(currency).concat(" is not supported"));
     }
 
     public static LedgerException redBalance(String accountNumber) {

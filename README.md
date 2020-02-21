@@ -1,9 +1,10 @@
-# Virhon General Ledger 24/7
+# Virhon General Ledger
 
 ![picture](http://i.piccy.info/i9/4000ad033c7371a6cc1a72d2fe9c194c/1582148037/8830/1363454/1111.png)
 
 ## Table of Contents
 
+- [Concept](#concept)
 - [General Information](#general-information)
 - [API Reference](#api-reference)
     * [Open a new account](#open-a-new-account-post)
@@ -13,7 +14,34 @@
     * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
     * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
 
-## General Information
+## CONCEPT
+
+## GENERAL INFORMATION
+
+### Errors
+In case if the system is not able to process your request correctly, you will get 
+an appropriate http status code with error details provided by a response body. The body has
+the following structure:
+````json
+{
+  "code": 150,
+  "message": "Currency XBTH not supported"
+}
+````
+where:
+
+|Parameter|Description|Type|Mandatory|
+|---------|-----------|----|---------|
+|code|Numeric code of error situation|Int|Yes|
+
+The following table shows all the possible error situation:
+
+|Code|Description
+|----|------------
+|100|Unable to add the post older than the page (by posting moment)
+|110|Unable to add the post older than the page (by reporting date)
+|120|The negative amount can't be reserved
+|130|The negative amount can't be transferred
 
 ### Types of account
  |Parameter| Description|
@@ -38,7 +66,7 @@ Reporting date says about the financial day the action was referred to.
 It is possible posting moment and reporting date to be different, but
 the both values are strictly increasing.
 
-## API reference
+## API REFERENCE
 
 ### Accounts
 ````
