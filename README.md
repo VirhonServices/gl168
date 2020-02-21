@@ -88,15 +88,15 @@ The following table shows all the possible error situations:
 #### Open a new account [POST]
 
 ##### Request
-```json
+````json
 {
   "accType": "PASSIVE",
   "accNumber": "26003000078365",
   "iban": "UA5630529926003000078365"
 }
-```
+````
 ##### Response 201
-```json
+````json
 {
   "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
   "accType": "PASSIVE",
@@ -105,7 +105,7 @@ The following table shows all the possible error situations:
   "currency": "UAH",
   "openedAt": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]"
 }
-```
+````
 
 ### Getting account's information
  ````
@@ -119,7 +119,7 @@ The following table shows all the possible error situations:
 #### Get the information [GET]
 
 ##### Response 200
-```json
+````json
 {
   "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
   "accType": "PASSIVE",
@@ -133,7 +133,7 @@ The following table shows all the possible error situations:
   "openedAt": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
   "closedAt": null
 }
-```
+````
 
 ### Getting account's balance at the particular posting moment
 ````
