@@ -55,9 +55,10 @@ where:
 
 |Parameter|Description|Type|Mandatory|
 |---------|-----------|----|---------|
-|code|Numeric code of error situation|Int|Yes|
+|code|Numeric code of error situation|Int|Yes
+|message|A text providing details of the situation having initiated by the error|String|Yes
 
-The following table shows all the possible error situation:
+The following table shows all the possible error situations:
 
 |Code|Description
 |----|------------
