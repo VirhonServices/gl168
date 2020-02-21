@@ -9,8 +9,7 @@
     * [Open a new account](#open-a-new-account-post)
     * [Get the information](#get-the-information-get)
     * [Get account's balance at the posting moment](#getting-accounts-balance-at-the-particular-posting-moment)
-    * [Get account's starting balance on a particular reporting day](#get-accounts-starting-balance-on-a-particular-reporting-day-get)
-    * [Get account's finishing balance at the particular reporting day](#get-accounts-finishing-balance-at-the-particular-reporting-day-get)
+    * [Get account's open and closed balances on a particular reporting period](#get-accounts-open-and-closed-balances-on-a-particular-reporting-period)
     * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
     * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
 
@@ -106,7 +105,7 @@ the both values are strictly increasing.
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account|UUID|Yes
+ |accountUuid| A uuid of the account
 
 
 #### Get account's balance at the posting moment [GET]
