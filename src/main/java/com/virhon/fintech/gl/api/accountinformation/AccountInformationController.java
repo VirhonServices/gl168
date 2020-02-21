@@ -66,6 +66,7 @@ public class AccountInformationController {
                 throw LedgerException.invalidAccount(accountUuid);
             }
         } catch (LedgerException e) {
+            LOGGER.error(e.getMessage());
             return new ResponseEntity<LedgerError>(new LedgerError(e.getCode(), e.getMessage()),
                     HttpStatus.BAD_REQUEST);
         } catch (Exception e) {

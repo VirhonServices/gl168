@@ -42,6 +42,26 @@ public class AccountAttributes {
         return result;
     }
 
+
+    /**
+     * Returns type of the balance
+     *
+     * @return
+     */
+    public AmountType getBalanceType() {
+        if (this.balance.signum() == 1) {
+            return AmountType.CREDIT;
+        } else if (this.balance.signum() == -1) {
+            return AmountType.DEBIT;
+        } else {
+            if (this.accountType == AccountType.ACTIVE) {
+                return AmountType.DEBIT;
+            } else {
+                return AmountType.CREDIT;
+            }
+        }
+    }
+
     public String getAccountUUID() {
         return this.accountUUID;
     }

@@ -37,6 +37,17 @@ public class Ledger {
         return account;
     }
 
+    public static Account getExistingByUuid(Ledger        ledger,
+                                            String        uuid) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByUuid(uuid);
+        if (aa==null) {
+            throw LedgerException.invalidAccount(uuid);
+        }
+        final Account account = new Account(ledger);
+        account.setAccountId(aa.getId());
+        return account;
+    }
+
     public static Account getExistingByAccountNumber(Ledger        ledger,
                                                      String        accountNumber) throws LedgerException {
         final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByAccountNumber(accountNumber);

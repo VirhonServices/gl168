@@ -202,7 +202,10 @@ public class Account {
      * Reserved for checking if the account arrested or blocked
      * @return
      */
-    public Boolean canBeOperated() {return true;}
+    public Boolean canBeOperated() {
+        // TODO: 22.02.20 needs to be refactored
+        return true;
+    }
 
     public IdentifiedEntity<AccountAttributes> getAttributes() {
         return this.ledger.getAttrRepo().getById(this.accountId);

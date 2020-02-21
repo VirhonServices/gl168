@@ -36,6 +36,39 @@ Posting date shows the moment when the transfer was posted. The value
 includes year, month, day, hour, minutes, seconds, milliseconds and 
 server's timezone.
 
+All the possible timezones provided below:
+
+|Code|Zone
+|----|-----
+|EST|-05:00
+|HST|-10:00
+|MST|-07:00
+|ACT|Australia/Darwin
+|AET|Australia/Sydney
+|AGT|America/Argentina/Buenos_Aires
+|ART|Africa/Cairo
+|AST|America/Anchorage
+|BET|America/Sao_Paulo
+|BST|Asia/Dhaka
+|CAT|Africa/Harare
+|CNT|America/St_Johns
+|CST|America/Chicago
+|CTT|Asia/Shanghai
+|EAT|Africa/Addis_Ababa
+|ECT|Europe/Paris
+|IET|America/Indiana/Indianapolis
+|IST|Asia/Kolkata
+|JST|Asia/Tokyo
+|MIT|Pacific/Apia
+|NET|Asia/Yerevan
+|NST|Pacific/Auckland
+|PLT|Asia/Karachi
+|PNT|America/Phoenix
+|PRT|America/Puerto_Rico
+|PST|America/Los_Angeles
+|SST|Pacific/Guadalcanal
+|VST|Asia/Ho_Chi_Minh
+
 #### REPORTING date 
 Reporting date says about the financial day the action was referred to. 
 It is possible posting moment and reporting date to be different, but
@@ -145,7 +178,7 @@ The following table shows all the possible error situations:
  |accountUuid| A uuid of the account
 
 
-#### Get account's balance at the posting moment [GET]
+#### Get account's balance at the posting moment [POST]
 
 ##### Request
 You need to pass separated DateTime value in server's timezone
@@ -155,9 +188,10 @@ You need to pass separated DateTime value in server's timezone
     "month": 2,
     "day": 16,
     "hour": 1,
-    "minutes": 26,
-    "seconds": 51,
-    "miliseconds": 556
+    "minute": 26,
+    "second": 51,
+    "nanoOfSecond": 556,
+    "zoneId": "Europe/Kiev"
 }
 ````
 
@@ -185,7 +219,7 @@ You need to pass separated DateTime value in server's timezone
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account
 
-#### Get account's open and closed balances on a particular reporting period [GET]
+#### Get account's open and closed balances on a particular reporting period [POST]
 
 ##### Request
 You need to pass separated parts of LocalDate values
@@ -231,7 +265,7 @@ You need to pass separated parts of LocalDate values
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account
 
-#### Get account's transfers by posting period [GET]
+#### Get account's transfers by posting period [POST]
 
 ##### Request
 ````json
@@ -241,18 +275,20 @@ You need to pass separated parts of LocalDate values
       "month": 2,
       "day": 16,
       "hour": 1,
-      "minutes": 26,
-      "seconds": 51,
-      "miliseconds": 556
+      "minute": 26,
+      "second": 51,
+      "nanoOfSecond": 556,
+      "zoneId": "Europe/Kiev"
   },
   "finishAt": {
       "year": 2020,
       "month": 2,
       "day": 18,
       "hour": 2,
-      "minutes": 22,
-      "seconds": 24,
-      "miliseconds": 876
+      "minute": 22,
+      "second": 24,
+      "nanoOfSecond": 876,
+      "zoneId": "Europe/Kiev"
   }
 }
 ````
@@ -296,7 +332,7 @@ Get all the transfers of the account that was reported on the specified period
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account
 
-#### Get account's transfers list by reporting period [GET]
+#### Get account's transfers list by reporting period [POST]
 
 ##### Request
  |Field| Description|Type|Mandatory|

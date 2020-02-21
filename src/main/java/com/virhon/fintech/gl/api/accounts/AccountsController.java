@@ -21,9 +21,9 @@ public class AccountsController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> openNewAccount(@PathVariable String currencyCode,
-                                            @RequestBody NewAccountRequestBody request) throws LedgerException {
-        final Ledger ledger = gl.getLedger(currencyCode);
+                                            @RequestBody NewAccountRequestBody request) {
         try {
+            final Ledger ledger = gl.getLedger(currencyCode);
             final Account account =
                     ledger.openNew(request.getAccNumber(), request.getIban(), AccountType.valueOf(request.getAccType()));
             final IdentifiedEntity<AccountAttributes> attr = ledger.getAttrRepo().getById(account.getAccountId());
@@ -38,6 +38,10 @@ public class AccountsController {
             LOGGER.info("Account ".concat(attr.getEntity().getIban().concat(" has been opened")));
             final ResponseEntity<NewAccountResponseBody> res = new ResponseEntity<>(response, HttpStatus.CREATED);
             return res;
+        } catch (LedgerException e) {
+            LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
+            return new ResponseEntity<LedgerError>(new LedgerError(e.getCode(), e.getMessage()),
+                    HttpStatus.BAD_REQUEST);
         } catch (IllegalArgumentException e) {
             LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
             return new ResponseEntity<>(new LedgerError(900,"Invalid account type "
