@@ -18,6 +18,29 @@
 
 ## GENERAL INFORMATION
 
+### Types of account
+ |Parameter| Description|
+ |---------|------------|
+ |**ACTIVE**| The account balance **able to be an active only** (an attemption to turn the account into passive balance throws an exception)
+ |**PASSIVE**| The account balance **able to be an passive only** (an attemption to turn the account into active balance throws an exception)
+ |**ACTIVEPASSIVE**| The account balance **able to be active either passive value** (the both values are valid)
+
+### Dates and moments of the balance and periods
+Some functions require date or period to be defined. There are two types of 
+date values regarding the transfers:
+* posting
+* reporting
+
+#### POSTING moment
+Posting date shows the moment when the transfer was posted. The value 
+includes year, month, day, hour, minutes, seconds, milliseconds and 
+server's timezone.
+
+#### REPORTING date 
+Reporting date says about the financial day the action was referred to. 
+It is possible posting moment and reporting date to be different, but
+the both values are strictly increasing.
+
 ### Errors
 In case if the system is not able to process your request correctly, you will get 
 an appropriate http status code with error details provided by a response body. The body has
@@ -42,29 +65,14 @@ The following table shows all the possible error situation:
 |110|Unable to add the post older than the page (by reporting date)
 |120|The negative amount can't be reserved
 |130|The negative amount can't be transferred
-
-### Types of account
- |Parameter| Description|
- |---------|------------|
- |**ACTIVE**| The account balance **able to be an active only** (an attemption to turn the account into passive balance throws an exception)
- |**PASSIVE**| The account balance **able to be an passive only** (an attemption to turn the account into active balance throws an exception)
- |**ACTIVEPASSIVE**| The account balance **able to be active either passive value** (the both values are valid)
-
-### Dates and moments of the balance and periods
-Some functions require date or period to be defined. There are two types of 
-date values regarding the transfers:
-* posting
-* reporting
-
-#### POSTING moment
-Posting date shows the moment when the transfer was posted. The value 
-includes year, month, day, hour, minutes, seconds, milliseconds and 
-server's timezone.
-
-#### REPORTING date 
-Reporting date says about the financial day the action was referred to. 
-It is possible posting moment and reporting date to be different, but
-the both values are strictly increasing.
+|140|Invalid type of account
+|150|Currency not supported
+|200|Red balance on the account
+|210|The balance of the account is not enough to make a reservation
+|300|The account doesn't exist
+|310|The account didn't exist on the date
+|320|The account can't be operated
+|400|Can't operate read-only account
 
 ## API REFERENCE
 

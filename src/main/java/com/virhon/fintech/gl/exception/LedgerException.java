@@ -35,7 +35,7 @@ public class LedgerException extends Exception {
     }
 
     public static LedgerException notSupportedCurrency(String currency) {
-        return new LedgerException(150, "Currency ".concat(currency).concat(" is not supported"));
+        return new LedgerException(150, "Currency ".concat(currency).concat(" not supported"));
     }
 
     public static LedgerException redBalance(String accountNumber) {
@@ -52,7 +52,7 @@ public class LedgerException extends Exception {
 
     public static LedgerException invalidHistoricalData(Account account, ZonedDateTime at) {
         return new LedgerException(310, "The account ".concat(account.getAttributes().getEntity().getAccountNumber()
-                .concat(" didn't exist at the date ").concat(at.toString())));
+                .concat(" didn't exist on the date ").concat(at.toString())));
     }
 
     public static LedgerException accountCantBeOperated(Long accountId) {
