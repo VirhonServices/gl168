@@ -6,17 +6,11 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class NewTransferRequestBody {
-    @NotNull
     private String transferRef;
-    @NotNull
     private String creditAccountUuid;
-    @NotNull
     private BigDecimal amount;
-    @NotNull
     private BigDecimal repAmount;
-    @NotNull
     private SeparatedDate reportedOn;
-    @NotNull
     private String description;
 
     public String getTransferRef() {

@@ -2,7 +2,7 @@ package com.virhon.fintech.gl.api.maketransfer;
 
 import java.math.BigDecimal;
 
-public class NewTransferResponseBody {
+public class TransferResponseBody {
     public static class Account {
         private String accUuid;
         private String accNumber;

@@ -61,6 +61,31 @@ public class NewTransferControllerTest extends AbstractTestNGSpringContextTests 
     }
 
     @Test
+    void testNPE() throws Exception {
+        final BigDecimal amount = new BigDecimal("5000.00");
+        final BigDecimal repAmount = new BigDecimal("200.00");
+        final SeparatedDate reportedOn = new SeparatedDate();
+        reportedOn.setYear(2020);
+        reportedOn.setMonth(2);
+        reportedOn.setDay(15);
+        final NewTransferRequestBody request = new NewTransferRequestBody();
+        request.setTransferRef("TRANSFER-001");
+        request.setCreditAccountUuid("b105791b-2252-48fa-8558-8faa40a003bd");
+        request.setAmount(amount);
+        request.setRepAmount(repAmount);
+        request.setDescription("Test transfer #111");
+        final String req = gson.toJson(request);
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6/transfers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(req)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(jsonPath("$.code").value(200)
+                );
+    }
+
+    @Test
     void testRedSaldo() throws Exception {
         final BigDecimal amount = new BigDecimal("5000.00");
         final BigDecimal repAmount = new BigDecimal("200.00");

@@ -8,6 +8,7 @@ import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,9 +20,9 @@ public class NewTransferController {
     @Autowired
     GeneralLedger gl;
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> makeTransfer(@PathVariable String currencyCode,
-                                          @PathVariable String debitAccountUuid,
+    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> makeTransfer(@PathVariable(required = true) String currencyCode,
+                                          @PathVariable(required = true) String debitAccountUuid,
                                           @RequestBody NewTransferRequestBody request) {
         try {
             final Ledger ledger = gl.getLedger(currencyCode);
@@ -32,7 +33,7 @@ public class NewTransferController {
             final IdentifiedEntity<Transfer> transfer = ledger.transferFunds(request.getTransferRef(),
                     debit.getAccountId(), credit.getAccountId(), request.getAmount(), request.getRepAmount(),
                     request.getReportedOn().toLocalDate(), request.getDescription());
-            final NewTransferResponseBody response = new NewTransferResponseBody();
+            final TransferResponseBody response = new TransferResponseBody();
             final Transfer tr = transfer.getEntity();
             response.setUuid(tr.getUuid());
             response.setTransferRef(tr.getTransferRef());
@@ -41,13 +42,13 @@ public class NewTransferController {
             response.setAmount(tr.getAmount());
             response.setRepAmount(tr.getLocalAmount());
             response.setDescription(tr.getDescription());
-            final NewTransferResponseBody.Account deb = new NewTransferResponseBody.Account();
+            final TransferResponseBody.Account deb = new TransferResponseBody.Account();
             deb.setAccUuid(debAttr.getAccountUUID());
             deb.setAccNumber(debAttr.getAccountNumber());
             deb.setIban(debAttr.getIban());
             deb.setAccType(debAttr.getAccountType().toString());
             response.setDebit(deb);
-            final NewTransferResponseBody.Account cre = new NewTransferResponseBody.Account();
+            final TransferResponseBody.Account cre = new TransferResponseBody.Account();
             cre.setAccUuid(creAttr.getAccountUUID());
             cre.setAccNumber(creAttr.getAccountNumber());
             cre.setIban(creAttr.getIban());
