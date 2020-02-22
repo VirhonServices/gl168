@@ -425,6 +425,7 @@ Get all the transfers of the account that was reported on the specified period
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
+ |transferUuid| UUID of the transfer the information need to be gotten of
 #### Get the transfer's information [GET]
 ##### Response 200
 ````json
