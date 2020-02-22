@@ -14,7 +14,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.testng.Assert.*;
 
 @SpringBootTest(classes = Application.class)
 public class BalanceAtControllerTest  extends AbstractTestNGSpringContextTests {

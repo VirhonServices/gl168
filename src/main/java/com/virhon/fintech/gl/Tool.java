@@ -44,7 +44,8 @@ public class Tool {
         if (zone != null) {
             _zone = zone;
         }
-        final ZonedDateTime result = ZonedDateTime.of(_year,_month, _day, _hour, _minute, _second, _nano, ZoneId.of(_zone));
+        final ZonedDateTime result = ZonedDateTime.of(_year,_month, _day, _hour, _minute,
+                _second, _nano, ZoneId.of(_zone));
         return result;
     }
 }

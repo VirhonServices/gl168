@@ -92,21 +92,21 @@ public class Ledger {
                                              final String     description) throws LedgerException {
         LOGGER.info(transferRef.concat(" Transferring ".concat(amount.toString())
                 .concat(" from ".concat(debitId.toString().concat(" to ").concat(creditId.toString())))));
-        // 1. Check sign of amount
+        // Check sign of amount
         if (amount.signum() == -1) {
             throw LedgerException.invalidTransferAmount(amount);
         }
-        // 2. Get accounts
+        // Get accounts
         final Account debit  = getExistingById(debitId);
         final Account credit = getExistingById(creditId);
-        // 3. Check if the transfer is possible
+        // Check if the transfer is possible
         if (!debit.canBeOperated()) {
             throw LedgerException.accountCantBeOperated(debitId);
         }
         if (!credit.canBeOperated()) {
             throw LedgerException.accountCantBeOperated(creditId);
         }
-        // 4. Do transfer
+        // Do transfer
         final ZonedDateTime postedAt = ZonedDateTime.now();
         final Transfer transfer = new Transfer();
         transfer.setTransferRef(transferRef);

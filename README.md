@@ -301,21 +301,15 @@ You need to pass separated parts of LocalDate values
           "transferRef": "qw7663837jnn0094948-003",
           "postedAt": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
           "reportedOn": "2020-02-16",
-          "currency": "UAH",
+          "transactionType": "CREDIT",
           "amount": 100.00,
           "repAmount": 100.00,
           "description": "Purchasing goods in MEGAMART",
-          "debit": {
+          "correspondent": {
               "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
               "accNumber": "1001200038767",
               "iban": "UA893052991001200038767",
               "accType": "ACTIVE"
-          },
-          "credit": {
-              "accUuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
-              "accNumber": "26003000078365",
-              "iban": "UA5630529926003000078365",
-              "accType": "PASSIVE"
           }
         }
     ]
@@ -364,12 +358,11 @@ Get all the transfers of the account that was reported on the specified period
           "transferRef": "qw7663837jnn0094948-003",
           "postedAt": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
           "reportedOn": "2020-02-16",
-          "currency": "UAH",
           "transactionType": "CREDIT",
           "amount": 100.00,
           "repAmount": 100.00,
           "description": "Purchasing goods in MEGAMART",
-          "corresponding": {
+          "correspondent": {
               "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
               "accNumber": "1001200038767",
               "iban": "UA893052991001200038767",
@@ -377,5 +370,76 @@ Get all the transfers of the account that was reported on the specified period
           }
         }
     ]
+}
+````
+### Making transfer
+````
+/v1/gl/{currencyCode}/accounts/{debitAccountUuid}/transfers
+````
+ |Variable| Description
+ |---------|------------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
+ |debitAccountUuid| A uuid of debit account
+#### Make a transfer debiting debitAccountUuid [POST]
+
+##### Request
+````json
+{
+  "transferRef": "qw7663837jnn0094948-003",
+  "creditAccountUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
+  "amount": "2481.00",
+  "repAmount": "100.00",
+  "reportedOn": {
+      "year": 2020,
+      "month": 2,
+      "day": 21
+  },
+  "description": "ONLINE TAXI bill 1228/UKR-11 payment"
+}
+````
+##### Response 201
+````json
+{
+  "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+  "transferRef": "qw7663837jnn0094948-003",
+  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
+  "reportedOn": "2020-02-21",
+  "transactionType": "CREDIT",
+  "amount": 100.00,
+  "repAmount": 100.00,
+  "description": "Purchasing goods in MEGAMART",
+  "correspondent": {
+      "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
+      "accNumber": "1001200038767",
+      "iban": "UA893052991001200038767",
+      "accType": "ACTIVE"
+  }
+}
+````
+### Getting transfer's information
+````
+/v1/gl/{currencyCode}/transfers/{transferUuid}
+````
+ |Variable| Description
+ |---------|------------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
+#### Get the transfer's information [GET]
+##### Response 200
+````json
+{
+  "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+  "transferRef": "qw7663837jnn0094948-003",
+  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
+  "reportedOn": "2020-02-21",
+  "transactionType": "CREDIT",
+  "amount": 100.00,
+  "repAmount": 100.00,
+  "description": "Purchasing goods in MEGAMART",
+  "correspondent": {
+      "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
+      "accNumber": "1001200038767",
+      "iban": "UA893052991001200038767",
+      "accType": "ACTIVE"
+  }
 }
 ````
