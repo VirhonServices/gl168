@@ -13,6 +13,8 @@
     * [Get account's open and closed balances on a particular reporting period](#get-accounts-open-and-closed-balances-on-a-particular-reporting-period-get)
     * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
     * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
+    * [Make a transfer debiting debitAccountUuid](#make-a-transfer-debiting-debitaccountuuid-post)
+    * [Get the transfer's information](#get-the-transfers-information-get)
 
 ## CONCEPT
 
