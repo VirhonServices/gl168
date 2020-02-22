@@ -32,7 +32,7 @@ public class BalanceAtController {
             final ZonedDateTime at = Tool.buildByDefault(request.getYear(), request.getMonth(), request.getDay(),
                     request.getHour(), request.getMinute(), request.getSecond(), request.getNanoOfSecond(),
                     request.getZoneId());
-            final Account account = Ledger.getExistingByUuid(ledger, accountUuid);
+            final Account account = ledger.getExistingByUuid(accountUuid);
             if (account == null) {
                 throw LedgerException.invalidAccount(accountUuid);
             }

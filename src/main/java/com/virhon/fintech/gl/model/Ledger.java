@@ -37,35 +37,32 @@ public class Ledger {
         return account;
     }
 
-    public static Account getExistingByUuid(Ledger        ledger,
-                                            String        uuid) throws LedgerException {
-        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByUuid(uuid);
+    public Account getExistingByUuid(String uuid) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> aa = this.getAttrRepo().getByUuid(uuid);
         if (aa==null) {
             throw LedgerException.invalidAccount(uuid);
         }
-        final Account account = new Account(ledger);
+        final Account account = new Account(this);
         account.setAccountId(aa.getId());
         return account;
     }
 
-    public static Account getExistingByAccountNumber(Ledger        ledger,
-                                                     String        accountNumber) throws LedgerException {
-        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByAccountNumber(accountNumber);
+    public Account getExistingByAccountNumber(String accountNumber) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> aa = this.getAttrRepo().getByAccountNumber(accountNumber);
         if (aa==null) {
             throw LedgerException.invalidAccount(accountNumber);
         }
-        final Account account = new Account(ledger);
+        final Account account = new Account(this);
         account.setAccountId(aa.getId());
         return account;
     }
 
-    public static Account getExistingByIban(Ledger        ledger,
-                                            String        iban) throws LedgerException {
-        final IdentifiedEntity<AccountAttributes> aa = ledger.getAttrRepo().getByIban(iban);
+    public Account getExistingByIban(String iban) throws LedgerException {
+        final IdentifiedEntity<AccountAttributes> aa = this.getAttrRepo().getByIban(iban);
         if (aa==null) {
             throw LedgerException.invalidAccount(iban);
         }
-        final Account account = new Account(ledger);
+        final Account account = new Account(this);
         account.setAccountId(aa.getId());
         return account;
     }
@@ -83,13 +80,25 @@ public class Ledger {
         return account;
     }
 
-    IdentifiedEntity<Transfer> transferFunds(final String     transferRef,
-                                             final Long       debitId,
-                                             final Long       creditId,
-                                             final BigDecimal amount,
-                                             final BigDecimal localAmount,
-                                             final LocalDate  reportedOn,
-                                             final String     description) throws LedgerException {
+    /**
+     *
+     * @param transferRef
+     * @param debitId
+     * @param creditId
+     * @param amount
+     * @param localAmount
+     * @param reportedOn
+     * @param description
+     * @return
+     * @throws LedgerException
+     */
+    public IdentifiedEntity<Transfer> transferFunds(final String     transferRef,
+                                                    final Long       debitId,
+                                                    final Long       creditId,
+                                                    final BigDecimal amount,
+                                                    final BigDecimal localAmount,
+                                                    final LocalDate  reportedOn,
+                                                    final String     description) throws LedgerException {
         LOGGER.info(transferRef.concat(" Transferring ".concat(amount.toString())
                 .concat(" from ".concat(debitId.toString().concat(" to ").concat(creditId.toString())))));
         // Check sign of amount
@@ -124,6 +133,40 @@ public class Ledger {
         return iTransfer;
     }
 
+    /**
+     *
+     * @param transferRef
+     * @param debitUuid
+     * @param creditUuid
+     * @param amount
+     * @param localAmount
+     * @param reportedOn
+     * @param description
+     * @return
+     */
+    public IdentifiedEntity<Transfer> transferFunds(final String     transferRef,
+                                                    final String     debitUuid,
+                                                    final String     creditUuid,
+                                                    final BigDecimal amount,
+                                                    final BigDecimal localAmount,
+                                                    final LocalDate  reportedOn,
+                                                    final String     description) throws LedgerException {
+        final Account debit = getExistingByUuid(debitUuid);
+        final Account credit = getExistingByUuid(creditUuid);
+        return transferFunds(transferRef, debit.getAccountId(), credit.getAccountId(),
+                amount, localAmount, reportedOn, description);
+    }
+
+    /**
+     *
+     * @param transferRef
+     * @param debitId
+     * @param creditId
+     * @param amount
+     * @param description
+     * @return
+     * @throws LedgerException
+     */
     IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
                                                final Long       debitId,
                                                final Long       creditId,

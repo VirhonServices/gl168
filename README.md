@@ -11,10 +11,10 @@
     * [Get the information](#get-the-information-get)
     * [Get account's balance at the posting moment](#get-accounts-balance-at-the-posting-moment-get)
     * [Get account's open and closed balances on a particular reporting period](#get-accounts-open-and-closed-balances-on-a-particular-reporting-period-get)
-    * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
-    * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
     * [Make a transfer debiting debitAccountUuid](#make-a-transfer-debiting-debitaccountuuid-post)
     * [Get the transfer's information](#get-the-transfers-information-get)
+    * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
+    * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
 
 ## CONCEPT
 
@@ -169,7 +169,6 @@ The following table shows all the possible error situations:
   "closedAt": null
 }
 ````
-
 ### Getting account's balance at the particular posting moment
 ````
 /v1/gl/{currencyCode}/accounts/{accountUuid}/posting/balance
@@ -178,7 +177,6 @@ The following table shows all the possible error situations:
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A uuid of the account
-
 
 #### Get account's balance at the posting moment [POST]
 
@@ -256,6 +254,88 @@ You need to pass separated parts of LocalDate values
        "repBalance": 1267.89,
        "balType": "CREDIT"   
    }
+}
+````
+### Making transfer
+````
+/v1/gl/{currencyCode}/accounts/{debitAccountUuid}/transfers
+````
+ |Variable| Description
+ |---------|------------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
+ |debitAccountUuid| A uuid of debit account
+#### Make a transfer debiting debitAccountUuid [POST]
+
+##### Request
+````json
+{
+  "transferRef": "qw7663837jnn0094948-003",
+  "creditAccountUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
+  "amount": 2481.00,
+  "repAmount": 100.00,
+  "reportedOn": {
+      "year": 2020,
+      "month": 2,
+      "day": 21
+  },
+  "description": "ONLINE TAXI bill 1228/UKR-11 payment"
+}
+````
+##### Response 201
+````json
+{
+  "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+  "transferRef": "qw7663837jnn0094948-003",
+  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
+  "reportedOn": "2020-02-21",
+  "amount": 2481.00,
+  "repAmount": 100.00,
+  "description": "Purchasing goods in MEGAMART",
+  "debit": {
+      "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
+      "accNumber": "1001200038767",
+      "iban": "UA893052991001200038767",
+      "accType": "ACTIVE"
+  },
+  "credit": {
+      "accUuid": "5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6",
+      "accNumber": "2602100009203",
+      "iban": "UA673052992602100009203",
+      "accType": "PASSIVE"
+  }  
+}
+````
+### Getting transfer's information
+````
+/v1/gl/{currencyCode}/transfers/{transferUuid}
+````
+ |Variable| Description
+ |---------|------------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
+ |transferUuid| UUID of the transfer the information need to be gotten of
+#### Get the transfer's information [GET]
+##### Response 200
+````json
+{
+  "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+  "transferRef": "qw7663837jnn0094948-003",
+  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
+  "reportedOn": "2020-02-21",
+  "amount": 2481.00,
+  "repAmount": 100.00,
+  "description": "Purchasing goods in MEGAMART",
+  "debit": {
+      "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
+      "accNumber": "1001200038767",
+      "iban": "UA893052991001200038767",
+      "accType": "ACTIVE"
+  },
+  "credit": {
+      "accUuid": "5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6",
+      "accNumber": "2602100009203",
+      "iban": "UA673052992602100009203",
+      "accType": "PASSIVE"
+  }  
 }
 ````
 ### Getting account's transfers list (by posting period)
@@ -372,77 +452,5 @@ Get all the transfers of the account that was reported on the specified period
           }
         }
     ]
-}
-````
-### Making transfer
-````
-/v1/gl/{currencyCode}/accounts/{debitAccountUuid}/transfers
-````
- |Variable| Description
- |---------|------------
- |currencyCode| The code of currency according to ISO 4217 alpha-3
- |debitAccountUuid| A uuid of debit account
-#### Make a transfer debiting debitAccountUuid [POST]
-
-##### Request
-````json
-{
-  "transferRef": "qw7663837jnn0094948-003",
-  "creditAccountUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
-  "amount": "2481.00",
-  "repAmount": "100.00",
-  "reportedOn": {
-      "year": 2020,
-      "month": 2,
-      "day": 21
-  },
-  "description": "ONLINE TAXI bill 1228/UKR-11 payment"
-}
-````
-##### Response 201
-````json
-{
-  "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
-  "transferRef": "qw7663837jnn0094948-003",
-  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
-  "reportedOn": "2020-02-21",
-  "transactionType": "CREDIT",
-  "amount": 100.00,
-  "repAmount": 100.00,
-  "description": "Purchasing goods in MEGAMART",
-  "correspondent": {
-      "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
-      "accNumber": "1001200038767",
-      "iban": "UA893052991001200038767",
-      "accType": "ACTIVE"
-  }
-}
-````
-### Getting transfer's information
-````
-/v1/gl/{currencyCode}/transfers/{transferUuid}
-````
- |Variable| Description
- |---------|------------
- |currencyCode| The code of currency according to ISO 4217 alpha-3
- |transferUuid| UUID of the transfer the information need to be gotten of
-#### Get the transfer's information [GET]
-##### Response 200
-````json
-{
-  "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
-  "transferRef": "qw7663837jnn0094948-003",
-  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
-  "reportedOn": "2020-02-21",
-  "transactionType": "CREDIT",
-  "amount": 100.00,
-  "repAmount": 100.00,
-  "description": "Purchasing goods in MEGAMART",
-  "correspondent": {
-      "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
-      "accNumber": "1001200038767",
-      "iban": "UA893052991001200038767",
-      "accType": "ACTIVE"
-  }
 }
 ````
