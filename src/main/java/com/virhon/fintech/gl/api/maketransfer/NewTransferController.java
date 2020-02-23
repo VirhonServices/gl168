@@ -60,7 +60,8 @@ public class NewTransferController {
             response.setCredit(cre);
             this.gl.commit();
             LOGGER.info("Transfer ".concat(tr.getTransferUuid()).concat(" has been succeed"));
-            final ResponseEntity<TransferResponseBody> result = new ResponseEntity<TransferResponseBody>(response, HttpStatus.CREATED);
+            final ResponseEntity<TransferResponseBody> result =
+                    new ResponseEntity<TransferResponseBody>(response, HttpStatus.OK);
             return result;
         } catch (LedgerException e) {
             LOGGER.error(e.getMessage());
