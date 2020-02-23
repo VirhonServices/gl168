@@ -43,6 +43,10 @@
         select * from ${tablename} where id = #{id}
     </select>
 
+    <select id="selectByUuid" parameterType="string" resultType="transfer">
+        select * from ${tablename} where uuid = #{uuid}
+    </select>
+
     <select id="selectByIdExclusive" parameterType="long" resultType="transfer">
         select * from ${tablename} where id = #{id} for update
     </select>

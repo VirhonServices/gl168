@@ -5,20 +5,22 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public class Transfer {
-    private String          uuid;
+    private String          transferUuid;
     private String          transferRef;
     private ZonedDateTime   postedAt;
     private BigDecimal      amount;
     private BigDecimal      localAmount;
     private LocalDate       reportedOn;
     private String          description;
+    private String          debitUuid;
+    private String          creditUuid;
 
-    public String getUuid() {
-        return uuid;
+    public String getTransferUuid() {
+        return transferUuid;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setTransferUuid(String transferUuid) {
+        this.transferUuid = transferUuid;
     }
 
     public String getTransferRef() {
@@ -67,5 +69,21 @@ public class Transfer {
 
     public void setPostedAt(ZonedDateTime postedAt) {
         this.postedAt = postedAt;
+    }
+
+    public String getDebitUuid() {
+        return debitUuid;
+    }
+
+    public void setDebitUuid(String debitUuid) {
+        this.debitUuid = debitUuid;
+    }
+
+    public String getCreditUuid() {
+        return creditUuid;
+    }
+
+    public void setCreditUuid(String creditUuid) {
+        this.creditUuid = creditUuid;
     }
 }

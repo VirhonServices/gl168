@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public class Post {
-    private Long transferId;
+    private String          transferUuid;
     private ZonedDateTime   postedAt;
     private LocalDate       reportedOn;
     private BigDecimal      amount;
@@ -14,26 +14,26 @@ public class Post {
     /**
      * Post is used only as a part of a account's page
      *
-     * @param transferId            - if of the document the post belongs to
+     * @param transferUuid            - if of the document the post belongs to
      * @param postedAt              - calendar zoned datetime when the post was made
      * @param reportedOn            - financial date the post linked with
      * @param amount                - negative says about credit turnover, positive - about debit
      * @param localAmount           - the amount in local currency
      */
-    public Post(Long            transferId,
+    public Post(String          transferUuid,
                 ZonedDateTime   postedAt,
                 LocalDate       reportedOn,
                 BigDecimal      amount,
                 BigDecimal      localAmount) {
-        this.transferId = transferId;
+        this.transferUuid = transferUuid;
         this.postedAt = postedAt;
         this.reportedOn = reportedOn;
         this.amount = amount;
         this.localAmount = localAmount;
     }
 
-    public Long getTransferId() {
-        return transferId;
+    public String getTransferUuid() {
+        return transferUuid;
     }
 
     public ZonedDateTime getPostedAt() {

@@ -119,16 +119,18 @@ public class Ledger {
         final ZonedDateTime postedAt = ZonedDateTime.now();
         final Transfer transfer = new Transfer();
         transfer.setTransferRef(transferRef);
-        transfer.setUuid(UUID.randomUUID().toString());
+        transfer.setTransferUuid(UUID.randomUUID().toString());
         transfer.setAmount(amount);
         transfer.setLocalAmount(localAmount);
         transfer.setReportedOn(reportedOn);
         transfer.setDescription(description);
         transfer.setPostedAt(postedAt);
+        transfer.setDebitUuid(debit.getAttributes().getEntity().getAccountUUID());
+        transfer.setCreditUuid(credit.getAttributes().getEntity().getAccountUUID());
         final IdentifiedEntity<Transfer> iTransfer = this.transferRepo.insert(transfer);
-        final Long transferId = iTransfer.getId();
-        debit.debit(transferId, postedAt, reportedOn, amount, localAmount);
-        credit.credit(transferId, postedAt, reportedOn, amount, localAmount);
+        final String transferUuid = UUID.randomUUID().toString();
+        debit.debit(transferUuid, postedAt, reportedOn, amount, localAmount);
+        credit.credit(transferUuid, postedAt, reportedOn, amount, localAmount);
         LOGGER.info(" Transferring ".concat(transferRef).concat(" SUCCEED"));
         return iTransfer;
     }

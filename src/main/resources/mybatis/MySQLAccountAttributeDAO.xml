@@ -14,7 +14,7 @@
     <!--auto generated Code-->
     <sql id="all_column">
         `id`,
-        `uuid`,
+        `transferUuid`,
         `account_number`,
         `iban`,
         `closed_at`,

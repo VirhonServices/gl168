@@ -133,7 +133,7 @@ The following table shows all the possible error situations:
 ##### Response 201
 ````json
 {
-  "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
+  "transferUuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
   "accType": "PASSIVE",
   "accNumber": "26003000078365",
   "iban": "UA5630529926003000078365",
@@ -149,14 +149,14 @@ The following table shows all the possible error situations:
  |Parameter| Description|
  |---------|------------|
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account
+ |accountUuid| A transferUuid of the account
  
 #### Get the information [GET]
 
 ##### Response 200
 ````json
 {
-  "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
+  "transferUuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
   "accType": "PASSIVE",
   "accNumber": "26003000078365",
   "iban": "UA5630529926003000078365",
@@ -176,7 +176,7 @@ The following table shows all the possible error situations:
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account
+ |accountUuid| A transferUuid of the account
 
 #### Get account's balance at the posting moment [POST]
 
@@ -198,7 +198,7 @@ You need to pass separated DateTime value in server's timezone
 ##### Response 200
 ````json
 {
-   "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
+   "transferUuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
    "at": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
    "accType": "PASSIVE",
    "accNumber": "26003000078365",
@@ -217,7 +217,7 @@ You need to pass separated DateTime value in server's timezone
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account
+ |accountUuid| A transferUuid of the account
 
 #### Get account's open and closed balances on a particular reporting period [POST]
 
@@ -263,7 +263,7 @@ You need to pass separated parts of LocalDate values
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |debitAccountUuid| A uuid of debit account
+ |debitAccountUuid| A transferUuid of debit account
 #### Make a transfer debiting debitAccountUuid [POST]
 
 ##### Request
@@ -284,7 +284,7 @@ You need to pass separated parts of LocalDate values
 ##### Response 201
 ````json
 {
-  "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+  "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
   "transferRef": "qw7663837jnn0094948-003",
   "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
   "reportedOn": "2020-02-21",
@@ -317,7 +317,7 @@ You need to pass separated parts of LocalDate values
 ##### Response 200
 ````json
 {
-  "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+  "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
   "transferRef": "qw7663837jnn0094948-003",
   "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
   "reportedOn": "2020-02-21",
@@ -345,7 +345,7 @@ You need to pass separated parts of LocalDate values
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account
+ |accountUuid| A transferUuid of the account
 
 #### Get account's transfers by posting period [POST]
 
@@ -406,7 +406,7 @@ Get all the transfers of the account that was reported on the specified period
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A uuid of the account
+ |accountUuid| A transferUuid of the account
 
 #### Get account's transfers list by reporting period [POST]
 
@@ -436,7 +436,7 @@ Get all the transfers of the account that was reported on the specified period
 {
     "transfers": [
         {
-          "uuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+          "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
           "transferRef": "qw7663837jnn0094948-003",
           "postedAt": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
           "reportedOn": "2020-02-16",

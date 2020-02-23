@@ -4,7 +4,7 @@ import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.AccountAttributes;
 import com.virhon.fintech.gl.model.AccountType;
-import com.virhon.fintech.gl.model.GeneralLedger;
+import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.apache.log4j.Logger;
@@ -22,9 +22,9 @@ public class AccountInformationController {
     final static Logger LOGGER = Logger.getLogger(AccountInformationController.class);
 
     @Autowired
-    GeneralLedger gl;
+    MySQLGeneralLedger gl;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping
     public ResponseEntity<?> get(@PathVariable String currencyCode, @PathVariable String accountUuid) {
         try {
             final String cur = currencyCode.toUpperCase();

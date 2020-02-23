@@ -4,7 +4,7 @@ import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.*;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
-import com.virhon.fintech.gl.repo.mysql.MySQLStorageConnection;
+import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ public class AccountsController {
     final static Logger LOGGER = Logger.getLogger(AccountsController.class);
 
     @Autowired
-    GeneralLedger gl;
+    MySQLGeneralLedger gl;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> openNewAccount(@PathVariable String currencyCode,
@@ -27,7 +27,7 @@ public class AccountsController {
             final Account account =
                     ledger.openNew(request.getAccNumber(), request.getIban(), AccountType.valueOf(request.getAccType()));
             final IdentifiedEntity<AccountAttributes> attr = ledger.getAttrRepo().getById(account.getAccountId());
-            MySQLStorageConnection.getInstance().commit();
+            this.gl.commit();
             final NewAccountResponseBody response = new NewAccountResponseBody();
             response.setUuid(attr.getEntity().getAccountUUID());
             response.setAccNumber(attr.getEntity().getAccountNumber());

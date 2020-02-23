@@ -5,7 +5,7 @@ import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.AccountAttributes;
-import com.virhon.fintech.gl.model.GeneralLedger;
+import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
 import com.virhon.fintech.gl.model.Ledger;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class BalanceAtController {
     final static Logger LOGGER = Logger.getLogger(BalanceAtController.class);
 
     @Autowired
-    GeneralLedger gl;
+    MySQLGeneralLedger gl;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> getBalanceAt(@PathVariable String currencyCode,

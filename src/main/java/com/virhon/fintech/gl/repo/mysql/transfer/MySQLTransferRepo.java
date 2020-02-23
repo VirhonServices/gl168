@@ -25,6 +25,17 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
     }
 
     @Override
+    public IdentifiedEntity<Transfer> getByUuid(String uuid) {
+        final MySQLTransferRecord record = this.getMapper().selectByUuid(this.getTablename(), uuid);
+        if (record != null) {
+            final Transfer transfer = getConverter().fromJson(record.getData(), Transfer.class);
+            return new IdentifiedEntity<>(record.getId(), transfer);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public IdentifiedEntity<Transfer> getByIdExclusive(Long id) {
         final MySQLTransferRecord record = this.getMapper().selectByIdExclusive(this.getTablename(), id);
         if (record != null) {
@@ -38,7 +49,7 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
     @Override
     public IdentifiedEntity<Transfer> insert(Transfer transfer) {
         final MySQLTransferRecord record = new MySQLTransferRecord();
-        record.setUuid(transfer.getUuid());
+        record.setUuid(transfer.getTransferUuid());
         final String data = getConverter().toJson(transfer);
         record.setData(data);
         getMapper().insert(getTablename(), record);
@@ -49,7 +60,7 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
     public void update(IdentifiedEntity<Transfer> transfer) {
         final MySQLTransferRecord record = new MySQLTransferRecord();
         record.setId(transfer.getId());
-        record.setUuid(transfer.getEntity().getUuid());
+        record.setUuid(transfer.getEntity().getTransferUuid());
         final String data = getConverter().toJson(transfer.getEntity());
         record.setData(data);
         getMapper().update(getTablename(), record);

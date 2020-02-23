@@ -55,9 +55,9 @@ public class AccountTest {
             final Account account = ledger.getExistingById(accountId);
             for (Long j=0L;j<limit;j++) {
                 if (j%2==0) {
-                    account.credit(j, postedAt, reportedOn, seven, seven);
+                    account.credit(j.toString(), postedAt, reportedOn, seven, seven);
                 } else {
-                    account.debit(j, postedAt, reportedOn, three, three);
+                    account.debit(j.toString(), postedAt, reportedOn, three, three);
                 }
                 postedAt = postedAt.plusMinutes(1);
                 int days = (int)(j / perDay);

@@ -1,6 +1,10 @@
 package com.virhon.fintech.gl.api.maketransfer;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.virhon.fintech.gl.api.Application;
 import com.virhon.fintech.gl.api.SeparatedDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +18,57 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.testng.Assert.*;
 
 @SpringBootTest(classes = Application.class)
 public class NewTransferControllerTest extends AbstractTestNGSpringContextTests {
-    private Gson gson = new Gson();
+    private Gson gson = new GsonBuilder()
+            .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
+                @Override
+                public void write(JsonWriter out, ZonedDateTime value) throws IOException {
+                    if (value != null) {
+                        out.value(value.toString());
+                    } else {
+                        out.value("null");
+                    }
+                }
+                @Override
+                public ZonedDateTime read(JsonReader in) throws IOException {
+                    final String value = in.nextString();
+                    if (value != null && !value.toLowerCase().equals("null")) {
+                        return ZonedDateTime.parse(value);
+                    } else {
+                        return null;
+                    }
+                }
+            })
+            .registerTypeAdapter(LocalDate.class, new TypeAdapter<LocalDate>() {
+                @Override
+                public void write(JsonWriter out, LocalDate value) throws IOException {
+                    if (value != null) {
+                        out.value(value.toString());
+                    } else {
+                        out.value("null");
+                    }
+                }
+                @Override
+                public LocalDate read(JsonReader in) throws IOException {
+                    final String value = in.nextString();
+                    if (value != null && !value.toLowerCase().equals("null")) {
+                        return LocalDate.parse(value);
+                    } else {
+                        return null;
+                    }
+                }
+            })
+            .serializeNulls()
+            .enableComplexMapKeySerialization()
+            .create();
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -73,14 +120,15 @@ public class NewTransferControllerTest extends AbstractTestNGSpringContextTests 
         request.setCreditAccountUuid("b105791b-2252-48fa-8558-8faa40a003bd");
         request.setAmount(amount);
         request.setRepAmount(repAmount);
+        request.setReportedOn(null);
         request.setDescription("Test transfer #111");
         final String req = gson.toJson(request);
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6/transfers")
-                .contentType(MediaType.APPLICATION_JSON)
                 .content(req)
-                .accept(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.code").value(200)
                 );
     }
