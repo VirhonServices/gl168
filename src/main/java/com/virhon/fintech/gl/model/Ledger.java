@@ -1,6 +1,7 @@
 package com.virhon.fintech.gl.model;
 
 import com.virhon.fintech.gl.Config;
+import com.virhon.fintech.gl.api.maketransfer.TransferResponseBody;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.*;
 import org.apache.log4j.Logger;
@@ -169,11 +170,11 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
-                                               final String     debitUuid,
-                                               final String     creditUuid,
-                                               final BigDecimal amount,
-                                               final String     description) throws LedgerException {
+    public IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
+                                                      final String     debitUuid,
+                                                      final String     creditUuid,
+                                                      final BigDecimal amount,
+                                                      final String     description) throws LedgerException {
         final Account debit = getExistingByUuid(debitUuid);
         final Account credit = getExistingByUuid(creditUuid);
         return reserveFunds(transferRef, debit.getAccountId(), credit.getAccountId(), amount, description);
@@ -189,7 +190,7 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
+    public IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
                                                final Long       debitId,
                                                final Long       creditId,
                                                final BigDecimal amount,
@@ -221,9 +222,9 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    IdentifiedEntity<Transfer> postReservation(String       uuid,
-                                               BigDecimal   localAmount,
-                                               LocalDate    reportedOn) throws LedgerException {
+    public IdentifiedEntity<Transfer> postReservation(String       uuid,
+                                                      BigDecimal   localAmount,
+                                                      LocalDate    reportedOn) throws LedgerException {
         // 1. Get the reservation
         final IdentifiedEntity<Reservation> reservation = reservationRepo.getByUuid(uuid);
         return postReservation(reservation.getId(), localAmount, reportedOn);
@@ -237,9 +238,9 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    IdentifiedEntity<Transfer> postReservation(Long         id,
-                                               BigDecimal   localAmount,
-                                               LocalDate    reportedOn) throws LedgerException {
+    public IdentifiedEntity<Transfer> postReservation(Long         id,
+                                                      BigDecimal   localAmount,
+                                                      LocalDate    reportedOn) throws LedgerException {
         // 1. Get the reservation
         final IdentifiedEntity<Reservation> reservation = reservationRepo.getById(id);
         // 2. Make new transfer
@@ -278,4 +279,39 @@ public class Ledger {
     public ReservationRepo getReservationRepo() {
         return this.reservationRepo;
     }
+
+    /**
+     *
+     * @param tr
+     * @return
+     * @throws LedgerException
+     */
+    public TransferResponseBody createTransferResponseBody(Transfer tr) throws LedgerException {
+        final com.virhon.fintech.gl.model.Account debit = this.getExistingByUuid(tr.getDebitUuid());
+        final AccountAttributes debAttr = debit.getAttributes().getEntity();
+        final com.virhon.fintech.gl.model.Account credit = this.getExistingByUuid(tr.getCreditUuid());
+        final AccountAttributes creAttr = credit.getAttributes().getEntity();
+        final TransferResponseBody response = new TransferResponseBody();
+        response.setUuid(tr.getTransferUuid());
+        response.setTransferRef(tr.getTransferRef());
+        response.setPostedAt(tr.getPostedAt().toString());
+        response.setReportedOn(tr.getReportedOn().toString());
+        response.setAmount(tr.getAmount());
+        response.setRepAmount(tr.getLocalAmount());
+        response.setDescription(tr.getDescription());
+        final TransferResponseBody.Account deb = new TransferResponseBody.Account();
+        deb.setAccUuid(debAttr.getAccountUUID());
+        deb.setAccNumber(debAttr.getAccountNumber());
+        deb.setIban(debAttr.getIban());
+        deb.setAccType(debAttr.getAccountType().toString());
+        response.setDebit(deb);
+        final TransferResponseBody.Account cre = new TransferResponseBody.Account();
+        cre.setAccUuid(creAttr.getAccountUUID());
+        cre.setAccNumber(creAttr.getAccountNumber());
+        cre.setIban(creAttr.getIban());
+        cre.setAccType(creAttr.getAccountType().toString());
+        response.setCredit(cre);
+        return response;
+    }
+
 }

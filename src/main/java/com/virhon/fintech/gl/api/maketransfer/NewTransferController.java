@@ -1,6 +1,7 @@
 package com.virhon.fintech.gl.api.maketransfer;
 
 import com.virhon.fintech.gl.api.LedgerError;
+import com.virhon.fintech.gl.api.accounts.NewAccountResponseBody;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.AccountAttributes;
@@ -33,33 +34,12 @@ public class NewTransferController {
         try {
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account debit = ledger.getExistingByUuid(debitAccountUuid);
-            final AccountAttributes debAttr = debit.getAttributes().getEntity();
             final Account credit = ledger.getExistingByUuid(request.getCreditAccountUuid());
-            final AccountAttributes creAttr = credit.getAttributes().getEntity();
             final IdentifiedEntity<Transfer> transfer = ledger.transferFunds(request.getTransferRef(),
                     debit.getAccountId(), credit.getAccountId(), request.getAmount(), request.getRepAmount(),
                     request.getReportedOn().toLocalDate(), request.getDescription());
-            final TransferResponseBody response = new TransferResponseBody();
             final Transfer tr = transfer.getEntity();
-            response.setUuid(tr.getTransferUuid());
-            response.setTransferRef(tr.getTransferRef());
-            response.setPostedAt(tr.getPostedAt().toString());
-            response.setReportedOn(tr.getReportedOn().toString());
-            response.setAmount(tr.getAmount());
-            response.setRepAmount(tr.getLocalAmount());
-            response.setDescription(tr.getDescription());
-            final TransferResponseBody.Account deb = new TransferResponseBody.Account();
-            deb.setAccUuid(debAttr.getAccountUUID());
-            deb.setAccNumber(debAttr.getAccountNumber());
-            deb.setIban(debAttr.getIban());
-            deb.setAccType(debAttr.getAccountType().toString());
-            response.setDebit(deb);
-            final TransferResponseBody.Account cre = new TransferResponseBody.Account();
-            cre.setAccUuid(creAttr.getAccountUUID());
-            cre.setAccNumber(creAttr.getAccountNumber());
-            cre.setIban(creAttr.getIban());
-            cre.setAccType(creAttr.getAccountType().toString());
-            response.setCredit(cre);
+            final TransferResponseBody response = ledger.createTransferResponseBody(tr);
             this.gl.commit();
             LOGGER.info("Transfer ".concat(tr.getTransferUuid()).concat(" has been succeed"));
             final ResponseEntity<TransferResponseBody> result =

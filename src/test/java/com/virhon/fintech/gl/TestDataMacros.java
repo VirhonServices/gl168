@@ -15,15 +15,20 @@ public class TestDataMacros {
         InputStreamReader isReader=
                 new InputStreamReader(new FileInputStream(new File("macros.lst")));
         BufferedReader br = new BufferedReader(isReader);
-        final String line = br.readLine();
+        final String line = br.readLine()
+                .replace(" ","")
+                .replace("{","")
+                .replace("}","");
         Arrays.asList(line.split(",")).forEach(s -> {
             final List<String> vals = new ArrayList<>();
             Arrays.asList(s.split("=")).forEach(ss -> vals.add(ss));
+            final String key =
             accounts.put(vals.get(0), vals.get(1));
         });
     }
 
     public String getObjectUuid(String macro){
-        return accounts.get(macro);
+        final String res = this.accounts.get(macro);
+        return res;
     }
 }

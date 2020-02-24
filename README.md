@@ -4,8 +4,7 @@
 
 ## Table of Contents
 
-- [Concept](#concept)
-- [General Information](#general-information)
+- [Overview](#overview)
 - [API Reference](#api-reference)
     * [Open a new account](#open-a-new-account-post)
     * [Get the information](#get-the-information-get)
@@ -18,9 +17,7 @@
     * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
     * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
 
-## CONCEPT
-
-## GENERAL INFORMATION
+## OVERVIEW
 
 ### Types of account
  |Parameter| Description|
