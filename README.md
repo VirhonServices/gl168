@@ -9,7 +9,7 @@
     * [Open a new account](#open-a-new-account-post)
     * [Get the information](#get-the-information-get)
     * [Get account's balance at the posting moment](#get-accounts-balance-at-the-posting-moment-get)
-    * [Get account's open and closed balances on a particular reporting period](#get-accounts-open-and-closed-balances-on-a-particular-reporting-period-get)
+    * [Get open and closed balances for reporting period](#get-open-and-closed-balances-for-reporting-period-get)
     * [Transfer funds](#transfer-funds-post)
     * [Reserve funds](#reserve-funds-post)
     * [Post the reservation](#post-the-reservation-post)
@@ -218,7 +218,7 @@ You need to pass separated DateTime value in server's timezone
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A transferUuid of the account
 
-#### Get account's open and closed balances on a particular reporting period [POST]
+#### Get open and closed balances for reporting period [POST]
 
 ##### Request
 You need to pass separated parts of LocalDate values

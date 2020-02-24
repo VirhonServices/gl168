@@ -243,15 +243,22 @@ public class Ledger {
                                                       LocalDate    reportedOn) throws LedgerException {
         // 1. Get the reservation
         final IdentifiedEntity<Reservation> reservation = reservationRepo.getById(id);
+        final Long debitId = reservation.getEntity().getDebitId();
+        final Long creditId = reservation.getEntity().getCreditId();
+        final BigDecimal amount = reservation.getEntity().getAmount();
         // 2. Make new transfer
         final IdentifiedEntity<Transfer> transfer = transferFunds(reservation.getEntity().getTransferRef(),
-                                                                  reservation.getEntity().getDebitId(),
-                                                                  reservation.getEntity().getCreditId(),
-                                                                  reservation.getEntity().getAmount(),
+                                                                  debitId,
+                                                                  creditId,
+                                                                  amount,
                                                                   localAmount,
                                                                   reportedOn,
                                                                   reservation.getEntity().getDescription());
         // 3. Delete the reservation
+        final Account debit = getExistingById(debitId);
+        final Account credit = getExistingById(creditId);
+        debit.reserveDebit(amount.negate());
+        credit.reserveCredit(amount.negate());
         this.reservationRepo.delete(reservation.getId());
         return transfer;
     }
