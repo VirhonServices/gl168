@@ -12,6 +12,8 @@
     * [Get account's balance at the posting moment](#get-accounts-balance-at-the-posting-moment-get)
     * [Get account's open and closed balances on a particular reporting period](#get-accounts-open-and-closed-balances-on-a-particular-reporting-period-get)
     * [Transfer funds](#transfer-funds-post)
+    * [Reserve funds](#reserve-funds-post)
+    * [Post the reservation](#post-the-reservation-post)
     * [Get the transfer's information](#get-the-transfers-information-get)
     * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
     * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
