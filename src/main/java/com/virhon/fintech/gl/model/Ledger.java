@@ -162,6 +162,26 @@ public class Ledger {
     /**
      *
      * @param transferRef
+     * @param debitUuid
+     * @param creditUuid
+     * @param amount
+     * @param description
+     * @return
+     * @throws LedgerException
+     */
+    IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
+                                               final String     debitUuid,
+                                               final String     creditUuid,
+                                               final BigDecimal amount,
+                                               final String     description) throws LedgerException {
+        final Account debit = getExistingByUuid(debitUuid);
+        final Account credit = getExistingByUuid(creditUuid);
+        return reserveFunds(transferRef, debit.getAccountId(), credit.getAccountId(), amount, description);
+    }
+
+    /**
+     *
+     * @param transferRef
      * @param debitId
      * @param creditId
      * @param amount
@@ -176,6 +196,7 @@ public class Ledger {
                                                final String     description) throws LedgerException {
         // 1. Create a reservation
         final Reservation reservation = new Reservation();
+        reservation.setUuid(UUID.randomUUID().toString());
         reservation.setTransferRef(transferRef);
         reservation.setDebitId(debitId);
         reservation.setCreditId(creditId);
@@ -191,6 +212,31 @@ public class Ledger {
         return iReservation;
     }
 
+
+    /**
+     *
+     * @param uuid
+     * @param localAmount
+     * @param reportedOn
+     * @return
+     * @throws LedgerException
+     */
+    IdentifiedEntity<Transfer> postReservation(String       uuid,
+                                               BigDecimal   localAmount,
+                                               LocalDate    reportedOn) throws LedgerException {
+        // 1. Get the reservation
+        final IdentifiedEntity<Reservation> reservation = reservationRepo.getByUuid(uuid);
+        return postReservation(reservation.getId(), localAmount, reportedOn);
+    }
+
+    /**
+     *
+     * @param id
+     * @param localAmount
+     * @param reportedOn
+     * @return
+     * @throws LedgerException
+     */
     IdentifiedEntity<Transfer> postReservation(Long         id,
                                                BigDecimal   localAmount,
                                                LocalDate    reportedOn) throws LedgerException {
@@ -214,22 +260,22 @@ public class Ledger {
     }
 
     public AttrRepo getAttrRepo() {
-        return attrRepo;
+        return this.attrRepo;
     }
 
     public CurPageRepo getCurPageRepo() {
-        return curPageRepo;
+        return this.curPageRepo;
     }
 
     public HistPageRepo getHistPageRepo() {
-        return histPageRepo;
+        return this.histPageRepo;
     }
 
     public TransferRepo getTransferRepo() {
-        return transferRepo;
+        return this.transferRepo;
     }
 
     public ReservationRepo getReservationRepo() {
-        return reservationRepo;
+        return this.reservationRepo;
     }
 }

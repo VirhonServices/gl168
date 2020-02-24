@@ -43,6 +43,7 @@ create table uah_transfer (
 drop table uah_reservation;
 create table uah_reservation (
     id              bigint      not null AUTO_INCREMENT,
+    uuid            varchar(36) not null,
     expire_at       datetime    not null,
     closed_at       datetime,
     reason          varchar(10),
@@ -99,6 +100,7 @@ primary key (id)
 drop table usd_reservation;
 create table usd_reservation (
 id              bigint      not null AUTO_INCREMENT,
+uuid            varchar(36) not null,
 expire_at       datetime    not null,
 closed_at       datetime,
 reason          varchar(10),
@@ -155,6 +157,7 @@ primary key (id)
 drop table eur_reservation;
 create table eur_reservation (
 id              bigint      not null AUTO_INCREMENT,
+uuid            varchar(36) not null,
 expire_at       datetime    not null,
 closed_at       datetime,
 reason          varchar(10),

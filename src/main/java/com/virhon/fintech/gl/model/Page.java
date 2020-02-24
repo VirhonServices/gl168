@@ -87,12 +87,14 @@ public class Page {
     }
 
     public List<Post> addPost(final Post post) throws LedgerException {
+/*
         if (this.startedAt.compareTo(post.getPostedAt()) > 0) {
             throw LedgerException.invalidPostedAt(post);
         }
         if (this.repStartedOn.compareTo(post.getReportedOn()) > 0) {
             throw LedgerException.invalidReportedOn(post);
         }
+*/
         this.posts.add(post);
         this.finishBalance = this.finishBalance.add(post.getAmount());
         if (this.finishedAt.compareTo(post.getPostedAt()) < 0) {

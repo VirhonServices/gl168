@@ -4,12 +4,17 @@
     <!--auto generated Code-->
     <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.reservation.MySQLReservationRecord">
         <result column="id" property="id"/>
+        <result column="uuid" property="uuid"/>
+        <result column="expire_at" property="expireAt"/>
+        <result column="closed_at" property="closedAt"/>
+        <result column="reason" property="reason"/>
         <result column="data" property="data"/>
     </resultMap>
 
     <!--auto generated Code-->
     <sql id="all_column">
         `id`,
+        `uuid`,
         `expire_at`,
         `closed_at`,
         `reason`,
@@ -19,11 +24,13 @@
     <!--auto generated Code-->
     <insert id="insert" parameterType="reservation" useGeneratedKeys="false" keyProperty="pojo.id" keyColumn="id">
         INSERT INTO ${tablename} (
+        `uuid`,
         `expire_at`,
         `closed_at`,
         `reason`,
         `data`
         ) VALUES (
+        #{pojo.uuid},
         #{pojo.expireAt},
         #{pojo.closedAt},
         #{pojo.reason},
@@ -36,6 +43,10 @@
 
     <select id="selectById" parameterType="long" resultType="reservation">
         select * from ${tablename} where id = #{id}
+    </select>
+
+    <select id="selectByUuid" parameterType="string" resultType="reservation">
+        select * from ${tablename} where uuid = #{uuid}
     </select>
 
     <select id="selectByIdExclusive" parameterType="long" resultType="reservation">

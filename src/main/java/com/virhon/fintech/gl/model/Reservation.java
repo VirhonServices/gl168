@@ -4,12 +4,21 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 public class Reservation {
+    private String          uuid;
     private String          transferRef;
     private Long            debitId;
     private Long            creditId;
     private BigDecimal      amount;
     private String          description;
     private ZonedDateTime   expireAt;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getTransferRef() {
         return transferRef;

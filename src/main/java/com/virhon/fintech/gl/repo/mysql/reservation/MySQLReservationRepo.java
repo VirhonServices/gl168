@@ -44,6 +44,17 @@ public class MySQLReservationRepo extends MySQLAbstactRepo<MySQLReservationDAO> 
     }
 
     @Override
+    public IdentifiedEntity<Reservation> getByUuid(String uuid) {
+        final MySQLReservationRecord record = this.getMapper().selectByUuid(this.getTablename(), uuid);
+        if (record != null) {
+            final Reservation reservation = getConverter().fromJson(record.getData(), Reservation.class);
+            return new IdentifiedEntity<>(record.getId(), reservation);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public void delete(Long id) {
         getMapper().delete(getTablename(), id);
     }

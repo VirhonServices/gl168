@@ -11,7 +11,7 @@
     * [Get the information](#get-the-information-get)
     * [Get account's balance at the posting moment](#get-accounts-balance-at-the-posting-moment-get)
     * [Get account's open and closed balances on a particular reporting period](#get-accounts-open-and-closed-balances-on-a-particular-reporting-period-get)
-    * [Make a transfer debiting debitAccountUuid](#make-a-transfer-debiting-debitaccountuuid-post)
+    * [Transfer funds](#transfer-funds-post)
     * [Get the transfer's information](#get-the-transfers-information-get)
     * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
     * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
@@ -256,7 +256,7 @@ You need to pass separated parts of LocalDate values
    }
 }
 ````
-### Making transfer
+### Making a transfer
 ````
 /v1/gl/{currencyCode}/accounts/{debitAccountUuid}/transfers
 ````
@@ -264,7 +264,7 @@ You need to pass separated parts of LocalDate values
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |debitAccountUuid| A transferUuid of debit account
-#### Make a transfer debiting debitAccountUuid [POST]
+#### Transfer funds [POST]
 
 ##### Request
 ````json
@@ -337,6 +337,76 @@ You need to pass separated parts of LocalDate values
       "accType": "PASSIVE"
   }  
 }
+````
+### Reserving funds for future transfer
+````
+/v1/gl/{currencyCode}/accounts/{debitAccountUuid}/reservations
+````
+ |Variable| Description
+ |---------|------------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
+ |debitAccountUuid| A transferUuid of debit account
+#### Reserve funds [POST]
+##### Request
+````json
+{
+  "transferRef": "qw7663837jnn0094948-003",
+  "creditAccountUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
+  "amount": 100.00,
+  "description": "ONLINE TAXI bill 1228/UKR-11 payment"
+}
+````
+##### Response 201
+````json
+{
+  "uuid": "48db13a1-b58d-4f42-89f1-c58f30fb6297",
+  "transferRef": "qw7663837jnn0094948-003",
+  "debitAccountUuid": "f1fb1ca9-3e3e-4eb1-80cf-e2a42a82ebff",
+  "creditAccountUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
+  "amount": 100.00,
+  "description": "ONLINE TAXI bill 1228/UKR-11 payment",
+  "expireAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]"
+}
+````
+### Posting reserved transfer
+````
+/v1/gl/{currencyCode}/reservations/{reservationUuid}
+````
+ |Variable| Description
+ |---------|------------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
+ /reservationUuid/ Uuid of the reservation need to be posted
+#### Post the reservation [PUT]
+##### Request
+````json
+{
+  "repAmount": 2481.00,
+  "reportedOn": "2020-02-20"
+}
+````
+##### Response 201
+````json
+{
+  "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+  "transferRef": "qw7663837jnn0094948-003",
+  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
+  "reportedOn": "2020-02-20",
+  "amount": 100.00,
+  "repAmount": 2481.00,
+  "description": "ONLINE TAXI bill 1228/UKR-11 payment",
+  "debit": {
+      "accUuid": "f1fb1ca9-3e3e-4eb1-80cf-e2a42a82ebff",
+      "accNumber": "1001200038767",
+      "iban": "UA893052991001200038767",
+      "accType": "ACTIVE"
+  },
+  "credit": {
+      "accUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
+      "accNumber": "2602100009203",
+      "iban": "UA673052992602100009203",
+      "accType": "PASSIVE"
+  }  
+} 
 ````
 ### Getting account's transfers list (by posting period)
 ````

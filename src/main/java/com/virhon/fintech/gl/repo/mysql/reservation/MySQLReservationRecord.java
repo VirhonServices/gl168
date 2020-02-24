@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 
 public class MySQLReservationRecord {
     private Long            id;
+    private String          uuid;
     private ZonedDateTime   expireAt;
     private ZonedDateTime   closedAt;
     private String          reason;
@@ -15,6 +16,14 @@ public class MySQLReservationRecord {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public ZonedDateTime getExpireAt() {
