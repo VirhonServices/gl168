@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Ledger {
@@ -319,6 +321,12 @@ public class Ledger {
         cre.setAccType(creAttr.getAccountType().toString());
         response.setCredit(cre);
         return response;
+    }
+
+    public List<Page> collectPages(Long accountId, LocalDate beginOn, LocalDate finishOn) {
+        final Page current = this.curPageRepo.getById(accountId).getEntity();
+        final List<Page> result = new ArrayList<>();
+        return result;
     }
 
 }
