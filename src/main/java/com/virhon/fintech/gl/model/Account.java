@@ -70,10 +70,12 @@ public class Account {
         }
         final IdentifiedEntity<Page> currentPage = this.ledger.getCurPageRepo().getByIdExclusive(this.accountId);
         final BigDecimal newBalance = attributes.getEntity().getBalance().add(post.getAmount());
+        final BigDecimal newLocalBalance = attributes.getEntity().getLocalBalance().add(post.getLocalAmount());
         if (!isValidBalance(attributes.getEntity(), newBalance)) {
             throw LedgerException.redBalance(attributes.getEntity().getAccountNumber());
         } else {
             attributes.getEntity().setBalance(newBalance);
+            attributes.getEntity().setLocalBalance(newLocalBalance);
             if (currentPage.getEntity().hasNext()) {
                 currentPage.getEntity().addPost(post);
                 this.ledger.getCurPageRepo().put(currentPage);
@@ -117,7 +119,7 @@ public class Account {
                              BigDecimal     localAmount)
             throws LedgerException {
         LOGGER.info("Crediting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
-        final BigDecimal balance = operate(transferUuid, postedAt, reportedOn, amount.negate(), localAmount);
+        final BigDecimal balance = operate(transferUuid, postedAt, reportedOn, amount.negate(), localAmount.negate());
         LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
         return balance;
     }

@@ -1,7 +1,6 @@
 package com.virhon.fintech.gl.api.gettransfer;
 
 import com.virhon.fintech.gl.api.LedgerError;
-import com.virhon.fintech.gl.api.accountinformation.AccountInformationController;
 import com.virhon.fintech.gl.api.maketransfer.TransferResponseBody;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/gl/{currencyCode}/transfers/{transferUuid}")
 public class GettingTransferController {
-    final static Logger LOGGER = Logger.getLogger(AccountInformationController.class);
+    final static Logger LOGGER = Logger.getLogger(GettingTransferController.class);
 
     @Autowired
     MySQLGeneralLedger gl;

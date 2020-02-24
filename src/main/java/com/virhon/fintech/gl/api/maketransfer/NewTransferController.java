@@ -1,9 +1,11 @@
 package com.virhon.fintech.gl.api.maketransfer;
 
 import com.virhon.fintech.gl.api.LedgerError;
-import com.virhon.fintech.gl.api.accounts.AccountsController;
 import com.virhon.fintech.gl.exception.LedgerException;
-import com.virhon.fintech.gl.model.*;
+import com.virhon.fintech.gl.model.Account;
+import com.virhon.fintech.gl.model.AccountAttributes;
+import com.virhon.fintech.gl.model.Ledger;
+import com.virhon.fintech.gl.model.Transfer;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
 import org.apache.log4j.Logger;
@@ -18,7 +20,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/v1/gl/{currencyCode}/accounts/{debitAccountUuid}/transfers")
 public class NewTransferController {
-    final static Logger LOGGER = Logger.getLogger(AccountsController.class);
+    final static Logger LOGGER = Logger.getLogger(NewTransferController.class);
 
     @Autowired
     MySQLGeneralLedger gl;

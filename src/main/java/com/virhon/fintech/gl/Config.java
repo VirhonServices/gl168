@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public class Config {
     private static Config INSTANCE = null;
-    private int maxNumPostsInBlock = 120;
+    private int maxNumPostsInBlock = 100;
 
     public Config() {
     }
