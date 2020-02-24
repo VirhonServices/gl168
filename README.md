@@ -377,7 +377,7 @@ You need to pass separated parts of LocalDate values
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- /reservationUuid/ Uuid of the reservation need to be posted
+ |reservationUuid| Uuid of the reservation need to be posted
 #### Post the reservation [PUT]
 ##### Request
 ````json
