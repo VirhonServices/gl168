@@ -380,7 +380,11 @@ You need to pass separated parts of LocalDate values
 ````json
 {
   "repAmount": 2481.00,
-  "reportedOn": "2020-02-20"
+  "reportedOn": {
+      "year": 2020,
+      "month": 2,
+      "day": 20
+  }
 }
 ````
 ##### Response 201
