@@ -12,7 +12,7 @@
     * [Get open and closed balances for reporting period](#get-open-and-closed-balances-for-reporting-period-post)
     * [Transfer funds](#transfer-funds-post)
     * [Reserve funds](#reserve-funds-post)
-    * [Post the reservation](#post-the-reservation-post)
+    * [Post the reservation](#post-the-reservation-put)
     * [Get the transfer's information](#get-the-transfers-information-get)
     * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
     * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
