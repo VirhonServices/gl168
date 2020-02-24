@@ -9,7 +9,7 @@
     * [Open a new account](#open-a-new-account-post)
     * [Get the information](#get-the-information-get)
     * [Get account's balance at the posting moment](#get-accounts-balance-at-the-posting-moment-get)
-    * [Get open and closed balances for reporting period](#get-open-and-closed-balances-for-reporting-period-get)
+    * [Get open and closed balances for reporting period](#get-open-and-closed-balances-for-reporting-period-post)
     * [Transfer funds](#transfer-funds-post)
     * [Reserve funds](#reserve-funds-post)
     * [Post the reservation](#post-the-reservation-post)
