@@ -6,6 +6,7 @@ import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.mysql.MySQLAbstactRepo;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,5 +77,21 @@ public class MySQLHistoricalPageRepo extends MySQLAbstactRepo<MySQLHitoricalPage
         record.setData(data);
         getMapper().insert(getTablename(), record);
         return record.getId();
+    }
+
+    @Override
+    public List<IdentifiedEntity<Page>> getHistoryPeriod(Long accountId,
+                                                         LocalDate startPeriod,
+                                                         LocalDate finishPeriod) {
+        final List<MySQLHistoricalPageRecord> records =
+                getMapper().selectHistoryPeriod(getTablename(), accountId, startPeriod, finishPeriod);
+        final List<IdentifiedEntity<Page>> result = new ArrayList<>();
+        if (!records.isEmpty()) {
+            records.forEach(r -> {
+                final Page page = getConverter().fromJson(r.getData(), Page.class);
+                result.add(new IdentifiedEntity<Page>(r.getId(), page));
+            });
+        }
+        return result;
     }
 }

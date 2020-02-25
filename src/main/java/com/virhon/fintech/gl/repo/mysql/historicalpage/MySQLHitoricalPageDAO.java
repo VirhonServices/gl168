@@ -3,6 +3,7 @@ package com.virhon.fintech.gl.repo.mysql.historicalpage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -14,5 +15,10 @@ public interface MySQLHitoricalPageDAO {
     MySQLHistoricalPageRecord selectByAccountId(@Param("tablename") String tablename,
                                                 @Param("accountId") Long accountId,
                                                 @Param("postedAt")  ZonedDateTime postedAt);
-    List<MySQLHistoricalPageRecord> selectHistory(@Param("tablename") String tablename, @Param("accountId") Long accountId);
+    List<MySQLHistoricalPageRecord> selectHistory(@Param("tablename") String tablename,
+                                                  @Param("accountId") Long accountId);
+    List<MySQLHistoricalPageRecord> selectHistoryPeriod(@Param("tablename") String tablename,
+                                                        @Param("accountId") Long accountId,
+                                                        @Param("startPeriod") LocalDate startPeriod,
+                                                        @Param("finishPeriod") LocalDate finishPeriod);
 }

@@ -325,7 +325,12 @@ public class Ledger {
 
     public List<Page> collectPages(Long accountId, LocalDate beginOn, LocalDate finishOn) {
         final Page current = this.curPageRepo.getById(accountId).getEntity();
+        final List<IdentifiedEntity<Page>> history = this.histPageRepo.getHistoryPeriod(accountId, beginOn, finishOn);
         final List<Page> result = new ArrayList<>();
+        if (current.getRepStartedOn().compareTo(beginOn) <= 0 || current.getRepStartedOn().compareTo(finishOn) <= 0) {
+            result.add(current);
+        }
+        history.forEach(p -> result.add(p.getEntity()));
         return result;
     }
 
