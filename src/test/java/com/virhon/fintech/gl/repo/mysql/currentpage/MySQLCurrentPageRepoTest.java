@@ -31,6 +31,6 @@ public class MySQLCurrentPageRepoTest {
         final IdentifiedEntity<Page> identifiedPage = repo.getById(55L);
         Assert.assertNotNull(identifiedPage);
         Assert.assertNotNull(identifiedPage.getEntity());
-        Assert.assertEquals(identifiedPage.getEntity().getPosts().size(), 85);
+        Assert.assertEquals(identifiedPage.getEntity().getTransfers().size(), 85);
     }
 }

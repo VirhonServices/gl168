@@ -96,13 +96,13 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    public IdentifiedEntity<Transfer> transferFunds(final String     transferRef,
-                                                    final Long       debitId,
-                                                    final Long       creditId,
-                                                    final BigDecimal amount,
-                                                    final BigDecimal localAmount,
-                                                    final LocalDate  reportedOn,
-                                                    final String     description) throws LedgerException {
+    public Transfer transferFunds(final String     transferRef,
+                                  final Long       debitId,
+                                  final Long       creditId,
+                                  final BigDecimal amount,
+                                  final BigDecimal localAmount,
+                                  final LocalDate  reportedOn,
+                                  final String     description) throws LedgerException {
         LOGGER.info(transferRef.concat(" Transferring ".concat(amount.toString())
                 .concat(" from ".concat(debitId.toString().concat(" to ").concat(creditId.toString())))));
         // Check sign of amount
@@ -131,12 +131,11 @@ public class Ledger {
         transfer.setPostedAt(postedAt);
         transfer.setDebitUuid(debit.getAttributes().getEntity().getAccountUUID());
         transfer.setCreditUuid(credit.getAttributes().getEntity().getAccountUUID());
-        final IdentifiedEntity<Transfer> iTransfer = this.transferRepo.insert(transfer);
-        final String transferUuid = UUID.randomUUID().toString();
-        debit.debit(transferUuid, postedAt, reportedOn, amount, localAmount);
-        credit.credit(transferUuid, postedAt, reportedOn, amount, localAmount);
+//        final IdentifiedEntity<Transfer> iTransfer = this.transferRepo.insert(transfer);
+        debit.debit(transfer);
+        credit.credit(transfer.getNegate());
         LOGGER.info(" Transferring ".concat(transferRef).concat(" SUCCEED"));
-        return iTransfer;
+        return transfer;
     }
 
     /**
@@ -150,13 +149,13 @@ public class Ledger {
      * @param description
      * @return
      */
-    public IdentifiedEntity<Transfer> transferFunds(final String     transferRef,
-                                                    final String     debitUuid,
-                                                    final String     creditUuid,
-                                                    final BigDecimal amount,
-                                                    final BigDecimal localAmount,
-                                                    final LocalDate  reportedOn,
-                                                    final String     description) throws LedgerException {
+    public Transfer transferFunds(final String     transferRef,
+                                  final String     debitUuid,
+                                  final String     creditUuid,
+                                  final BigDecimal amount,
+                                  final BigDecimal localAmount,
+                                  final LocalDate  reportedOn,
+                                  final String     description) throws LedgerException {
         final Account debit = getExistingByUuid(debitUuid);
         final Account credit = getExistingByUuid(creditUuid);
         return transferFunds(transferRef, debit.getAccountId(), credit.getAccountId(),
@@ -194,10 +193,10 @@ public class Ledger {
      * @throws LedgerException
      */
     public IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
-                                               final Long       debitId,
-                                               final Long       creditId,
-                                               final BigDecimal amount,
-                                               final String     description) throws LedgerException {
+                                                      final Long       debitId,
+                                                      final Long       creditId,
+                                                      final BigDecimal amount,
+                                                      final String     description) throws LedgerException {
         // 1. Create a reservation
         final Reservation reservation = new Reservation();
         reservation.setUuid(UUID.randomUUID().toString());
@@ -225,9 +224,9 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    public IdentifiedEntity<Transfer> postReservation(String       uuid,
-                                                      BigDecimal   localAmount,
-                                                      LocalDate    reportedOn) throws LedgerException {
+    public Transfer postReservation(final String       uuid,
+                                    final BigDecimal   localAmount,
+                                    final LocalDate    reportedOn) throws LedgerException {
         // 1. Get the reservation
         final IdentifiedEntity<Reservation> reservation = reservationRepo.getByUuid(uuid);
         return postReservation(reservation.getId(), localAmount, reportedOn);
@@ -241,16 +240,16 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    public IdentifiedEntity<Transfer> postReservation(Long         id,
-                                                      BigDecimal   localAmount,
-                                                      LocalDate    reportedOn) throws LedgerException {
+    public Transfer postReservation(final Long         id,
+                                    final BigDecimal   localAmount,
+                                    final LocalDate    reportedOn) throws LedgerException {
         // 1. Get the reservation
         final IdentifiedEntity<Reservation> reservation = reservationRepo.getById(id);
         final Long debitId = reservation.getEntity().getDebitId();
         final Long creditId = reservation.getEntity().getCreditId();
         final BigDecimal amount = reservation.getEntity().getAmount();
         // 2. Make new transfer
-        final IdentifiedEntity<Transfer> transfer = transferFunds(reservation.getEntity().getTransferRef(),
+        final Transfer transfer = transferFunds(reservation.getEntity().getTransferRef(),
                                                                   debitId,
                                                                   creditId,
                                                                   amount,
@@ -343,7 +342,7 @@ public class Ledger {
         private LocalDate startedOn;
         private LocalDate finishedOn;
 
-        private List<Post> posts = new ArrayList<>();
+        private List<Transfer> transfers = new ArrayList<>();
 
         public BigDecimal getStartRepBalance() {
             return startRepBalance;
@@ -393,12 +392,12 @@ public class Ledger {
             this.finishedOn = finishedOn;
         }
 
-        public void setPosts(List<Post> posts) {
-            this.posts = posts;
+        public List<Transfer> getTransfers() {
+            return transfers;
         }
 
-        public List<Post> getPosts() {
-            return posts;
+        public void setTransfers(List<Transfer> transfers) {
+            this.transfers = transfers;
         }
     }
 
@@ -413,28 +412,28 @@ public class Ledger {
                                                     LocalDate beginOn,
                                                     LocalDate finishOn) {
         final List<Page> pages = collectPages(accountId, beginOn, finishOn);
-        final List<Post> previousPosts = pages.stream()
-                .map(p -> p.getPosts())
+        final List<Transfer> previousTransfers = pages.stream()
+                .map(p -> p.getTransfers())
                 .flatMap(posts -> posts.stream())
                 .filter(post -> post.getReportedOn().compareTo(beginOn) < 0)
                 .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
                 .collect(Collectors.toList());
-        final BigDecimal preTurnover = previousPosts.stream().map(p -> p.getAmount())
+        final BigDecimal preTurnover = previousTransfers.stream().map(p -> p.getAmount())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal preRepTurnover = previousPosts.stream().map(p -> p.getLocalAmount())
+        final BigDecimal preRepTurnover = previousTransfers.stream().map(p -> p.getLocalAmount())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         final BigDecimal startBalance = pages.get(0).getStartBalance().add(preTurnover);
         final BigDecimal startRepBalance = pages.get(0).getStartRepBalance().add(preRepTurnover);
-        final List<Post> periodPosts = pages.stream()
-                .map(p -> p.getPosts())
+        final List<Transfer> periodTransfers = pages.stream()
+                .map(p -> p.getTransfers())
                 .flatMap(posts -> posts.stream())
                 .filter(post -> post.getReportedOn().compareTo(beginOn) >= 0 &&
                         post.getReportedOn().compareTo(finishOn) <= 0)
                 .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
                 .collect(Collectors.toList());
-        final BigDecimal periodTurnover = periodPosts.stream().map(p -> p.getAmount())
+        final BigDecimal periodTurnover = periodTransfers.stream().map(p -> p.getAmount())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal periodRepTurnover = periodPosts.stream().map(p -> p.getLocalAmount())
+        final BigDecimal periodRepTurnover = periodTransfers.stream().map(p -> p.getLocalAmount())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         final BigDecimal finishBalance = startBalance.add(periodTurnover);
         final BigDecimal finishRepBalance = startRepBalance.add(periodRepTurnover);
@@ -445,7 +444,7 @@ public class Ledger {
         collection.setStartRepBalance(startRepBalance);
         collection.setFinishBalance(finishBalance);
         collection.setFinishRepBalance(finishRepBalance);
-        collection.setPosts(periodPosts);
+        collection.setTransfers(periodTransfers);
         return collection;
     }
 

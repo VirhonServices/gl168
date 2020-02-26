@@ -19,7 +19,7 @@ public class Page {
     private BigDecimal      startRepBalance;
     private BigDecimal      finishRepBalance;
 
-    private List<Post>      posts = new ArrayList<>();
+    private List<Transfer>  transfers = new ArrayList<>();
 
     private Page() {
     }
@@ -91,7 +91,7 @@ public class Page {
         return (currentCanContain(on) && on.compareTo(this.getRepFinishedOn()) <= 0);
     }
 
-    public List<Post> addPost(final Post post) throws LedgerException {
+    public List<Transfer> addTransfer(final Transfer transfer) throws LedgerException {
 /*
         if (this.startedAt.compareTo(post.getPostedAt()) > 0) {
             throw LedgerException.invalidPostedAt(post);
@@ -100,27 +100,27 @@ public class Page {
             throw LedgerException.invalidReportedOn(post);
         }
 */
-        this.posts.add(post);
-        this.finishBalance = this.finishBalance.add(post.getAmount());
-        this.finishRepBalance = this.finishRepBalance.add(post.getLocalAmount());
-        if (this.finishedAt.compareTo(post.getPostedAt()) < 0) {
-            this.finishedAt = post.getPostedAt();
+        this.transfers.add(transfer);
+        this.finishBalance = this.finishBalance.add(transfer.getAmount());
+        this.finishRepBalance = this.finishRepBalance.add(transfer.getLocalAmount());
+        if (this.finishedAt.compareTo(transfer.getPostedAt()) < 0) {
+            this.finishedAt = transfer.getPostedAt();
         }
-        if (this.repFinishedOn.compareTo(post.getReportedOn()) < 0) {
-            this.repFinishedOn = post.getReportedOn();
+        if (this.repFinishedOn.compareTo(transfer.getReportedOn()) < 0) {
+            this.repFinishedOn = transfer.getReportedOn();
         }
-        return this.posts;
+        return this.transfers;
     }
 
     public BigDecimal getBalanceAt(ZonedDateTime at) {
         BigDecimal curAmount = this.startBalance;
-        if (!posts.isEmpty()) {
+        if (!transfers.isEmpty()) {
             int res = 0;
-            for (int i=0; i<posts.size(); i++) {
-                Post curPost = posts.get(i);
-                res = at.compareTo(curPost.getPostedAt());
+            for (int i = 0; i< transfers.size(); i++) {
+                Transfer curTransfer = transfers.get(i);
+                res = at.compareTo(curTransfer.getPostedAt());
                 if (res >= 0) {
-                    curAmount = curAmount.add(curPost.getAmount());
+                    curAmount = curAmount.add(curTransfer.getAmount());
                 } else {
                     break;
                 }
@@ -143,11 +143,11 @@ public class Page {
      * @return              - true if the block is full
      */
     public boolean isFull() {
-        return !checkOverflow(this.posts.size());
+        return !checkOverflow(this.transfers.size());
     }
 
     public boolean hasNext() {
-        return !checkOverflow(this.posts.size()+1);
+        return !checkOverflow(this.transfers.size()+1);
     }
 
     public ZonedDateTime getStartedAt() {
@@ -223,11 +223,11 @@ public class Page {
         this.finishBalance = finishBalance;
     }
 
-    public List<Post> getPosts() {
-        return this.posts;
+    public List<Transfer> getTransfers() {
+        return this.transfers;
     }
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
+    public void setTransfers(List<Transfer> transfers) {
+        this.transfers = transfers;
     }
 }

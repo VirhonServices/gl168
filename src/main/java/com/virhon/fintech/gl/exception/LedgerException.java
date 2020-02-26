@@ -1,7 +1,7 @@
 package com.virhon.fintech.gl.exception;
 
 import com.virhon.fintech.gl.model.Account;
-import com.virhon.fintech.gl.model.Post;
+import com.virhon.fintech.gl.model.Transfer;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -14,11 +14,11 @@ public class LedgerException extends Exception {
         this.code = code;
     }
 
-    public static LedgerException invalidPostedAt(Post post) {
+    public static LedgerException invalidPostedAt(Transfer post) {
         return new LedgerException(100, "Unable to add the post older than the page ".concat(post.getPostedAt().toString()));
     }
 
-    public static LedgerException invalidReportedOn(Post post) {
+    public static LedgerException invalidReportedOn(Transfer post) {
         return new LedgerException(110, "Unable to add the post older than the page ".concat(post.getReportedOn().toString()));
     }
 

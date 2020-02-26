@@ -15,6 +15,20 @@ public class Transfer {
     private String          debitUuid;
     private String          creditUuid;
 
+    public Transfer getNegate() {
+        final Transfer result = new Transfer();
+        result.setTransferUuid(this.transferUuid);
+        result.setTransferRef(this.getTransferRef());
+        result.setPostedAt(this.getPostedAt());
+        result.setAmount(this.getAmount().negate());
+        result.setLocalAmount(this.getLocalAmount().negate());
+        result.setReportedOn(this.getReportedOn());
+        result.setDescription(this.getDescription());
+        result.setDebitUuid(this.getDebitUuid());
+        result.setCreditUuid(this.getCreditUuid());
+        return result;
+    }
+
     public String getTransferUuid() {
         return transferUuid;
     }

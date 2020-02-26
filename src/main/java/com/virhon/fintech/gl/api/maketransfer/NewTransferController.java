@@ -5,7 +5,6 @@ import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.model.Transfer;
-import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +32,9 @@ public class NewTransferController {
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account debit = ledger.getExistingByUuid(debitAccountUuid);
             final Account credit = ledger.getExistingByUuid(request.getCreditAccountUuid());
-            final IdentifiedEntity<Transfer> transfer = ledger.transferFunds(request.getTransferRef(),
-                    debit.getAccountId(), credit.getAccountId(), request.getAmount(), request.getRepAmount(),
+            final Transfer tr = ledger.transferFunds(request.getTransferRef(), debit.getAccountId(),
+                    credit.getAccountId(), request.getAmount(), request.getRepAmount(),
                     request.getReportedOn().toLocalDate(), request.getDescription());
-            final Transfer tr = transfer.getEntity();
             final TransferData response = ledger.createTransferResponseBody(tr);
             this.gl.commit();
             LOGGER.info("Transfer ".concat(tr.getTransferUuid()).concat(" has been succeed"));

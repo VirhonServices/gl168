@@ -12,7 +12,7 @@ import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.GeneralLedger;
 import com.virhon.fintech.gl.model.Ledger;
-import com.virhon.fintech.gl.model.Post;
+import com.virhon.fintech.gl.model.Transfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -105,9 +105,9 @@ public class ReportingPeriodBalancesControllerTest extends AbstractTestNGSpringC
         final Ledger.ReportingCollection collection = ledger.collectReportingData(account.getAccountId(), startedOn, finishedOn);
 
         BigDecimal bal = collection.getStartBalance();
-        final List<Post> posts = collection.getPosts();
-        for (int i=0;i<collection.getPosts().size();i++) {
-            bal = bal.add(posts.get(i).getAmount());
+        final List<Transfer> transfers = collection.getTransfers();
+        for (int i=0;i<transfers.size();i++) {
+            bal = bal.add(transfers.get(i).getAmount());
         }
         Assert.assertEquals(bal, collection.getFinishBalance());
 

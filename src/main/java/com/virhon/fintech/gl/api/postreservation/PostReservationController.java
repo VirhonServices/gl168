@@ -30,11 +30,11 @@ public class PostReservationController {
             final Ledger ledger = gl.getLedger(currencyCode);
             final IdentifiedEntity<Reservation> iRes = ledger.getReservationRepo().getByUuid(reservationUuid);
             final Reservation res = iRes.getEntity();
-            final IdentifiedEntity<Transfer> iTr = ledger.transferFunds(res.getTransferRef(), res.getDebitId(),
-                    res.getCreditId(), res.getAmount(), request.getRepAmount(), request.getReportedOn().toLocalDate(),
-                    res.getDescription());
+            final Transfer tr = ledger.transferFunds(res.getTransferRef(), res.getDebitId(),
+                                res.getCreditId(), res.getAmount(), request.getRepAmount(), request.getReportedOn().toLocalDate(),
+                                res.getDescription());
             gl.commit();
-            final TransferData response = ledger.createTransferResponseBody(iTr.getEntity());
+            final TransferData response = ledger.createTransferResponseBody(tr);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (LedgerException e) {
             LOGGER.error(e.getMessage());

@@ -5,7 +5,6 @@ import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public class Account {
@@ -57,33 +56,33 @@ public class Account {
     }
 
     /**
-     * Register the post into a current page
+     * Register the tr into a current page
      *
-     * @param post
+     * @param tr
      * @throws LedgerException
      */
-    private void registerPost(Post post) throws LedgerException {
+    private void registerTransfer(Transfer tr) throws LedgerException {
         final IdentifiedEntity<AccountAttributes> attributes = this.ledger.getAttrRepo()
                 .getByIdExclusive(this.accountId);
         if (attributes == null) {
             throw LedgerException.invalidAccount(this.accountId.toString());
         }
         final IdentifiedEntity<Page> currentPage = this.ledger.getCurPageRepo().getByIdExclusive(this.accountId);
-        final BigDecimal newBalance = attributes.getEntity().getBalance().add(post.getAmount());
-        final BigDecimal newLocalBalance = attributes.getEntity().getLocalBalance().add(post.getLocalAmount());
+        final BigDecimal newBalance = attributes.getEntity().getBalance().add(tr.getAmount());
+        final BigDecimal newLocalBalance = attributes.getEntity().getLocalBalance().add(tr.getLocalAmount());
         if (!isValidBalance(attributes.getEntity(), newBalance)) {
             throw LedgerException.redBalance(attributes.getEntity().getAccountNumber());
         } else {
             attributes.getEntity().setBalance(newBalance);
             attributes.getEntity().setLocalBalance(newLocalBalance);
             if (currentPage.getEntity().hasNext()) {
-                currentPage.getEntity().addPost(post);
+                currentPage.getEntity().addTransfer(tr);
                 this.ledger.getCurPageRepo().put(currentPage);
             } else {
                 final Page hPage = currentPage.getEntity();
                 final Page cPage = Page.create(hPage.getFinishedAt(),
                         hPage.getRepFinishedOn(), hPage.getFinishBalance(), hPage.getFinishRepBalance());
-                cPage.addPost(post);
+                cPage.addTransfer(tr);
                 final IdentifiedEntity<Page> cidPage = new IdentifiedEntity<>(this.accountId, cPage);
                 this.ledger.getCurPageRepo().put(cidPage);
                 this.ledger.getHistPageRepo().insert(this.accountId, hPage);
@@ -92,46 +91,26 @@ public class Account {
         }
     }
 
-    /**
-     * Credit account
-     *
-     * @param transferUuid
-     * @param postedAt
-     * @param reportedOn
-     * @param amount        positive says about debiting, negative says about crediting
-     * @return              resulted account balance
-     */
-    private BigDecimal operate(String           transferUuid,
-                               ZonedDateTime    postedAt,
-                               LocalDate        reportedOn,
-                               BigDecimal       amount,
-                               BigDecimal       localAmount)
+    private BigDecimal operate(Transfer tr)
             throws LedgerException {
-        Post post = new Post(transferUuid, postedAt, reportedOn, amount, localAmount);
-        registerPost(post);
+        registerTransfer(tr);
         return getAttributes().getEntity().getBalance();
     }
 
-    public BigDecimal credit(String         transferUuid,
-                             ZonedDateTime  postedAt,
-                             LocalDate      reportedOn,
-                             BigDecimal     amount,
-                             BigDecimal     localAmount)
+    public BigDecimal credit(Transfer tr)
             throws LedgerException {
-        LOGGER.info("Crediting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
-        final BigDecimal balance = operate(transferUuid, postedAt, reportedOn, amount.negate(), localAmount.negate());
+        LOGGER.info("Crediting account id=".concat(accountId.toString())
+                .concat(" for ".concat(tr.getAmount().toString())));
+        final BigDecimal balance = operate(tr);
         LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
         return balance;
     }
 
-    public BigDecimal debit(String          transferUuid,
-                            ZonedDateTime   postedAt,
-                            LocalDate       reportedOn,
-                            BigDecimal      amount,
-                            BigDecimal      localAmount)
+    public BigDecimal debit(Transfer tr)
             throws LedgerException {
-        LOGGER.info("Debting account id=".concat(accountId.toString()).concat(" for ".concat(amount.toString())));
-        final BigDecimal balance = operate(transferUuid, postedAt, reportedOn, amount, localAmount);
+        LOGGER.info("Debting account id=".concat(accountId.toString())
+                .concat(" for ".concat(tr.getAmount().toString())));
+        final BigDecimal balance = operate(tr);
         LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
         return balance;
     }

@@ -11,7 +11,7 @@ public class TestDataMacros {
     private Map<String, String> accounts = new HashMap<>();
 
     @PostConstruct
-    void init() throws IOException {
+    public void init() throws IOException {
         InputStreamReader isReader=
                 new InputStreamReader(new FileInputStream(new File("macros.lst")));
         BufferedReader br = new BufferedReader(isReader);

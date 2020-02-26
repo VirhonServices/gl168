@@ -20,13 +20,19 @@ public class PageTest {
             final ZonedDateTime postedAt = startedAt.plusSeconds(i*i);
             final BigDecimal currentBalance =
                     startedBalance.add(new BigDecimal("1.29384858599").multiply(new BigDecimal(i)));
-            final Post post = new Post(UUID.randomUUID().toString(), postedAt, reportedAt, currentBalance, currentBalance);
-            page.addPost(post);
+            final Transfer tr = new Transfer();
+            tr.setTransferUuid(UUID.randomUUID().toString());
+            tr.setTransferRef("TRANSFER-REF");
+            tr.setPostedAt(postedAt);
+            tr.setReportedOn(reportedAt);
+            tr.setAmount(currentBalance);
+            tr.setLocalAmount(currentBalance);
+            page.addTransfer(tr);
         }
         return page;
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     void test() throws LedgerException {
         final ZonedDateTime startedAt = ZonedDateTime.now().minusDays(3);
         final LocalDate reportedAt = LocalDate.now().minusDays(3);
@@ -38,8 +44,14 @@ public class PageTest {
             final ZonedDateTime postedAt = startedAt.plusSeconds(i*i);
             final BigDecimal currentBalance =
                     startedBalance.add(new BigDecimal("1.29384858599").multiply(new BigDecimal(i)));
-            final Post post = new Post(UUID.randomUUID().toString(), postedAt, reportedAt, currentBalance, currentBalance);
-            page.addPost(post);
+            final Transfer tr = new Transfer();
+            tr.setTransferUuid(UUID.randomUUID().toString());
+            tr.setTransferRef("TRANSFER-REF");
+            tr.setPostedAt(postedAt);
+            tr.setReportedOn(reportedAt);
+            tr.setAmount(currentBalance);
+            tr.setLocalAmount(currentBalance);
+            page.addTransfer(tr);
             if (i==5) {
                 fixedDateTimeAt = postedAt;
             }

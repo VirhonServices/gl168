@@ -1,6 +1,7 @@
 package com.virhon.fintech.gl.model;
 
 import com.virhon.fintech.gl.Config;
+import com.virhon.fintech.gl.TestDataMacros;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.LedgerRepoFactory;
@@ -18,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class AccountTest {
     private MySQLAttrRepo               attrRepo = new MySQLAttrRepo("uah_account_attribute");
@@ -27,17 +29,19 @@ public class AccountTest {
     private LedgerRepoFactory factory = new MySQLLedgerRepoFactory("UAH");
     private Ledger ledger = new Ledger(factory);
 
+    private TestDataMacros macros = new TestDataMacros();
+
     public AccountTest() throws IOException {
+        macros.init();
     }
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     void testCreating() throws LedgerException {
         final List<Long> accountIds = new ArrayList<>();
         // 1. Create new accounts
         for (long i=0;i<4;i++) {
-            final String accountNumber = "260010987654321".concat(Long.valueOf(1562L + (new Random().nextInt(1000))).toString());
-            final String iban = "UA56305299".concat(accountNumber);
-            final Account account = ledger.openNew(accountNumber, iban, AccountType.PASSIVE);
+            final String accountUuid = macros.getObjectUuid("PASSIVE_EMPTY3");
+            final Account account = ledger.getExistingByUuid(accountUuid);
             if (i%2==1) {
                 accountIds.add(account.getAccountId());
             }
@@ -53,11 +57,30 @@ public class AccountTest {
         for (int i=0;i<accountIds.size();i++) {
             final Long accountId = accountIds.get(i);
             final Account account = ledger.getExistingById(accountId);
+            final AccountAttributes attr = account.getAttributes().getEntity();
             for (Long j=0L;j<limit;j++) {
                 if (j%2==0) {
-                    account.credit(j.toString(), postedAt, reportedOn, seven, seven);
+                    final Transfer tr = new Transfer();
+                    tr.setTransferUuid(UUID.randomUUID().toString());
+                    tr.setTransferRef("TRANSFER-REF");
+                    tr.setPostedAt(ZonedDateTime.now());
+                    tr.setDescription("Description");
+                    tr.setReportedOn(LocalDate.now());
+                    tr.setAmount(seven);
+                    tr.setLocalAmount(seven);
+                    tr.setDebitUuid(attr.getAccountUUID());
+                    account.credit(tr);
                 } else {
-                    account.debit(j.toString(), postedAt, reportedOn, three, three);
+                    final Transfer tr = new Transfer();
+                    tr.setTransferUuid(UUID.randomUUID().toString());
+                    tr.setTransferRef("TRANSFER-REF");
+                    tr.setPostedAt(ZonedDateTime.now());
+                    tr.setDescription("Description");
+                    tr.setReportedOn(LocalDate.now());
+                    tr.setAmount(three);
+                    tr.setLocalAmount(three);
+                    tr.setDebitUuid(attr.getAccountUUID());
+                    account.debit(tr);
                 }
                 postedAt = postedAt.plusMinutes(1);
                 int days = (int)(j / perDay);
@@ -76,7 +99,6 @@ public class AccountTest {
         Assert.assertEquals(pagesNum, historicalPagesNumber);
         final long curPageSize = limit - (pagesNum * Config.getInstance().getMaxNumPostsInBlock());
         final Page curPage = this.cRepo.getById(account.getAccountId()).getEntity();
-        Assert.assertEquals(curPage.getPosts().size(), curPageSize);
+        Assert.assertEquals(curPage.getTransfers().size(), curPageSize);
     }
-
 }
