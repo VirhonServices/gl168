@@ -42,6 +42,7 @@ public class Page {
         page.setStartBalance(startBalance);
         page.setFinishBalance(startBalance);
         page.setStartRepBalance(startRepBalance);
+        page.setFinishRepBalance(startRepBalance);
         return page;
     }
 

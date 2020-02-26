@@ -23,9 +23,9 @@ public class ReportingPeriodController {
     MySQLGeneralLedger gl;
 
     @PostMapping
-    public ResponseEntity<?> get(@PathVariable String currencyCode,
-                                 @PathVariable String accountUuid,
-                                 @RequestBody ReportingPeriodRequest request) {
+    public ResponseEntity<?> getReportingBalances(@PathVariable String currencyCode,
+                                                  @PathVariable String accountUuid,
+                                                  @RequestBody ReportingPeriodRequest request) {
         try {
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account account = ledger.getExistingByUuid(accountUuid);
