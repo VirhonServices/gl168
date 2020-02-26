@@ -31,15 +31,6 @@ create table uah_historical_page (
     primary key (id)
 ) comment "Accounts historical pages";
 
-drop table uah_transfer;
-create table uah_transfer (
-    id              bigint      not null AUTO_INCREMENT,
-    uuid            varchar(36) not null,
-    data            text,
-
-    primary key (id)
-) comment "Transfers";
-
 drop table uah_reservation;
 create table uah_reservation (
     id              bigint      not null AUTO_INCREMENT,
@@ -88,15 +79,6 @@ data            text,
 primary key (id)
 ) comment "Accounts historical pages";
 
-drop table usd_transfer;
-create table usd_transfer (
-id              bigint      not null AUTO_INCREMENT,
-uuid            varchar(36) not null,
-data            text,
-
-primary key (id)
-) comment "Transfers";
-
 drop table usd_reservation;
 create table usd_reservation (
 id              bigint      not null AUTO_INCREMENT,
@@ -144,15 +126,6 @@ data            text,
 
 primary key (id)
 ) comment "Accounts historical pages";
-
-drop table eur_transfer;
-create table eur_transfer (
-id              bigint      not null AUTO_INCREMENT,
-uuid            varchar(36) not null,
-data            text,
-
-primary key (id)
-) comment "Transfers";
 
 drop table eur_reservation;
 create table eur_reservation (

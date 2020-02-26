@@ -1,6 +1,5 @@
 package com.virhon.fintech.gl;
 
-import com.google.gson.Gson;
 import com.virhon.fintech.gl.api.Application;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
@@ -17,7 +16,9 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
@@ -28,7 +29,6 @@ import java.util.Map;
 @SpringBootTest(classes = Application.class)
 public class TestDataCreator extends AbstractTestNGSpringContextTests {
     final static Logger LOGGER = Logger.getLogger(TestDataCreator.class);
-    private Gson gson;
     private MockMvc mockMvc;
 
     @Autowired

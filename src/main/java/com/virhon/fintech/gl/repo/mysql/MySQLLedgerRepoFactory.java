@@ -5,7 +5,6 @@ import com.virhon.fintech.gl.repo.mysql.accountattribute.MySQLAttrRepo;
 import com.virhon.fintech.gl.repo.mysql.currentpage.MySQLCurrentPageRepo;
 import com.virhon.fintech.gl.repo.mysql.historicalpage.MySQLHistoricalPageRepo;
 import com.virhon.fintech.gl.repo.mysql.reservation.MySQLReservationRepo;
-import com.virhon.fintech.gl.repo.mysql.transfer.MySQLTransferRepo;
 
 import java.io.IOException;
 
@@ -14,7 +13,6 @@ public class MySQLLedgerRepoFactory implements LedgerRepoFactory {
     public static final String CURRENT_PAGE = "current_page";
     public static final String HISTORICAL_PAGE = "historical_page";
     public static final String RESERVATION = "reservation";
-    public static final String TRANSFER = "transfer";
     private String currency;
 
     public MySQLLedgerRepoFactory(String currency) {
@@ -43,11 +41,6 @@ public class MySQLLedgerRepoFactory implements LedgerRepoFactory {
     @Override
     public ReservationRepo getReservationRepository() throws IOException {
         return new MySQLReservationRepo(getCurrencyTableName(RESERVATION));
-    }
-
-    @Override
-    public TransferRepo getTransferRepository() throws IOException {
-        return new MySQLTransferRepo(getCurrencyTableName(TRANSFER));
     }
 
     public String getCurrency() {

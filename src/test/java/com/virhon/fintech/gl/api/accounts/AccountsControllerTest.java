@@ -1,6 +1,7 @@
 package com.virhon.fintech.gl.api.accounts;
 
 import com.google.gson.Gson;
+import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = Application.class)
 public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
-    private Gson gson = new Gson();
+    private Gson gson = GsonConverter.create();
 
     @Autowired
     private WebApplicationContext webApplicationContext;

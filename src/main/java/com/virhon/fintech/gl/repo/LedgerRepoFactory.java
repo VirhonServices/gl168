@@ -7,5 +7,4 @@ public interface LedgerRepoFactory {
     CurPageRepo getCurrentPageRepository() throws IOException;
     HistPageRepo getHistoricalPageRepository() throws IOException;
     ReservationRepo getReservationRepository() throws IOException;
-    TransferRepo getTransferRepository() throws IOException;
 }

@@ -8,14 +8,10 @@
 - [API Reference](#api-reference)
     * [Open a new account](#open-a-new-account-post)
     * [Get the information](#get-the-information-get)
-    * [Get account's balance at the posting moment](#get-accounts-balance-at-the-posting-moment-get)
-    * [Get open and closed balances for reporting period](#get-open-and-closed-balances-for-reporting-period-post)
     * [Transfer funds](#transfer-funds-post)
     * [Reserve funds](#reserve-funds-post)
     * [Post the reservation](#post-the-reservation-put)
-    * [Get the transfer's information](#get-the-transfers-information-get)
-    * [Get account's transfers by posting period](#get-accounts-transfers-by-posting-period-get)
-    * [Get account's transfers list by reporting period](#get-accounts-transfers-list-by-reporting-period-get)
+    * [Get the data for reporting period](#get-the-data-for-reporting-period-post)
 
 ## OVERVIEW
 
@@ -208,53 +204,6 @@ You need to pass separated DateTime value in server's timezone
    "balType": "CREDIT"
 }
 ````
-
-### Getting account's reporting balance for the period
-````
-/v1/gl/{currencyCode}/accounts/{accountUuid}/reporting/balance
-````
- |Variable| Description
- |---------|------------
- |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A transferUuid of the account
-
-#### Get open and closed balances for reporting period [POST]
-
-##### Request
-You need to pass separated parts of LocalDate values
-````json
- {
-   "beginOn": {
-       "year": 2020,
-       "month": 2,
-       "day": 14
-   },
-   "finishOn": {
-       "year": 2020,
-       "month": 2,
-       "day": 16
-   }
- }
- ````
-
-##### Response 200
-````json
-{
-  "accType": "PASSIVE",
-  "accNumber": "26003000078365",
-  "iban": "UA5630529926003000078365",
-  "open": {
-       "balance": 1267.89,
-       "repBalance": 1267.89,
-       "balType": "CREDIT"
-   },
-   "closed": {
-       "balance": 1267.89,
-       "repBalance": 1267.89,
-       "balType": "CREDIT"   
-   }
-}
-````
 ### Making a transfer
 ````
 /v1/gl/{currencyCode}/accounts/{debitAccountUuid}/transfers
@@ -281,39 +230,6 @@ You need to pass separated parts of LocalDate values
 }
 ````
 ##### Response 201
-````json
-{
-  "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
-  "transferRef": "qw7663837jnn0094948-003",
-  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
-  "reportedOn": "2020-02-21",
-  "amount": 2481.00,
-  "repAmount": 100.00,
-  "description": "Purchasing goods in MEGAMART",
-  "debit": {
-      "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
-      "accNumber": "1001200038767",
-      "iban": "UA893052991001200038767",
-      "accType": "ACTIVE"
-  },
-  "credit": {
-      "accUuid": "5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6",
-      "accNumber": "2602100009203",
-      "iban": "UA673052992602100009203",
-      "accType": "PASSIVE"
-  }  
-}
-````
-### Getting transfer's information
-````
-/v1/gl/{currencyCode}/transfers/{transferUuid}
-````
- |Variable| Description
- |---------|------------
- |currencyCode| The code of currency according to ISO 4217 alpha-3
- |transferUuid| UUID of the transfer the information need to be gotten of
-#### Get the transfer's information [GET]
-##### Response 200
 ````json
 {
   "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
@@ -411,123 +327,61 @@ You need to pass separated parts of LocalDate values
   }  
 } 
 ````
-### Getting account's transfers list (by posting period)
+### Getting the reporting period data
 ````
-/v1/gl/{currencyCode}/accounts/{accountUuid}/posted/transfers
-````
- |Variable| Description
- |---------|------------
- |currencyCode| The code of currency according to ISO 4217 alpha-3
- |accountUuid| A transferUuid of the account
-
-#### Get account's transfers by posting period [POST]
-
-##### Request
-````json
-{
-  "beginAt": {
-      "year": 2020,
-      "month": 2,
-      "day": 16,
-      "hour": 1,
-      "minute": 26,
-      "second": 51,
-      "nanoOfSecond": 556,
-      "zoneId": "Europe/Kiev"
-  },
-  "finishAt": {
-      "year": 2020,
-      "month": 2,
-      "day": 18,
-      "hour": 2,
-      "minute": 22,
-      "second": 24,
-      "nanoOfSecond": 876,
-      "zoneId": "Europe/Kiev"
-  }
-}
-````
-
-##### Response 200
-````json
-{
-    "transfers": [
-        {
-          "transferRef": "qw7663837jnn0094948-003",
-          "postedAt": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
-          "reportedOn": "2020-02-16",
-          "transactionType": "CREDIT",
-          "amount": 100.00,
-          "repAmount": 100.00,
-          "description": "Purchasing goods in MEGAMART",
-          "correspondent": {
-              "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
-              "accNumber": "1001200038767",
-              "iban": "UA893052991001200038767",
-              "accType": "ACTIVE"
-          }
-        }
-    ]
-}
-````
-
-### Getting account's transfers list (by reporting period)
-Get all the transfers of the account that was reported on the specified period
-````
-/v1/gl/{currencyCode}/accounts/{accountUuid}/reported/transfers
+/v1/gl/{currencyCode}/accounts/{accountUuid}/reporting
 ````
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
  |accountUuid| A transferUuid of the account
 
-#### Get account's transfers list by reporting period [POST]
+#### Get the data for reporting period [POST]
 
 ##### Request
- |Field| Description|Type|Mandatory|
- |---------|------------|----|----------
- |beginOn| The first financial day of the period|Object|Yes
- |finishOn| The last financial day of the period|Object|Yes
-
+You need to pass separated parts of LocalDate values
 ````json
-{
-  "beginOn": {
-      "year": 2020,
-      "month": 2,
-      "day": 14
-  },
-  "finishOn": {
-      "year": 2020,
-      "month": 2,
-      "day": 16
-  }
-}
-````
-
+ {
+   "beginOn": {
+       "year": 2020,
+       "month": 2,
+       "day": 14
+   },
+   "finishOn": {
+       "year": 2020,
+       "month": 2,
+       "day": 16
+   }
+ }
+ ````
 ##### Response 200
 ````json
 {
+    "accType": "PASSIVE",
+    "accNumber": "260350009",
+    "iban": "UA55305299260350009",
+    "closed": {
+        "balType": "DEBIT",
+        "balance": 2859.36,
+        "repBalance": 69053.544
+    },
+    "open": {
+        "balType": "DEBIT",
+        "balance": 865.2,
+        "repBalance": 20894.58
+    },
     "transfers": [
         {
-          "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
-          "transferRef": "qw7663837jnn0094948-003",
-          "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
-          "reportedOn": "2020-02-20",
-          "amount": 100.00,
-          "repAmount": 2481.00,
-          "description": "ONLINE TAXI bill 1228/UKR-11 payment",
-          "debit": {
-              "accUuid": "f1fb1ca9-3e3e-4eb1-80cf-e2a42a82ebff",
-              "accNumber": "1001200038767",
-              "iban": "UA893052991001200038767",
-              "accType": "ACTIVE"
-          },
-          "credit": {
-              "accUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
-              "accNumber": "2602100009203",
-              "iban": "UA673052992602100009203",
-              "accType": "PASSIVE"
-          }  
+            "transferUuid": "e711609d-bb88-482f-ba0f-1dcef2695cd3",
+            "transferRef": "AUTO-426",
+            "amountType": "DEBIT",
+            "amount": 4.26,
+            "repAmount": 102.879,
+            "description": "Autogenerated transfer",
+            "postedAt": "2020-02-26T18:40:06.107+02:00[Europe/Kiev]",
+            "reportedOn": "2020-02-27",
+            "creditUuid": "0b175013-c991-425b-99ca-c1b035f00284",
+            "debitUuid": "caf86739-e154-43a7-b2b1-a0b9cf09f4b5"
         }
     ]
 }

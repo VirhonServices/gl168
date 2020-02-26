@@ -19,7 +19,6 @@ public class Ledger {
     private AttrRepo attrRepo;
     private CurPageRepo curPageRepo;
     private HistPageRepo histPageRepo;
-    private TransferRepo transferRepo;
     private ReservationRepo reservationRepo;
 
     final static Logger LOGGER = Logger.getLogger(Ledger.class);
@@ -28,7 +27,6 @@ public class Ledger {
         this.attrRepo = factory.getAccountAttributeRepository();
         this.curPageRepo = factory.getCurrentPageRepository();
         this.histPageRepo = factory.getHistoricalPageRepository();
-        this.transferRepo = factory.getTransferRepository();
         this.reservationRepo = factory.getReservationRepository();
     }
 
@@ -279,10 +277,6 @@ public class Ledger {
 
     public HistPageRepo getHistPageRepo() {
         return this.histPageRepo;
-    }
-
-    public TransferRepo getTransferRepo() {
-        return this.transferRepo;
     }
 
     public ReservationRepo getReservationRepo() {
