@@ -82,7 +82,7 @@ public class Account {
             } else {
                 final Page hPage = currentPage.getEntity();
                 final Page cPage = Page.create(hPage.getFinishedAt(),
-                        hPage.getRepFinishedOn(), hPage.getFinishBalance());
+                        hPage.getRepFinishedOn(), hPage.getFinishBalance(), hPage.getFinishRepBalance());
                 cPage.addPost(post);
                 final IdentifiedEntity<Page> cidPage = new IdentifiedEntity<>(this.accountId, cPage);
                 this.ledger.getCurPageRepo().put(cidPage);
