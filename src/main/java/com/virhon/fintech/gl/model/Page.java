@@ -16,6 +16,8 @@ public class Page {
     private LocalDate       repFinishedOn;
     private BigDecimal      startBalance;
     private BigDecimal      finishBalance;
+    private BigDecimal      startRepBalance;
+    private BigDecimal      finishRepBalance;
 
     private List<Post>      posts = new ArrayList<>();
 
@@ -30,7 +32,8 @@ public class Page {
      * @param startBalance
      * @return
      */
-    public static Page create(ZonedDateTime startedAt, LocalDate reportedOn, BigDecimal startBalance) {
+    public static Page create(ZonedDateTime startedAt, LocalDate reportedOn,
+                              BigDecimal startBalance, BigDecimal startRepBalance) {
         final Page page = new Page();
         page.setStartedAt(startedAt);
         page.setFinishedAt(startedAt);
@@ -38,11 +41,12 @@ public class Page {
         page.setRepFinishedOn(reportedOn);
         page.setStartBalance(startBalance);
         page.setFinishBalance(startBalance);
+        page.setStartRepBalance(startRepBalance);
         return page;
     }
 
-    public static Page create(BigDecimal startBalance) {
-        return create(ZonedDateTime.now(), LocalDate.now(), startBalance);
+    public static Page create(BigDecimal startBalance, BigDecimal startRepBalance) {
+        return create(ZonedDateTime.now(), LocalDate.now(), startBalance, startRepBalance);
     }
 
 
@@ -97,6 +101,7 @@ public class Page {
 */
         this.posts.add(post);
         this.finishBalance = this.finishBalance.add(post.getAmount());
+        this.finishRepBalance = this.finishRepBalance.add(post.getLocalAmount());
         if (this.finishedAt.compareTo(post.getPostedAt()) < 0) {
             this.finishedAt = post.getPostedAt();
         }
@@ -179,6 +184,22 @@ public class Page {
             return Config.getInstance().getReportedOn();
         }
 
+    }
+
+    public BigDecimal getStartRepBalance() {
+        return startRepBalance;
+    }
+
+    public void setStartRepBalance(BigDecimal startRepBalance) {
+        this.startRepBalance = startRepBalance;
+    }
+
+    public BigDecimal getFinishRepBalance() {
+        return finishRepBalance;
+    }
+
+    public void setFinishRepBalance(BigDecimal finishRepBalance) {
+        this.finishRepBalance = finishRepBalance;
     }
 
     public void setRepFinishedOn(LocalDate repFinishedOn) {

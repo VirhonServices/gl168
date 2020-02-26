@@ -48,10 +48,10 @@ public class AccountAttributes {
      *
      * @return
      */
-    public AmountType getBalanceType() {
-        if (this.balance.signum() == 1) {
+    public AmountType getBalanceType(BigDecimal bal) {
+        if (bal.signum() == 1) {
             return AmountType.CREDIT;
-        } else if (this.balance.signum() == -1) {
+        } else if (bal.signum() == -1) {
             return AmountType.DEBIT;
         } else {
             if (this.accountType == AccountType.ACTIVE) {
@@ -60,6 +60,10 @@ public class AccountAttributes {
                 return AmountType.CREDIT;
             }
         }
+    }
+
+    public AmountType getBalanceType() {
+        return getBalanceType(this.balance);
     }
 
     public String getAccountUUID() {

@@ -68,11 +68,11 @@
     </select>
 
     <select id="selectHistory" parameterType="long" resultType="historical_page">
-        select * from ${tablename} where account_id = #{accountId}
+        select * from ${tablename} where account_id = #{accountId} order by id
     </select>
 
     <select id="selectHistoryPeriod" parameterType="map" resultType="historical_page">
-        select * from ${tablename} where account_id = #{accountId} and ((#{startPeriod} between rep_started_on and rep_finished_on) or (#{finishPeriod} between rep_started_on and rep_finished_on) or (rep_started_on between #{startPeriod} and #{finishPeriod} and rep_finished_on between #{startPeriod} and #{finishPeriod}))
+        select * from ${tablename} where account_id = #{accountId} and ((#{startPeriod} between rep_started_on and rep_finished_on) or (#{finishPeriod} between rep_started_on and rep_finished_on) or (rep_started_on between #{startPeriod} and #{finishPeriod} and rep_finished_on between #{startPeriod} and #{finishPeriod})) order by id
     </select>
 
 </mapper>

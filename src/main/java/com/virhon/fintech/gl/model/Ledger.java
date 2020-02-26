@@ -11,8 +11,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Ledger {
     private AttrRepo attrRepo;
@@ -74,7 +76,7 @@ public class Ledger {
                            String          iban,
                            AccountType     accountType) {
         final AccountAttributes attributes = AccountAttributes.createNew(accountNumber, iban, accountType);
-        final Page page = Page.create(BigDecimal.ZERO);
+        final Page page = Page.create(BigDecimal.ZERO, BigDecimal.ZERO);
         final Account account = new Account(this);
         final Long accountId = getAttrRepo().insert(attributes);
         account.setAccountId(accountId);
@@ -323,15 +325,129 @@ public class Ledger {
         return response;
     }
 
-    public List<Page> collectPages(Long accountId, LocalDate beginOn, LocalDate finishOn) {
+    private List<Page> collectPages(Long accountId, LocalDate beginOn, LocalDate finishOn) {
         final Page current = this.curPageRepo.getById(accountId).getEntity();
         final List<IdentifiedEntity<Page>> history = this.histPageRepo.getHistoryPeriod(accountId, beginOn, finishOn);
         final List<Page> result = new ArrayList<>();
+        history.forEach(p -> result.add(p.getEntity()));
         if (current.getRepStartedOn().compareTo(beginOn) <= 0 || current.getRepStartedOn().compareTo(finishOn) <= 0) {
             result.add(current);
         }
-        history.forEach(p -> result.add(p.getEntity()));
         return result;
+    }
+
+    public static class ReportingCollection {
+        private BigDecimal startBalance;
+        private BigDecimal startRepBalance;
+        private BigDecimal finishBalance;
+        private BigDecimal finishRepBalance;
+        private LocalDate startedOn;
+        private LocalDate finishedOn;
+
+        private List<Post> posts = new ArrayList<>();
+
+        public BigDecimal getStartRepBalance() {
+            return startRepBalance;
+        }
+
+        public void setStartRepBalance(BigDecimal startRepBalance) {
+            this.startRepBalance = startRepBalance;
+        }
+
+        public BigDecimal getFinishRepBalance() {
+            return finishRepBalance;
+        }
+
+        public void setFinishRepBalance(BigDecimal finishRepBalance) {
+            this.finishRepBalance = finishRepBalance;
+        }
+
+        public BigDecimal getStartBalance() {
+            return startBalance;
+        }
+
+        public void setStartBalance(BigDecimal startBalance) {
+            this.startBalance = startBalance;
+        }
+
+        public BigDecimal getFinishBalance() {
+            return finishBalance;
+        }
+
+        public void setFinishBalance(BigDecimal finishBalance) {
+            this.finishBalance = finishBalance;
+        }
+
+        public LocalDate getStartedOn() {
+            return startedOn;
+        }
+
+        public void setStartedOn(LocalDate startedOn) {
+            this.startedOn = startedOn;
+        }
+
+        public LocalDate getFinishedOn() {
+            return finishedOn;
+        }
+
+        public void setFinishedOn(LocalDate finishedOn) {
+            this.finishedOn = finishedOn;
+        }
+
+        public void setPosts(List<Post> posts) {
+            this.posts = posts;
+        }
+
+        public List<Post> getPosts() {
+            return posts;
+        }
+    }
+
+    /**
+     *
+     * @param accountId
+     * @param beginOn
+     * @param finishOn
+     * @return
+     */
+    public ReportingCollection collectReportingData(Long accountId,
+                                                    LocalDate beginOn,
+                                                    LocalDate finishOn) {
+        final List<Page> pages = collectPages(accountId, beginOn, finishOn);
+        final List<Post> previousPosts = pages.stream()
+                .map(p -> p.getPosts())
+                .flatMap(posts -> posts.stream())
+                .filter(post -> post.getReportedOn().compareTo(beginOn) < 0)
+                .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
+                .collect(Collectors.toList());
+        final BigDecimal preTurnover = previousPosts.stream().map(p -> p.getAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal preRepTurnover = previousPosts.stream().map(p -> p.getLocalAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal startBalance = pages.get(0).getStartBalance().add(preTurnover);
+        final BigDecimal startRepBalance = pages.get(0).getStartRepBalance().add(preRepTurnover);
+        final List<Post> periodPosts = pages.stream()
+                .map(p -> p.getPosts())
+                .flatMap(posts -> posts.stream())
+                .filter(post -> post.getReportedOn().compareTo(beginOn) >= 0 &&
+                        post.getReportedOn().compareTo(finishOn) <= 0)
+                .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
+                .collect(Collectors.toList());
+        final BigDecimal periodTurnover = periodPosts.stream().map(p -> p.getAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal periodRepTurnover = periodPosts.stream().map(p -> p.getLocalAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal finishBalance = startBalance.add(periodTurnover);
+        final BigDecimal finishRepBalance = startRepBalance.add(periodRepTurnover);
+        final ReportingCollection collection = new ReportingCollection();
+        collection.setStartedOn(beginOn);
+        collection.setFinishedOn(finishOn);
+        collection.setStartBalance(startBalance);
+        collection.setStartRepBalance(startRepBalance);
+        collection.setFinishBalance(finishBalance);
+        collection.setFinishRepBalance(finishRepBalance);
+        collection.setPosts(periodPosts);
+        return collection;
     }
 
 }
