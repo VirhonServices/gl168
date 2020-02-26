@@ -1,10 +1,8 @@
-package com.virhon.fintech.gl.api.reportingperiod;
-
-import com.virhon.fintech.gl.model.AccountType;
+package com.virhon.fintech.gl.api.reportingperiodbalances;
 
 import java.math.BigDecimal;
 
-public class ReportingPeriodResponse {
+public class ReportingPeriodBalancesResponse {
     public static class Balance {
         private BigDecimal balance;
         private BigDecimal repBalance;

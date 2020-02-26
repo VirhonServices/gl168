@@ -1,4 +1,4 @@
-package com.virhon.fintech.gl.api.reportingperiod;
+package com.virhon.fintech.gl.api.reportingperiodbalances;
 
 import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.exception.LedgerException;
@@ -16,8 +16,8 @@ import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/v1/gl/{currencyCode}/accounts/{accountUuid}/reporting/balance")
-public class ReportingPeriodController {
-    final static Logger LOGGER = Logger.getLogger(ReportingPeriodController.class);
+public class ReportingPeriodBalancesController {
+    final static Logger LOGGER = Logger.getLogger(ReportingPeriodBalancesController.class);
 
     @Autowired
     MySQLGeneralLedger gl;
@@ -32,19 +32,19 @@ public class ReportingPeriodController {
             final AccountAttributes attr = account.getAttributes().getEntity();
             final Ledger.ReportingCollection collection = ledger.collectReportingData(account.getAccountId(),
                     request.getBeginOn().toLocalDate(), request.getFinishOn().toLocalDate());
-            final ReportingPeriodResponse response = new ReportingPeriodResponse();
+            final ReportingPeriodBalancesResponse response = new ReportingPeriodBalancesResponse();
             response.setAccType(attr.getAccountType().toString());
             response.setAccNumber(attr.getAccountNumber());
             response.setIban(attr.getIban());
 
-            final ReportingPeriodResponse.Balance open = new ReportingPeriodResponse.Balance();
+            final ReportingPeriodBalancesResponse.Balance open = new ReportingPeriodBalancesResponse.Balance();
             final BigDecimal startBalance = collection.getStartBalance();
             open.setBalance(startBalance.abs());
             open.setBalType(attr.getBalanceType(startBalance).toString());
             open.setRepBalance(collection.getStartRepBalance().abs());
             response.setOpen(open);
 
-            final ReportingPeriodResponse.Balance closed = new ReportingPeriodResponse.Balance();
+            final ReportingPeriodBalancesResponse.Balance closed = new ReportingPeriodBalancesResponse.Balance();
             final BigDecimal finishBalance = collection.getFinishBalance();
             closed.setBalance(finishBalance.abs());
             closed.setBalType(attr.getBalanceType(finishBalance).toString());

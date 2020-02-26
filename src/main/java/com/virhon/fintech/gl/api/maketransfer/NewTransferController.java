@@ -1,10 +1,8 @@
 package com.virhon.fintech.gl.api.maketransfer;
 
 import com.virhon.fintech.gl.api.LedgerError;
-import com.virhon.fintech.gl.api.accounts.NewAccountResponseBody;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
-import com.virhon.fintech.gl.model.AccountAttributes;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.model.Transfer;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
@@ -39,11 +37,11 @@ public class NewTransferController {
                     debit.getAccountId(), credit.getAccountId(), request.getAmount(), request.getRepAmount(),
                     request.getReportedOn().toLocalDate(), request.getDescription());
             final Transfer tr = transfer.getEntity();
-            final TransferResponseBody response = ledger.createTransferResponseBody(tr);
+            final TransferData response = ledger.createTransferResponseBody(tr);
             this.gl.commit();
             LOGGER.info("Transfer ".concat(tr.getTransferUuid()).concat(" has been succeed"));
-            final ResponseEntity<TransferResponseBody> result =
-                    new ResponseEntity<TransferResponseBody>(response, HttpStatus.OK);
+            final ResponseEntity<TransferData> result =
+                    new ResponseEntity<TransferData>(response, HttpStatus.OK);
             return result;
         } catch (LedgerException e) {
             LOGGER.error(e.getMessage());

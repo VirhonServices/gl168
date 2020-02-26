@@ -1,7 +1,7 @@
 package com.virhon.fintech.gl.model;
 
 import com.virhon.fintech.gl.Config;
-import com.virhon.fintech.gl.api.maketransfer.TransferResponseBody;
+import com.virhon.fintech.gl.api.maketransfer.TransferData;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.*;
 import org.apache.log4j.Logger;
@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -297,12 +296,12 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    public TransferResponseBody createTransferResponseBody(Transfer tr) throws LedgerException {
+    public TransferData createTransferResponseBody(Transfer tr) throws LedgerException {
         final com.virhon.fintech.gl.model.Account debit = this.getExistingByUuid(tr.getDebitUuid());
         final AccountAttributes debAttr = debit.getAttributes().getEntity();
         final com.virhon.fintech.gl.model.Account credit = this.getExistingByUuid(tr.getCreditUuid());
         final AccountAttributes creAttr = credit.getAttributes().getEntity();
-        final TransferResponseBody response = new TransferResponseBody();
+        final TransferData response = new TransferData();
         response.setUuid(tr.getTransferUuid());
         response.setTransferRef(tr.getTransferRef());
         response.setPostedAt(tr.getPostedAt().toString());
@@ -310,13 +309,13 @@ public class Ledger {
         response.setAmount(tr.getAmount());
         response.setRepAmount(tr.getLocalAmount());
         response.setDescription(tr.getDescription());
-        final TransferResponseBody.Account deb = new TransferResponseBody.Account();
+        final TransferData.Account deb = new TransferData.Account();
         deb.setAccUuid(debAttr.getAccountUUID());
         deb.setAccNumber(debAttr.getAccountNumber());
         deb.setIban(debAttr.getIban());
         deb.setAccType(debAttr.getAccountType().toString());
         response.setDebit(deb);
-        final TransferResponseBody.Account cre = new TransferResponseBody.Account();
+        final TransferData.Account cre = new TransferData.Account();
         cre.setAccUuid(creAttr.getAccountUUID());
         cre.setAccNumber(creAttr.getAccountNumber());
         cre.setIban(creAttr.getIban());

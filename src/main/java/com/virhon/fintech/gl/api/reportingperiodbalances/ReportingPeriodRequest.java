@@ -1,4 +1,4 @@
-package com.virhon.fintech.gl.api.reportingperiod;
+package com.virhon.fintech.gl.api.reportingperiodbalances;
 
 import com.virhon.fintech.gl.api.SeparatedDate;
 

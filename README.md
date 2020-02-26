@@ -511,18 +511,23 @@ Get all the transfers of the account that was reported on the specified period
         {
           "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
           "transferRef": "qw7663837jnn0094948-003",
-          "postedAt": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
-          "reportedOn": "2020-02-16",
-          "transactionType": "CREDIT",
+          "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
+          "reportedOn": "2020-02-20",
           "amount": 100.00,
-          "repAmount": 100.00,
-          "description": "Purchasing goods in MEGAMART",
-          "correspondent": {
-              "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
+          "repAmount": 2481.00,
+          "description": "ONLINE TAXI bill 1228/UKR-11 payment",
+          "debit": {
+              "accUuid": "f1fb1ca9-3e3e-4eb1-80cf-e2a42a82ebff",
               "accNumber": "1001200038767",
               "iban": "UA893052991001200038767",
               "accType": "ACTIVE"
-          }
+          },
+          "credit": {
+              "accUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
+              "accNumber": "2602100009203",
+              "iban": "UA673052992602100009203",
+              "accType": "PASSIVE"
+          }  
         }
     ]
 }

@@ -1,7 +1,7 @@
 package com.virhon.fintech.gl.api.gettransfer;
 
 import com.virhon.fintech.gl.api.LedgerError;
-import com.virhon.fintech.gl.api.maketransfer.TransferResponseBody;
+import com.virhon.fintech.gl.api.maketransfer.TransferData;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.AccountAttributes;
@@ -40,7 +40,7 @@ public class GettingTransferController {
             final Account credit = ledger.getExistingByUuid(tr.getCreditUuid());
             final AccountAttributes debAttr = debit.getAttributes().getEntity();
             final AccountAttributes creAttr = credit.getAttributes().getEntity();
-            final TransferResponseBody response = new TransferResponseBody();
+            final TransferData response = new TransferData();
             response.setUuid(tr.getTransferUuid());
             response.setTransferRef(tr.getTransferRef());
             response.setPostedAt(tr.getPostedAt().toString());
@@ -48,13 +48,13 @@ public class GettingTransferController {
             response.setAmount(tr.getAmount());
             response.setRepAmount(tr.getLocalAmount());
             response.setDescription(tr.getDescription());
-            final TransferResponseBody.Account deb = new TransferResponseBody.Account();
+            final TransferData.Account deb = new TransferData.Account();
             deb.setAccUuid(debAttr.getAccountUUID());
             deb.setAccNumber(debAttr.getAccountNumber());
             deb.setIban(debAttr.getIban());
             deb.setAccType(debAttr.getAccountType().toString());
             response.setDebit(deb);
-            final TransferResponseBody.Account cre = new TransferResponseBody.Account();
+            final TransferData.Account cre = new TransferData.Account();
             cre.setAccUuid(creAttr.getAccountUUID());
             cre.setAccNumber(creAttr.getAccountNumber());
             cre.setIban(creAttr.getIban());

@@ -1,7 +1,7 @@
 package com.virhon.fintech.gl.api.postreservation;
 
 import com.virhon.fintech.gl.api.LedgerError;
-import com.virhon.fintech.gl.api.maketransfer.TransferResponseBody;
+import com.virhon.fintech.gl.api.maketransfer.TransferData;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.model.Reservation;
@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/v1/gl/{currencyCode}/reservations/{reservationUuid}")
@@ -36,7 +34,7 @@ public class PostReservationController {
                     res.getCreditId(), res.getAmount(), request.getRepAmount(), request.getReportedOn().toLocalDate(),
                     res.getDescription());
             gl.commit();
-            final TransferResponseBody response = ledger.createTransferResponseBody(iTr.getEntity());
+            final TransferData response = ledger.createTransferResponseBody(iTr.getEntity());
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (LedgerException e) {
             LOGGER.error(e.getMessage());
