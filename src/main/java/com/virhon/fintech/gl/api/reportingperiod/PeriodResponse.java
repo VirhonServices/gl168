@@ -7,7 +7,7 @@ import com.virhon.fintech.gl.model.Transfer;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class ReportingPeriodResponse {
+public class PeriodResponse {
     public static class Balance {
         private BigDecimal balance;
         private BigDecimal repBalance;

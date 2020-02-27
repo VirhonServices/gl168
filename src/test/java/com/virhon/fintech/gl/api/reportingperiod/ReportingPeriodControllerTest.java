@@ -1,10 +1,6 @@
 package com.virhon.fintech.gl.api.reportingperiod;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.TestDataMacros;
 import com.virhon.fintech.gl.api.Application;
@@ -26,10 +22,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

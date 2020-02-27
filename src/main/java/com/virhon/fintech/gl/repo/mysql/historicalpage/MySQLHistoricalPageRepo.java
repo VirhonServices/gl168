@@ -94,4 +94,20 @@ public class MySQLHistoricalPageRepo extends MySQLAbstactRepo<MySQLHitoricalPage
         }
         return result;
     }
+
+    @Override
+    public List<IdentifiedEntity<Page>> getHistoryPostingPeriod(Long accountId,
+                                                                ZonedDateTime startPeriod,
+                                                                ZonedDateTime finishPeriod) {
+        final List<MySQLHistoricalPageRecord> records =
+                getMapper().selectHistoryPostingPeriod(getTablename(), accountId, startPeriod, finishPeriod);
+        final List<IdentifiedEntity<Page>> result = new ArrayList<>();
+        if (!records.isEmpty()) {
+            records.forEach(r -> {
+                final Page page = getConverter().fromJson(r.getData(), Page.class);
+                result.add(new IdentifiedEntity<Page>(r.getId(), page));
+            });
+        }
+        return result;
+    }
 }

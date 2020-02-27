@@ -21,4 +21,8 @@ public interface MySQLHitoricalPageDAO {
                                                         @Param("accountId") Long accountId,
                                                         @Param("startPeriod") LocalDate startPeriod,
                                                         @Param("finishPeriod") LocalDate finishPeriod);
+    List<MySQLHistoricalPageRecord> selectHistoryPostingPeriod(@Param("tablename") String tablename,
+                                                               @Param("accountId") Long accountId,
+                                                               @Param("startPeriod") ZonedDateTime startPeriod,
+                                                               @Param("finishPeriod") ZonedDateTime finishPeriod);
 }

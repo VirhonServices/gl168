@@ -1,5 +1,8 @@
 package com.virhon.fintech.gl.api;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 public class SeparatedDateTime {
     private Integer year;
     private Integer month;
@@ -8,7 +11,11 @@ public class SeparatedDateTime {
     private Integer minute;
     private Integer second;
     private Integer nano;
-    private String zone;
+
+    public ZonedDateTime asDateTime() {
+        final ZonedDateTime zdt = ZonedDateTime.of(year, month, day, hour, minute, second, nano, ZoneId.systemDefault());
+        return zdt;
+    }
 
     public Integer getYear() {
         return year;
@@ -64,13 +71,5 @@ public class SeparatedDateTime {
 
     public void setNano(Integer nano) {
         this.nano = nano;
-    }
-
-    public String getZone() {
-        return zone;
-    }
-
-    public void setZone(String zone) {
-        this.zone = zone;
     }
 }

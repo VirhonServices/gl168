@@ -31,7 +31,7 @@ public class PostReservationController {
             final IdentifiedEntity<Reservation> iRes = ledger.getReservationRepo().getByUuid(reservationUuid);
             final Reservation res = iRes.getEntity();
             final Transfer tr = ledger.transferFunds(res.getTransferRef(), res.getDebitId(),
-                                res.getCreditId(), res.getAmount(), request.getRepAmount(), request.getReportedOn().toLocalDate(),
+                                res.getCreditId(), res.getAmount(), request.getRepAmount(), request.getReportedOn().asLocalDate(),
                                 res.getDescription());
             gl.commit();
             final TransferData response = ledger.createTransferResponseBody(tr);

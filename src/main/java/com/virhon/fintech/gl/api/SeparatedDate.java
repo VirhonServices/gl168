@@ -7,7 +7,7 @@ public class SeparatedDate {
     private Integer month;
     private Integer day;
 
-    public LocalDate toLocalDate() {
+    public LocalDate asLocalDate() {
         return LocalDate.of(this.year, this.month, this.day);
     }
 

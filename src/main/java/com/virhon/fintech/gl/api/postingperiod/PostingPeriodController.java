@@ -1,6 +1,7 @@
-package com.virhon.fintech.gl.api.reportingperiod;
+package com.virhon.fintech.gl.api.postingperiod;
 
 import com.virhon.fintech.gl.api.LedgerError;
+import com.virhon.fintech.gl.api.reportingperiod.PeriodResponse;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.AccountAttributes;
@@ -17,23 +18,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/gl/{currencyCode}/accounts/{accountUuid}/reporting")
-public class ReportingPeriodController {
-    final static Logger LOGGER = Logger.getLogger(ReportingPeriodController.class);
+@RequestMapping("/v1/gl/{currencyCode}/accounts/{accountUuid}/posting")
+public class PostingPeriodController {
+    final static Logger LOGGER = Logger.getLogger(PostingPeriodController.class);
 
     @Autowired
     MySQLGeneralLedger gl;
 
     @PostMapping
-    public ResponseEntity<?> getReportingPeriod(@PathVariable String currencyCode,
-                                                @PathVariable String accountUuid,
-                                                @RequestBody ReportingPeriodRequest request) {
+    public ResponseEntity<?> getPostingPeriod(@PathVariable String currencyCode,
+                                              @PathVariable String accountUuid,
+                                              @RequestBody PostingPeriodRequest request) {
         try {
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account account = ledger.getExistingByUuid(accountUuid);
             final AccountAttributes attr = account.getAttributes().getEntity();
-            final Ledger.ReportingCollection collection = ledger.collectReportingData(account.getAccountId(),
-                    request.getBeginOn().asLocalDate(), request.getFinishOn().asLocalDate());
+            final Ledger.PostingCollection collection = ledger.collectPostingData(account.getAccountId(),
+                    request.getStartedAt().asDateTime(), request.getFinishedAt().asDateTime());
             final PeriodResponse response = new PeriodResponse();
             response.setAccType(attr.getAccountType().toString());
             response.setAccNumber(attr.getAccountNumber());
@@ -52,13 +53,13 @@ public class ReportingPeriodController {
             response.setClosed(closed);
             final List<PeriodResponse.TransferResponse> tResponses = new ArrayList<>();
             collection.getTransfers().forEach(t -> {
-                        final PeriodResponse.TransferResponse trResponse =
-                                PeriodResponse.TransferResponse.createFrom(t);
-                        trResponse.setTransferType(attr.getBalanceType(t.getAmount()).toString());
-                        tResponses.add(trResponse);
-                    });
+                final PeriodResponse.TransferResponse trResponse =
+                        PeriodResponse.TransferResponse.createFrom(t);
+                trResponse.setTransferType(attr.getBalanceType(t.getAmount()).toString());
+                tResponses.add(trResponse);
+            });
             response.setTransfers(tResponses);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<PeriodResponse>(response, HttpStatus.OK);
         } catch (LedgerException e) {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(e.getCode(), e.getMessage());

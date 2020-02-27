@@ -75,4 +75,9 @@
         select * from ${tablename} where account_id = #{accountId} and ((#{startPeriod} between rep_started_on and rep_finished_on) or (#{finishPeriod} between rep_started_on and rep_finished_on) or (rep_started_on between #{startPeriod} and #{finishPeriod} and rep_finished_on between #{startPeriod} and #{finishPeriod})) order by id
     </select>
 
+    <select id="selectHistoryPostingPeriod" parameterType="map" resultType="historical_page">
+        select * from ${tablename} where account_id = #{accountId} and ((#{startPeriod} between started_at and finished_at) or (#{finishPeriod} between started_at and finished_at) or (started_at between #{startPeriod} and #{finishPeriod} and finished_at between #{startPeriod} and #{finishPeriod})) order by id
+    </select>
+
+
 </mapper>

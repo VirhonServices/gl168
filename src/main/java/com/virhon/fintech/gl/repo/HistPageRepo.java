@@ -21,6 +21,8 @@ public interface HistPageRepo {
     IdentifiedEntity<Page> getByAccountId(Long accountId, ZonedDateTime postedAt);
     List<IdentifiedEntity<Page>> getHistory(Long accountId);
     List<IdentifiedEntity<Page>> getHistoryPeriod(Long accountId, LocalDate startPeriod, LocalDate finishPeriod);
+    List<IdentifiedEntity<Page>> getHistoryPostingPeriod(Long accountId, ZonedDateTime startPeriod,
+                                                         ZonedDateTime finishPeriod);
     Long insert(Long accountId, Page page);
     Long update(Long accountId, IdentifiedEntity<Page> page);
 }

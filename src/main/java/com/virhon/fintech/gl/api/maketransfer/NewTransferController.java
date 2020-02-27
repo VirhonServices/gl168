@@ -34,7 +34,7 @@ public class NewTransferController {
             final Account credit = ledger.getExistingByUuid(request.getCreditAccountUuid());
             final Transfer tr = ledger.transferFunds(request.getTransferRef(), debit.getAccountId(),
                     credit.getAccountId(), request.getAmount(), request.getRepAmount(),
-                    request.getReportedOn().toLocalDate(), request.getDescription());
+                    request.getReportedOn().asLocalDate(), request.getDescription());
             final TransferData response = ledger.createTransferResponseBody(tr);
             this.gl.commit();
             LOGGER.info("Transfer ".concat(tr.getTransferUuid()).concat(" has been succeed"));

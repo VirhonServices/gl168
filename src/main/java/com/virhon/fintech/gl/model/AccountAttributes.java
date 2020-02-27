@@ -49,9 +49,9 @@ public class AccountAttributes {
      * @return
      */
     public AmountType getBalanceType(BigDecimal bal) {
-        if (bal.signum() == 1) {
+        if (bal.signum() == -1) {
             return AmountType.CREDIT;
-        } else if (bal.signum() == -1) {
+        } else if (bal.signum() == 1) {
             return AmountType.DEBIT;
         } else {
             if (this.accountType == AccountType.ACTIVE) {

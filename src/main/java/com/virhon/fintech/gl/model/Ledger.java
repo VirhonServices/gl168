@@ -317,7 +317,7 @@ public class Ledger {
         return response;
     }
 
-    private List<Page> collectPages(Long accountId, LocalDate beginOn, LocalDate finishOn) {
+    private List<Page> collectReportingPages(Long accountId, LocalDate beginOn, LocalDate finishOn) {
         final Page current = this.curPageRepo.getById(accountId).getEntity();
         final List<IdentifiedEntity<Page>> history = this.histPageRepo.getHistoryPeriod(accountId, beginOn, finishOn);
         final List<Page> result = new ArrayList<>();
@@ -328,14 +328,22 @@ public class Ledger {
         return result;
     }
 
-    public static class ReportingCollection {
+    private List<Page> collectPostingPages(Long accountId, ZonedDateTime beginAt, ZonedDateTime finishAt) {
+        final Page current = this.curPageRepo.getById(accountId).getEntity();
+        final List<IdentifiedEntity<Page>> history = this.histPageRepo.getHistoryPostingPeriod(accountId, beginAt, finishAt);
+        final List<Page> result = new ArrayList<>();
+        history.forEach(p -> result.add(p.getEntity()));
+        if (current.getStartedAt().compareTo(beginAt) <= 0 || current.getStartedAt().compareTo(finishAt) <= 0) {
+            result.add(current);
+        }
+        return result;
+    }
+
+    public static class Balances {
         private BigDecimal startBalance;
         private BigDecimal startRepBalance;
         private BigDecimal finishBalance;
         private BigDecimal finishRepBalance;
-        private LocalDate startedOn;
-        private LocalDate finishedOn;
-
         private List<Transfer> transfers = new ArrayList<>();
 
         public BigDecimal getStartRepBalance() {
@@ -370,6 +378,20 @@ public class Ledger {
             this.finishBalance = finishBalance;
         }
 
+        public List<Transfer> getTransfers() {
+            return transfers;
+        }
+
+        public void setTransfers(List<Transfer> transfers) {
+            this.transfers = transfers;
+        }
+    }
+
+    public static class ReportingCollection extends Balances {
+        private LocalDate startedOn;
+        private LocalDate finishedOn;
+
+
         public LocalDate getStartedOn() {
             return startedOn;
         }
@@ -385,13 +407,26 @@ public class Ledger {
         public void setFinishedOn(LocalDate finishedOn) {
             this.finishedOn = finishedOn;
         }
+    }
 
-        public List<Transfer> getTransfers() {
-            return transfers;
+    public static class PostingCollection extends Balances {
+        private ZonedDateTime startedAt;
+        private ZonedDateTime finishedAt;
+
+        public ZonedDateTime getStartedAt() {
+            return startedAt;
         }
 
-        public void setTransfers(List<Transfer> transfers) {
-            this.transfers = transfers;
+        public void setStartedAt(ZonedDateTime startedAt) {
+            this.startedAt = startedAt;
+        }
+
+        public ZonedDateTime getFinishedAt() {
+            return finishedAt;
+        }
+
+        public void setFinishedAt(ZonedDateTime finishedAt) {
+            this.finishedAt = finishedAt;
         }
     }
 
@@ -405,7 +440,7 @@ public class Ledger {
     public ReportingCollection collectReportingData(Long accountId,
                                                     LocalDate beginOn,
                                                     LocalDate finishOn) {
-        final List<Page> pages = collectPages(accountId, beginOn, finishOn);
+        final List<Page> pages = collectReportingPages(accountId, beginOn, finishOn);
         final List<Transfer> previousTransfers = pages.stream()
                 .map(p -> p.getTransfers())
                 .flatMap(posts -> posts.stream())
@@ -441,5 +476,46 @@ public class Ledger {
         collection.setTransfers(periodTransfers);
         return collection;
     }
+
+    public PostingCollection collectPostingData(Long accountId,
+                                                ZonedDateTime startAt,
+                                                ZonedDateTime finishAt) {
+        final List<Page> pages = collectPostingPages(accountId, startAt, finishAt);
+        final List<Transfer> previousTransfers = pages.stream()
+                .map(p -> p.getTransfers())
+                .flatMap(posts -> posts.stream())
+                .filter(post -> post.getPostedAt().compareTo(startAt) < 0)
+                .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
+                .collect(Collectors.toList());
+        final BigDecimal preTurnover = previousTransfers.stream().map(p -> p.getAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal preRepTurnover = previousTransfers.stream().map(p -> p.getLocalAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal startBalance = pages.get(0).getStartBalance().add(preTurnover);
+        final BigDecimal startRepBalance = pages.get(0).getStartRepBalance().add(preRepTurnover);
+        final List<Transfer> periodTransfers = pages.stream()
+                .map(p -> p.getTransfers())
+                .flatMap(posts -> posts.stream())
+                .filter(post -> post.getPostedAt().compareTo(startAt) >= 0 &&
+                        post.getPostedAt().compareTo(finishAt) <= 0)
+                .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
+                .collect(Collectors.toList());
+        final BigDecimal periodTurnover = periodTransfers.stream().map(p -> p.getAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal periodRepTurnover = periodTransfers.stream().map(p -> p.getLocalAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        final BigDecimal finishBalance = startBalance.add(periodTurnover);
+        final BigDecimal finishRepBalance = startRepBalance.add(periodRepTurnover);
+        final PostingCollection collection = new PostingCollection();
+        collection.setStartedAt(startAt);
+        collection.setFinishedAt(finishAt);
+        collection.setStartBalance(startBalance);
+        collection.setStartRepBalance(startRepBalance);
+        collection.setFinishBalance(finishBalance);
+        collection.setFinishRepBalance(finishRepBalance);
+        collection.setTransfers(periodTransfers);
+        return collection;
+    }
+
 
 }
