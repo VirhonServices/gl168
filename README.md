@@ -9,6 +9,7 @@
     * [Open a new account](#open-a-new-account-post)
     * [Get the information](#get-the-information-get)
     * [Transfer funds](#transfer-funds-post)
+    * [Get the transfer's information](#get-the-transfers-information-get)
     * [Reserve funds](#reserve-funds-post)
     * [Post the reservation](#post-the-reservation-put)
     * [Get the data for reporting period](#get-the-data-for-reporting-period-post)
@@ -212,7 +213,8 @@ You need to pass separated DateTime value in server's timezone
  |Variable| Description
  |---------|------------
  |currencyCode| The code of currency according to ISO 4217 alpha-3
- |debitAccountUuid| A transferUuid of debit account
+ |debitAccountUuid| Uuid of the account being debited
+ 
 #### Transfer funds [POST]
 
 ##### Request
@@ -254,6 +256,42 @@ You need to pass separated DateTime value in server's timezone
   }  
 }
 ````
+### Getting transfer's information
+````
+/v1/gl/{currencyCode}/transfers/{transferUuid}
+````
+ |Variable| Description
+ |---------|------------
+ |currencyCode| The code of currency according to ISO 4217 alpha-3
+ |transferUuid| A uuid of the transfer being gotten
+
+#### Get the transfer's information [GET]
+
+##### Response
+````json
+{
+  "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
+  "transferRef": "qw7663837jnn0094948-003",
+  "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
+  "reportedOn": "2020-02-21",
+  "amount": 2481.00,
+  "repAmount": 100.00,
+  "description": "Purchasing goods in MEGAMART",
+  "debit": {
+      "accUuid": "de49a7a8-77de-42cd-b5f6-bbf1aa745623",
+      "accNumber": "1001200038767",
+      "iban": "UA893052991001200038767",
+      "accType": "ACTIVE"
+  },
+  "credit": {
+      "accUuid": "5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6",
+      "accNumber": "2602100009203",
+      "iban": "UA673052992602100009203",
+      "accType": "PASSIVE"
+  }  
+}
+````
+
 ### Reserving funds for future transfer
 ````
 /v1/gl/{currencyCode}/accounts/{debitAccountUuid}/reservations
