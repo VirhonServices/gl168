@@ -8,8 +8,12 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public class Page {
+    private String          uuid;
+    private String          accountUuid;
     private ZonedDateTime   startedAt;
     private ZonedDateTime   finishedAt;
     private LocalDate       repStartedOn;
@@ -32,9 +36,11 @@ public class Page {
      * @param startBalance
      * @return
      */
-    public static Page create(ZonedDateTime startedAt, LocalDate reportedOn,
+    public static Page create(String accountUuid, ZonedDateTime startedAt, LocalDate reportedOn,
                               BigDecimal startBalance, BigDecimal startRepBalance) {
         final Page page = new Page();
+        page.setUuid(UUID.randomUUID().toString());
+        page.setAccountUuid(accountUuid);
         page.setStartedAt(startedAt);
         page.setFinishedAt(startedAt);
         page.setRepStartedOn(reportedOn);
@@ -46,10 +52,9 @@ public class Page {
         return page;
     }
 
-    public static Page create(BigDecimal startBalance, BigDecimal startRepBalance) {
-        return create(ZonedDateTime.now(), LocalDate.now(), startBalance, startRepBalance);
+    public static Page create(String accountUuid, BigDecimal startBalance, BigDecimal startRepBalance) {
+        return create(accountUuid, ZonedDateTime.now(), LocalDate.now(), startBalance, startRepBalance);
     }
-
 
     /**
      * Check if current page can contain the POSTING date
@@ -187,6 +192,10 @@ public class Page {
 
     }
 
+    public Optional<Transfer> locate(final String transferUuid) {
+        return this.transfers.stream().filter(t -> t.getTransferUuid().equals(transferUuid)).findFirst();
+    }
+
     public BigDecimal getStartRepBalance() {
         return startRepBalance;
     }
@@ -229,5 +238,21 @@ public class Page {
 
     public void setTransfers(List<Transfer> transfers) {
         this.transfers = transfers;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getAccountUuid() {
+        return accountUuid;
+    }
+
+    public void setAccountUuid(String accountUuid) {
+        this.accountUuid = accountUuid;
     }
 }

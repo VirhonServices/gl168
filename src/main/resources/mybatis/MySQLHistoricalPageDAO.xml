@@ -2,8 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.virhon.fintech.gl.repo.mysql.historicalpage.MySQLHitoricalPageDAO">
     <!--auto generated Code-->
-    <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.historicalpage.MySQLHitoricalPageDAO" autoMapping="true">
+    <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.historicalpage.MySQLHistoricalPageRecord" autoMapping="true">
         <result column="id" property="id"/>
+        <result column="uuid" property="uuid"/>
         <result column="account_id" property="accountId"/>
         <result column="started_at" property="startedAt"/>
         <result column="finished_at" property="finishedAt"/>
@@ -15,6 +16,7 @@
     <!--auto generated Code-->
     <sql id="all_column">
         `id`,
+        `uuid`,
         `account_id`,
         `started_at`,
         `finished_at`,
@@ -26,6 +28,7 @@
     <!--auto generated Code-->
     <insert id="insert" parameterType="historical_page" useGeneratedKeys="true" keyProperty="pojo.id" keyColumn="id">
         INSERT INTO ${tablename} (
+        `uuid`,
         `account_id`,
         `started_at`,
         `finished_at`,
@@ -33,6 +36,7 @@
         `rep_finished_on`,
         `data`
         ) VALUES (
+        #{pojo.uuid},
         #{pojo.accountId},
         #{pojo.startedAt},
         #{pojo.finishedAt},
@@ -49,6 +53,7 @@
     <update id="update">
         UPDATE ${tablename}
         <set>
+            <if test="pojo.uuid != null"> `uuid` = #{pojo.uuid}, </if>
             <if test="pojo.accountId != null"> `account_id` = #{pojo.accountId}, </if>
             <if test="pojo.startedAt != null"> `started_at` = #{pojo.startedAt}, </if>
             <if test="pojo.finishedAt != null"> `finished_at` = #{pojo.finishedAt}, </if>
@@ -61,6 +66,10 @@
 
     <select id="selectById" parameterType="long" resultType="historical_page">
         select * from ${tablename} where id = #{id}
+    </select>
+
+    <select id="selectByUuid" parameterType="string" resultType="historical_page">
+        select * from ${tablename} where uuid = #{uuid}
     </select>
 
     <select id="selectByAccountId" parameterType="map" resultType="historical_page">

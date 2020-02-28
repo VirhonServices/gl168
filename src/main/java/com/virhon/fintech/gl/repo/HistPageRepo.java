@@ -11,6 +11,7 @@ import java.util.List;
  */
 public interface HistPageRepo {
     IdentifiedEntity<Page> getById(Long id);
+    IdentifiedEntity<Page> getByUuid(String uuid);
 
     /**
      *

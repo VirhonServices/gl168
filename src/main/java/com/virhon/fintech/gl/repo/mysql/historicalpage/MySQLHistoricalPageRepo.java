@@ -28,6 +28,16 @@ public class MySQLHistoricalPageRepo extends MySQLAbstactRepo<MySQLHitoricalPage
     }
 
     @Override
+    public IdentifiedEntity<Page> getByUuid(String uuid) {
+        final MySQLHistoricalPageRecord record = getMapper().selectByUuid(getTablename(), uuid);
+        if (record!=null) {
+            final Page page = getConverter().fromJson(record.getData(), Page.class);
+            return new IdentifiedEntity<>(record.getId(), page);
+        }
+        return null;
+    }
+
+    @Override
     public IdentifiedEntity<Page> getByAccountId(Long accountId, ZonedDateTime at) {
         final MySQLHistoricalPageRecord record = getMapper().selectByAccountId(getTablename(), accountId, at);
         if (record!=null) {
@@ -54,6 +64,7 @@ public class MySQLHistoricalPageRepo extends MySQLAbstactRepo<MySQLHitoricalPage
     public Long update(Long accountId, IdentifiedEntity<Page> page) {
         final MySQLHistoricalPageRecord record = new MySQLHistoricalPageRecord();
         record.setId(page.getId());
+        record.setUuid(page.getEntity().getUuid());
         record.setAccountId(accountId);
         record.setStartedAt(page.getEntity().getStartedAt());
         record.setFinishedAt(page.getEntity().getFinishedAt());
@@ -68,6 +79,7 @@ public class MySQLHistoricalPageRepo extends MySQLAbstactRepo<MySQLHitoricalPage
     @Override
     public Long insert(Long accountId, Page page) {
         final MySQLHistoricalPageRecord record = new MySQLHistoricalPageRecord();
+        record.setUuid(page.getUuid());
         record.setAccountId(accountId);
         record.setStartedAt(page.getStartedAt());
         record.setFinishedAt(page.getFinishedAt());

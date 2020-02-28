@@ -63,6 +63,10 @@ public class LedgerException extends Exception {
         return new LedgerException(330, "The transfer uuid=".concat(uuid).concat(" doesn't exist"));
     }
 
+    public static LedgerException pageNotExist(String uuid) {
+        return new LedgerException(340, "The page uuid=".concat(uuid).concat(" doesn't exist"));
+    }
+
     public static LedgerException invalidMode(Account account) {
         return new LedgerException(400, "Can't operate read-only account "
                 .concat(account.getAttributes().getEntity().getAccountNumber()));

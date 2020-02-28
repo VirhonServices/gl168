@@ -12,6 +12,7 @@ public interface MySQLHitoricalPageDAO {
     Long insert(@Param("tablename") String tablename, @Param("pojo") MySQLHistoricalPageRecord pojo);
     void update(@Param("tablename") String tablename, @Param("pojo") MySQLHistoricalPageRecord pojo);
     MySQLHistoricalPageRecord selectById(@Param("tablename") String tablename, @Param("id") Long id);
+    MySQLHistoricalPageRecord selectByUuid(@Param("tablename") String tablename, @Param("uuid") String uuid);
     MySQLHistoricalPageRecord selectByAccountId(@Param("tablename") String tablename,
                                                 @Param("accountId") Long accountId,
                                                 @Param("postedAt")  ZonedDateTime postedAt);

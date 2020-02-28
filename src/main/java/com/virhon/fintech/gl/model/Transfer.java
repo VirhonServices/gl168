@@ -12,8 +12,8 @@ public class Transfer {
     private BigDecimal      localAmount;
     private LocalDate       reportedOn;
     private String          description;
-    private String          debitUuid;
-    private String          creditUuid;
+    private String          debitPageUuid;
+    private String          creditPageUuid;
 
     public Transfer getNegate() {
         final Transfer result = new Transfer();
@@ -24,8 +24,8 @@ public class Transfer {
         result.setLocalAmount(this.getLocalAmount().negate());
         result.setReportedOn(this.getReportedOn());
         result.setDescription(this.getDescription());
-        result.setDebitUuid(this.getDebitUuid());
-        result.setCreditUuid(this.getCreditUuid());
+        result.setDebitPageUuid(this.getDebitPageUuid());
+        result.setCreditPageUuid(this.getCreditPageUuid());
         return result;
     }
 
@@ -85,19 +85,19 @@ public class Transfer {
         this.postedAt = postedAt;
     }
 
-    public String getDebitUuid() {
-        return debitUuid;
+    public String getDebitPageUuid() {
+        return debitPageUuid;
     }
 
-    public void setDebitUuid(String debitUuid) {
-        this.debitUuid = debitUuid;
+    public void setDebitPageUuid(String debitPageUuid) {
+        this.debitPageUuid = debitPageUuid;
     }
 
-    public String getCreditUuid() {
-        return creditUuid;
+    public String getCreditPageUuid() {
+        return creditPageUuid;
     }
 
-    public void setCreditUuid(String creditUuid) {
-        this.creditUuid = creditUuid;
+    public void setCreditPageUuid(String creditPageUuid) {
+        this.creditPageUuid = creditPageUuid;
     }
 }

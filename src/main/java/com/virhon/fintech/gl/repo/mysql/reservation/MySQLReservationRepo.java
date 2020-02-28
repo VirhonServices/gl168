@@ -8,9 +8,11 @@ import com.virhon.fintech.gl.repo.mysql.MySQLAbstactRepo;
 import java.io.IOException;
 
 public class MySQLReservationRepo extends MySQLAbstactRepo<MySQLReservationDAO> implements ReservationRepo {
+
     public MySQLReservationRepo(String tablename) throws IOException {
         super(tablename, MySQLReservationDAO.class);
     }
+
     @Override
     public IdentifiedEntity<Reservation> getById(Long id) {
         final MySQLReservationRecord record = this.getMapper().selectById(this.getTablename(), id);

@@ -68,8 +68,7 @@ public class AccountTest {
                     tr.setReportedOn(LocalDate.now());
                     tr.setAmount(seven);
                     tr.setLocalAmount(seven);
-                    tr.setDebitUuid(attr.getAccountUUID());
-                    account.credit(tr);
+                    tr.setDebitPageUuid(account.credit(tr));
                 } else {
                     final Transfer tr = new Transfer();
                     tr.setTransferUuid(UUID.randomUUID().toString());
@@ -79,8 +78,7 @@ public class AccountTest {
                     tr.setReportedOn(LocalDate.now());
                     tr.setAmount(three);
                     tr.setLocalAmount(three);
-                    tr.setDebitUuid(attr.getAccountUUID());
-                    account.debit(tr);
+                    tr.setDebitPageUuid(account.debit(tr));
                 }
                 postedAt = postedAt.plusMinutes(1);
                 int days = (int)(j / perDay);

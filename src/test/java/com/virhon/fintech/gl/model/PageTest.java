@@ -15,7 +15,7 @@ public class PageTest {
         final ZonedDateTime startedAt = ZonedDateTime.now().minusDays(3);
         final LocalDate reportedAt = LocalDate.now().minusDays(3);
         final BigDecimal startedBalance = new BigDecimal("10.282737364");
-        final Page page = Page.create(startedAt, reportedAt, startedBalance, startedBalance);
+        final Page page = Page.create("accountUuid", startedAt, reportedAt, startedBalance, startedBalance);
         for (int i=0;i<85;i++) {
             final ZonedDateTime postedAt = startedAt.plusSeconds(i*i);
             final BigDecimal currentBalance =
@@ -39,7 +39,7 @@ public class PageTest {
         final BigDecimal startedBalance = new BigDecimal("10.282737364");
         ZonedDateTime fixedDateTimeAt = null;
         BigDecimal fixedBalance = BigDecimal.ZERO;
-        final Page page = Page.create(startedAt, reportedAt, startedBalance, startedBalance);
+        final Page page = Page.create("accountUuid", startedAt, reportedAt, startedBalance, startedBalance);
         for (int i=0;i<85;i++) {
             final ZonedDateTime postedAt = startedAt.plusSeconds(i*i);
             final BigDecimal currentBalance =

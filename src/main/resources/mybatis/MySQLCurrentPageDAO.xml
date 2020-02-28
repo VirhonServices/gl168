@@ -4,12 +4,14 @@
     <!--auto generated Code-->
     <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.currentpage.MySQLCurrentPageRecord">
         <result column="id" property="id"/>
+        <result column="uuid" property="uuid"/>
         <result column="data" property="data"/>
     </resultMap>
 
     <!--auto generated Code-->
     <sql id="all_column">
         `id`,
+        `uuid`,
         `data`
     </sql>
 
@@ -17,9 +19,11 @@
     <insert id="insert" parameterType="current_page" useGeneratedKeys="false" keyProperty="pojo.id" keyColumn="id">
         INSERT INTO ${tablename} (
         `id`,
+        `uuid`,
         `data`
         ) VALUES (
         #{pojo.id},
+        #{pojo.uuid},
         #{pojo.data}
         )
     </insert>
@@ -28,6 +32,7 @@
     <update id="update">
         UPDATE ${tablename}
         <set>
+            <if test="pojo.uuid != null"> `uuid` = #{pojo.uuid}, </if>
             <if test="pojo.data != null"> `data` = #{pojo.data} </if>
         </set>
         WHERE id = #{pojo.id}
@@ -35,6 +40,10 @@
 
     <select id="selectById" parameterType="long" resultType="current_page">
         select * from ${tablename} where id = #{id}
+    </select>
+
+    <select id="selectByUuid" parameterType="string" resultType="current_page">
+        select * from ${tablename} where uuid = #{uuid}
     </select>
 
     <select id="selectByIdExclusive" parameterType="long" resultType="current_page">

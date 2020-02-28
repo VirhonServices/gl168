@@ -47,8 +47,8 @@ public class PeriodResponse {
         private BigDecimal      repAmount;
         private String          reportedOn;
         private String          description;
-        private String          debitUuid;
-        private String          creditUuid;
+        private String          debitPageUuid;
+        private String          creditPageUuid;
 
         public static TransferResponse createFrom(Transfer tr) {
             final Gson gson = GsonConverter.create();
@@ -60,8 +60,8 @@ public class PeriodResponse {
             tres.setRepAmount(tr.getLocalAmount().abs());
             tres.setReportedOn(tr.getReportedOn().toString());
             tres.setDescription(tr.getDescription());
-            tres.setDebitUuid(tr.getDebitUuid());
-            tres.setCreditUuid(tr.getCreditUuid());
+            tres.setDebitPageUuid(tr.getDebitPageUuid());
+            tres.setCreditPageUuid(tr.getCreditPageUuid());
             return tres;
         }
 
@@ -129,20 +129,20 @@ public class PeriodResponse {
             this.description = description;
         }
 
-        public String getDebitUuid() {
-            return debitUuid;
+        public String getDebitPageUuid() {
+            return debitPageUuid;
         }
 
-        public void setDebitUuid(String debitUuid) {
-            this.debitUuid = debitUuid;
+        public void setDebitPageUuid(String debitPageUuid) {
+            this.debitPageUuid = debitPageUuid;
         }
 
-        public String getCreditUuid() {
-            return creditUuid;
+        public String getCreditPageUuid() {
+            return creditPageUuid;
         }
 
-        public void setCreditUuid(String creditUuid) {
-            this.creditUuid = creditUuid;
+        public void setCreditPageUuid(String creditPageUuid) {
+            this.creditPageUuid = creditPageUuid;
         }
     }
 

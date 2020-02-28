@@ -25,6 +25,17 @@ public class MySQLCurrentPageRepo extends MySQLAbstactRepo<MySQLCurrentPageDAO> 
     }
 
     @Override
+    public IdentifiedEntity<Page> getByUuid(String accountUuid) {
+        final MySQLCurrentPageRecord record = getMapper().selectByUuid(getTablename(), accountUuid);
+        if (record != null) {
+            final Page page = getConverter().fromJson(record.getData(), Page.class);
+            return new IdentifiedEntity<>(record.getId(), page);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public IdentifiedEntity<Page> getByIdExclusive(Long accountId) {
         final MySQLCurrentPageRecord record = getMapper().selectByIdExclusive(getTablename(), accountId);
         if (record != null) {
@@ -41,6 +52,7 @@ public class MySQLCurrentPageRepo extends MySQLAbstactRepo<MySQLCurrentPageDAO> 
         record.setId(page.getId());
         final String json = getConverter().toJson(page.getEntity());
         record.setData(json);
+        record.setUuid(page.getEntity().getUuid());
         if (getMapper().selectById(getTablename(), page.getId()) == null) {
             getMapper().insert(getTablename(), record);
         } else {

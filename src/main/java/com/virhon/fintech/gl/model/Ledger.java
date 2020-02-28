@@ -20,6 +20,7 @@ public class Ledger {
     private CurPageRepo curPageRepo;
     private HistPageRepo histPageRepo;
     private ReservationRepo reservationRepo;
+    private TransferRepo transferRepo;
 
     final static Logger LOGGER = Logger.getLogger(Ledger.class);
 
@@ -28,6 +29,7 @@ public class Ledger {
         this.curPageRepo = factory.getCurrentPageRepository();
         this.histPageRepo = factory.getHistoricalPageRepository();
         this.reservationRepo = factory.getReservationRepository();
+        this.transferRepo = factory.getTransferRepo();
     }
 
     public Account getExistingById(Long accountId) throws LedgerException {
@@ -73,7 +75,7 @@ public class Ledger {
                            String          iban,
                            AccountType     accountType) {
         final AccountAttributes attributes = AccountAttributes.createNew(accountNumber, iban, accountType);
-        final Page page = Page.create(BigDecimal.ZERO, BigDecimal.ZERO);
+        final Page page = Page.create(attributes.getAccountUUID(), BigDecimal.ZERO, BigDecimal.ZERO);
         final Account account = new Account(this);
         final Long accountId = getAttrRepo().insert(attributes);
         account.setAccountId(accountId);
@@ -127,11 +129,11 @@ public class Ledger {
         transfer.setReportedOn(reportedOn);
         transfer.setDescription(description);
         transfer.setPostedAt(postedAt);
-        transfer.setDebitUuid(debit.getAttributes().getEntity().getAccountUUID());
-        transfer.setCreditUuid(credit.getAttributes().getEntity().getAccountUUID());
-//        final IdentifiedEntity<Transfer> iTransfer = this.transferRepo.insert(transfer);
+        transfer.setDebitPageUuid(debit.getCurrentPage().getEntity().getUuid());
+        transfer.setCreditPageUuid(credit.getCurrentPage().getEntity().getUuid());
         debit.debit(transfer);
-        credit.credit(transfer.getNegate());
+        credit.credit(transfer);
+        this.transferRepo.reg(transfer.getTransferUuid(), transfer.getDebitPageUuid(), transfer.getCreditPageUuid());
         LOGGER.info(" Transferring ".concat(transferRef).concat(" SUCCEED"));
         return transfer;
     }
@@ -283,6 +285,21 @@ public class Ledger {
         return this.reservationRepo;
     }
 
+    public TransferRepo getTransferRepo() {
+        return this.transferRepo;
+    }
+
+    public Page getPage(final String uuid) throws LedgerException {
+        IdentifiedEntity<Page> page = this.getCurPageRepo().getByUuid(uuid);
+        if (page == null) {
+            page = this.getHistPageRepo().getByUuid(uuid);
+        }
+        if (page == null) {
+            throw LedgerException.pageNotExist(uuid);
+        }
+        return page.getEntity();
+    }
+
     /**
      *
      * @param tr
@@ -290,9 +307,11 @@ public class Ledger {
      * @throws LedgerException
      */
     public TransferData createTransferResponseBody(Transfer tr) throws LedgerException {
-        final com.virhon.fintech.gl.model.Account debit = this.getExistingByUuid(tr.getDebitUuid());
+        final Page debitPage = getPage(tr.getDebitPageUuid());
+        final Account debit = this.getExistingByUuid(debitPage.getAccountUuid());
         final AccountAttributes debAttr = debit.getAttributes().getEntity();
-        final com.virhon.fintech.gl.model.Account credit = this.getExistingByUuid(tr.getCreditUuid());
+        final Page creditPage = getPage(tr.getCreditPageUuid());
+        final Account credit = this.getExistingByUuid(creditPage.getAccountUuid());
         final AccountAttributes creAttr = credit.getAttributes().getEntity();
         final TransferData response = new TransferData();
         response.setUuid(tr.getTransferUuid());
@@ -390,7 +409,6 @@ public class Ledger {
     public static class ReportingCollection extends Balances {
         private LocalDate startedOn;
         private LocalDate finishedOn;
-
 
         public LocalDate getStartedOn() {
             return startedOn;

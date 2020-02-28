@@ -60,8 +60,11 @@ public class Account {
      *
      * @param tr
      * @throws LedgerException
+     *
+     * @return              UUID of the page, the transfer was added into
      */
-    private void registerTransfer(Transfer tr) throws LedgerException {
+    private String registerTransfer(Transfer tr) throws LedgerException {
+        String result;
         final IdentifiedEntity<AccountAttributes> attributes = this.ledger.getAttrRepo()
                 .getByIdExclusive(this.accountId);
         if (attributes == null) {
@@ -78,41 +81,42 @@ public class Account {
             if (currentPage.getEntity().hasNext()) {
                 currentPage.getEntity().addTransfer(tr);
                 this.ledger.getCurPageRepo().put(currentPage);
+                result = currentPage.getEntity().getUuid();
             } else {
                 final Page hPage = currentPage.getEntity();
-                final Page cPage = Page.create(hPage.getFinishedAt(),
+                final Page cPage = Page.create(attributes.getEntity().getAccountUUID(), hPage.getFinishedAt(),
                         hPage.getRepFinishedOn(), hPage.getFinishBalance(), hPage.getFinishRepBalance());
                 cPage.addTransfer(tr);
                 final IdentifiedEntity<Page> cidPage = new IdentifiedEntity<>(this.accountId, cPage);
                 this.ledger.getCurPageRepo().put(cidPage);
                 this.ledger.getHistPageRepo().insert(this.accountId, hPage);
+                result = cPage.getUuid();
             }
             this.ledger.getAttrRepo().update(attributes);
+            return result;
         }
     }
 
-    private BigDecimal operate(Transfer tr)
+    public String operate(Transfer tr)
             throws LedgerException {
-        registerTransfer(tr);
-        return getAttributes().getEntity().getBalance();
+        String opName = "Debting";
+        if (tr.getAmount().signum() == -1) {
+            opName = "Crediting";
+        }
+        LOGGER.info(opName.concat(" account id=").concat(accountId.toString())
+                .concat(" for ".concat(tr.getAmount().toString())));
+        final String pageUuid = registerTransfer(tr);
+        LOGGER.info("OK Resulting balance = ".concat(getAttributes().getEntity().getBalance().toString()));
+        return pageUuid;
     }
 
-    public BigDecimal credit(Transfer tr)
-            throws LedgerException {
-        LOGGER.info("Crediting account id=".concat(accountId.toString())
-                .concat(" for ".concat(tr.getAmount().toString())));
-        final BigDecimal balance = operate(tr);
-        LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
-        return balance;
+    public String credit(Transfer tr) throws LedgerException {
+        return operate(tr.getNegate());
     }
 
-    public BigDecimal debit(Transfer tr)
+    public String debit(Transfer tr)
             throws LedgerException {
-        LOGGER.info("Debting account id=".concat(accountId.toString())
-                .concat(" for ".concat(tr.getAmount().toString())));
-        final BigDecimal balance = operate(tr);
-        LOGGER.info("OK Resulting balance = ".concat(balance.toString()));
-        return balance;
+        return operate(tr);
     }
 
     /**

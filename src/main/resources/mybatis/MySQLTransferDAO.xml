@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.virhon.fintech.gl.repo.mysql.transfer.MySQLTransferDAO">
+    <!--auto generated Code-->
+    <resultMap id="transferResult" type="com.virhon.fintech.gl.repo.mysql.transfer.MySQLTransferRecord">
+        <result column="id" property="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+        <result column="uuid" property="uuid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="debit_page_uuid" property="debitPageUuid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="credit_page_uuid" property="creditPageUuid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <insert id="insert" parameterType="transfer" useGeneratedKeys="true" keyProperty="pojo.id" keyColumn="id">
+        INSERT INTO ${tablename} (
+        `uuid`,
+        `debit_page_uuid`,
+        `credit_page_uuid`
+        ) VALUES (
+        #{pojo.uuid},
+        #{pojo.debitPageUuid},
+        #{pojo.creditPageUuid}
+        )
+        <selectKey keyProperty="pojo.id" resultType="long" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE ${tablename}
+        <set>
+            <if test="pojo.uuid != null"> `uuid` = #{pojo.uuid}, </if>
+            <if test="pojo.debitPageUuid != null"> `debit_page_uuid` = #{pojo.debitPageUuid}, </if>
+            <if test="pojo.creditPageUuid != null"> `credit_page_uuid` = #{pojo.creditPageUuid}, </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="selectById" parameterType="long" resultMap="transferResult">
+        select * from ${tablename} where id = #{id}
+    </select>
+
+    <select id="selectByUuid" parameterType="string" resultMap="transferResult">
+        select * from ${tablename} where uuid = #{uuid}
+    </select>
+
+</mapper>

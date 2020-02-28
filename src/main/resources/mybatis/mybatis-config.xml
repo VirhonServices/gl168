@@ -10,6 +10,7 @@
         <typeAlias type="com.virhon.fintech.gl.repo.mysql.currentpage.MySQLCurrentPageRecord" alias="current_page" />
         <typeAlias type="com.virhon.fintech.gl.repo.mysql.historicalpage.MySQLHistoricalPageRecord" alias="historical_page" />
         <typeAlias type="com.virhon.fintech.gl.repo.mysql.reservation.MySQLReservationRecord" alias="reservation" />
+        <typeAlias type="com.virhon.fintech.gl.repo.mysql.transfer.MySQLTransferRecord" alias="transfer" />
     </typeAliases>
     <environments default="development">
         <environment id="development">
@@ -27,5 +28,6 @@
         <mapper resource="mybatis/MySQLCurrentPageDAO.xml" />
         <mapper resource="mybatis/MySQLHistoricalPageDAO.xml" />
         <mapper resource="mybatis/MySQLReservationDAO.xml" />
+        <mapper resource="mybatis/MySQLTransferDAO.xml" />
     </mappers>
 </configuration>
