@@ -3,7 +3,7 @@ package com.virhon.fintech.gl.api;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public class SeparatedDateTime {
+public class SeparatedDateTime extends RequestValidator {
     private Integer year;
     private Integer month;
     private Integer day;

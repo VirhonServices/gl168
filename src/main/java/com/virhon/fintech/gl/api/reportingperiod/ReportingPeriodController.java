@@ -29,6 +29,9 @@ public class ReportingPeriodController {
                                                 @PathVariable String accountUuid,
                                                 @RequestBody ReportingPeriodRequest request) {
         try {
+            request.checkNotNullAllFields();
+            request.getBeginOn().checkNotNullAllFields();
+            request.getFinishOn().checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account account = ledger.getExistingByUuid(accountUuid);
             final AccountAttributes attr = account.getAttributes().getEntity();

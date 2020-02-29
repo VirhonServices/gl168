@@ -1,8 +1,9 @@
 package com.virhon.fintech.gl.api.reportingperiod;
 
+import com.virhon.fintech.gl.api.RequestValidator;
 import com.virhon.fintech.gl.api.SeparatedDate;
 
-public class ReportingPeriodRequest {
+public class ReportingPeriodRequest extends RequestValidator {
     private SeparatedDate beginOn;
     private SeparatedDate finishOn;
 

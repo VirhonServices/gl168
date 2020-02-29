@@ -2,7 +2,7 @@ package com.virhon.fintech.gl.api;
 
 import java.time.LocalDate;
 
-public class SeparatedDate {
+public class SeparatedDate extends RequestValidator{
     private Integer year;
     private Integer month;
     private Integer day;

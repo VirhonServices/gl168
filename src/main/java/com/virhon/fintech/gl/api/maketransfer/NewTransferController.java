@@ -29,6 +29,7 @@ public class NewTransferController {
                                           @PathVariable(required = true) String debitAccountUuid,
                                           @Valid @RequestBody NewTransferRequestBody request) {
         try {
+            request.checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account debit = ledger.getExistingByUuid(debitAccountUuid);
             final Account credit = ledger.getExistingByUuid(request.getCreditAccountUuid());

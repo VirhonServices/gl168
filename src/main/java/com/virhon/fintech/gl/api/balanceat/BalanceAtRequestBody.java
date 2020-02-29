@@ -1,6 +1,8 @@
 package com.virhon.fintech.gl.api.balanceat;
 
-public class BalanceAtRequestBody {
+import com.virhon.fintech.gl.api.RequestValidator;
+
+public class BalanceAtRequestBody extends RequestValidator {
     private Integer year;
     private Integer month;
     private Integer day;

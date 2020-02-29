@@ -23,6 +23,7 @@ public class AccountsController {
     public ResponseEntity<?> openNewAccount(@PathVariable String currencyCode,
                                             @RequestBody NewAccountRequestBody request) {
         try {
+            request.checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account account =
                     ledger.openNew(request.getAccNumber(), request.getIban(), AccountType.valueOf(request.getAccType()));

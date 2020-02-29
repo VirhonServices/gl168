@@ -28,6 +28,7 @@ public class BalanceAtController {
                                           @PathVariable String accountUuid,
                                           @RequestBody BalanceAtRequestBody request) {
         try {
+            request.checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             final ZonedDateTime at = Tool.buildByDefault(request.getYear(), request.getMonth(), request.getDay(),
                     request.getHour(), request.getMinute(), request.getSecond(), request.getNanoOfSecond(),

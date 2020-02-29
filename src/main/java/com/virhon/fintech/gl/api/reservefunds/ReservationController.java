@@ -25,6 +25,7 @@ public class ReservationController {
                                           @PathVariable String debitAccountUuid,
                                           @RequestBody NewReservationRequest request) {
         try {
+            request.checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             final IdentifiedEntity<Reservation> iRes = ledger.reserveFunds(request.getTransferRef(), debitAccountUuid,
                     request.getCreditAccountUuid(), request.getAmount(), request.getDescription());

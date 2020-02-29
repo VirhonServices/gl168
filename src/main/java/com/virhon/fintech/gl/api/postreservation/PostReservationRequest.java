@@ -1,10 +1,11 @@
 package com.virhon.fintech.gl.api.postreservation;
 
+import com.virhon.fintech.gl.api.RequestValidator;
 import com.virhon.fintech.gl.api.SeparatedDate;
 
 import java.math.BigDecimal;
 
-public class PostReservationRequest {
+public class PostReservationRequest extends RequestValidator {
     private BigDecimal repAmount;
     private SeparatedDate reportedOn;
 

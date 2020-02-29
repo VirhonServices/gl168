@@ -38,6 +38,10 @@ public class LedgerException extends Exception {
         return new LedgerException(150, "Currency ".concat(currency).concat(" not supported"));
     }
 
+    public static LedgerException notNullValue(String valueName) {
+        return new LedgerException(160, "The value ".concat(valueName).concat(" can't be null"));
+    }
+
     public static LedgerException redBalance(String accountNumber) {
         return new LedgerException(200, "Red balance on the account ".concat(accountNumber));
     }

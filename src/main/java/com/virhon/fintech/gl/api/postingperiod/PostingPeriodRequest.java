@@ -1,8 +1,9 @@
 package com.virhon.fintech.gl.api.postingperiod;
 
+import com.virhon.fintech.gl.api.RequestValidator;
 import com.virhon.fintech.gl.api.SeparatedDateTime;
 
-public class PostingPeriodRequest {
+public class PostingPeriodRequest extends RequestValidator {
     private SeparatedDateTime startedAt;
     private SeparatedDateTime finishedAt;
 
@@ -21,4 +22,5 @@ public class PostingPeriodRequest {
     public void setFinishedAt(SeparatedDateTime finishedAt) {
         this.finishedAt = finishedAt;
     }
+
 }

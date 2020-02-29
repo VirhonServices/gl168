@@ -1,8 +1,10 @@
 package com.virhon.fintech.gl.api.reservefunds;
 
+import com.virhon.fintech.gl.api.RequestValidator;
+
 import java.math.BigDecimal;
 
-public class NewReservationRequest {
+public class NewReservationRequest extends RequestValidator {
     private String transferRef;
     private String creditAccountUuid;
     private BigDecimal amount;

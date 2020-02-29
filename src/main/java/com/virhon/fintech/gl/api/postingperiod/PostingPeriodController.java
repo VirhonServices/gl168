@@ -29,8 +29,11 @@ public class PostingPeriodController {
     @PostMapping
     public ResponseEntity<?> getPostingPeriod(@PathVariable String currencyCode,
                                               @PathVariable String accountUuid,
-                                              @Valid @RequestBody PostingPeriodRequest request) {
+                                              @RequestBody PostingPeriodRequest request) {
         try {
+            request.checkNotNullAllFields();
+            request.getStartedAt().checkNotNullAllFields();
+            request.getFinishedAt().checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account account = ledger.getExistingByUuid(accountUuid);
             final AccountAttributes attr = account.getAttributes().getEntity();

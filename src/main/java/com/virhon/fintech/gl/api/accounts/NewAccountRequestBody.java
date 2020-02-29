@@ -1,6 +1,8 @@
 package com.virhon.fintech.gl.api.accounts;
 
-public class NewAccountRequestBody {
+import com.virhon.fintech.gl.api.RequestValidator;
+
+public class NewAccountRequestBody extends RequestValidator {
     private String accType;
     private String accNumber;
     private String iban;

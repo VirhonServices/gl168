@@ -1,22 +1,18 @@
 package com.virhon.fintech.gl.api.maketransfer;
 
+import com.virhon.fintech.gl.api.RequestValidator;
 import com.virhon.fintech.gl.api.SeparatedDate;
+import com.virhon.fintech.gl.exception.LedgerException;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
-public class NewTransferRequestBody {
-    @NotNull
+public class NewTransferRequestBody extends RequestValidator {
     private String transferRef;
-    @NotNull
     private String creditAccountUuid;
-    @NotNull
     private BigDecimal amount;
-    @NotNull
     private BigDecimal repAmount;
-    @NotNull(message = "reportedOn must be defined")
     private SeparatedDate reportedOn;
-    @NotNull
     private String description;
 
     public String getTransferRef() {

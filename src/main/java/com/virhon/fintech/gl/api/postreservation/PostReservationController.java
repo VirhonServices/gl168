@@ -27,6 +27,8 @@ public class PostReservationController {
                                              @PathVariable String reservationUuid,
                                              @RequestBody PostReservationRequest request) {
         try {
+            request.checkNotNullAllFields();
+            request.getReportedOn().checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             final IdentifiedEntity<Reservation> iRes = ledger.getReservationRepo().getByUuid(reservationUuid);
             final Reservation res = iRes.getEntity();
