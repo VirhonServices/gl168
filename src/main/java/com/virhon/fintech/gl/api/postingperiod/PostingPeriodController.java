@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class PostingPeriodController {
     @PostMapping
     public ResponseEntity<?> getPostingPeriod(@PathVariable String currencyCode,
                                               @PathVariable String accountUuid,
-                                              @RequestBody PostingPeriodRequest request) {
+                                              @Valid @RequestBody PostingPeriodRequest request) {
         try {
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account account = ledger.getExistingByUuid(accountUuid);

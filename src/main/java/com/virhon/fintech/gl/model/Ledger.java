@@ -534,6 +534,4 @@ public class Ledger {
         collection.setTransfers(periodTransfers);
         return collection;
     }
-
-
 }

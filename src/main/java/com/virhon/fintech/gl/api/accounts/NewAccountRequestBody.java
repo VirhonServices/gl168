@@ -1,13 +1,9 @@
 package com.virhon.fintech.gl.api.accounts;
 
-import javax.validation.constraints.NotNull;
-
 public class NewAccountRequestBody {
-    @NotNull(message = "Account's type can't be null")
     private String accType;
     private String accNumber;
     private String iban;
-    @NotNull(message = "Account's currency must be defined")
 
     public String getAccType() {
         return accType;
