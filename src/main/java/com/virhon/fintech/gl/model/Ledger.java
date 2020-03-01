@@ -71,10 +71,22 @@ public class Ledger {
         return account;
     }
 
-    public Account openNew(String          accountNumber,
+    /**
+     *
+     * @param clientUuid
+     * @param clientCustomerId
+     * @param accountNumber
+     * @param iban
+     * @param accountType
+     * @return
+     */
+    public Account openNew(String          clientUuid,
+                           String          clientCustomerId,
+                           String          accountNumber,
                            String          iban,
                            AccountType     accountType) {
-        final AccountAttributes attributes = AccountAttributes.createNew(accountNumber, iban, accountType);
+        final AccountAttributes attributes = AccountAttributes.createNew(clientUuid, clientCustomerId, accountNumber,
+                iban, accountType);
         final Page page = Page.create(attributes.getAccountUUID(), BigDecimal.ZERO, BigDecimal.ZERO);
         final Account account = new Account(this);
         final Long accountId = getAttrRepo().insert(attributes);
@@ -96,13 +108,16 @@ public class Ledger {
      * @return
      * @throws LedgerException
      */
-    public Transfer transferFunds(final String     transferRef,
-                                  final Long       debitId,
-                                  final Long       creditId,
-                                  final BigDecimal amount,
-                                  final BigDecimal localAmount,
-                                  final LocalDate  reportedOn,
-                                  final String     description) throws LedgerException {
+    public Transfer transferFunds(final String          transferRef,
+                                  final String          clientUuid,
+                                  final String          clientCustomerId,
+                                  final Long            debitId,
+                                  final Long            creditId,
+                                  final BigDecimal      amount,
+                                  final BigDecimal      localAmount,
+                                  final ZonedDateTime   postedAt,
+                                  final LocalDate       reportedOn,
+                                  final String          description) throws LedgerException {
         LOGGER.info(transferRef.concat(" Transferring ".concat(amount.toString())
                 .concat(" from ".concat(debitId.toString().concat(" to ").concat(creditId.toString())))));
         // Check sign of amount
@@ -120,10 +135,11 @@ public class Ledger {
             throw LedgerException.accountCantBeOperated(creditId);
         }
         // Do transfer
-        final ZonedDateTime postedAt = ZonedDateTime.now();
         final Transfer transfer = new Transfer();
         transfer.setTransferRef(transferRef);
         transfer.setTransferUuid(UUID.randomUUID().toString());
+        transfer.setClientUuid(clientUuid);
+        transfer.setClientCustomerId(clientCustomerId);
         transfer.setAmount(amount);
         transfer.setLocalAmount(localAmount);
         transfer.setReportedOn(reportedOn);
@@ -133,10 +149,37 @@ public class Ledger {
         transfer.setCreditPageUuid(credit.getCurrentPage().getEntity().getUuid());
         debit.debit(transfer);
         credit.credit(transfer);
-        this.transferRepo.reg(transfer.getTransferUuid(), transfer.getDebitPageUuid(), transfer.getCreditPageUuid());
+        this.transferRepo.reg(transfer.getTransferUuid(), transfer.getClientUuid(), transfer.getClientCustomerId(),
+                transfer.getDebitPageUuid(), transfer.getCreditPageUuid());
         LOGGER.info(" Transferring ".concat(transferRef).concat(" SUCCEED"));
         return transfer;
     }
+
+    /**
+     *
+     * @param transferRef
+     * @param debitId
+     * @param creditId
+     * @param amount
+     * @param localAmount
+     * @param reportedOn
+     * @param description
+     * @return
+     * @throws LedgerException
+     */
+    public Transfer transferFunds(final String          transferRef,
+                                  final String          clientUuid,
+                                  final String          clientCustomerId,
+                                  final Long            debitId,
+                                  final Long            creditId,
+                                  final BigDecimal      amount,
+                                  final BigDecimal      localAmount,
+                                  final LocalDate       reportedOn,
+                                  final String          description) throws LedgerException {
+        return transferFunds(transferRef, clientUuid, clientCustomerId, debitId, creditId, amount,
+                localAmount, ZonedDateTime.now(), reportedOn, description);
+    }
+
 
     /**
      *
@@ -150,6 +193,8 @@ public class Ledger {
      * @return
      */
     public Transfer transferFunds(final String     transferRef,
+                                  final String     clientUuid,
+                                  final String     clientCustomerId,
                                   final String     debitUuid,
                                   final String     creditUuid,
                                   final BigDecimal amount,
@@ -158,8 +203,37 @@ public class Ledger {
                                   final String     description) throws LedgerException {
         final Account debit = getExistingByUuid(debitUuid);
         final Account credit = getExistingByUuid(creditUuid);
-        return transferFunds(transferRef, debit.getAccountId(), credit.getAccountId(),
+        return transferFunds(transferRef, clientUuid, clientCustomerId, debit.getAccountId(), credit.getAccountId(),
                 amount, localAmount, reportedOn, description);
+    }
+
+    /**
+     *
+     * @param transferRef
+     * @param debitUuid
+     * @param creditUuid
+     * @param amount
+     * @param localAmount
+     * @param postedAt
+     * @param reportedOn
+     * @param description
+     * @return
+     * @throws LedgerException
+     */
+    public Transfer transferFunds(final String          transferRef,
+                                  final String          clientUuid,
+                                  final String          clientCustomerId,
+                                  final String          debitUuid,
+                                  final String          creditUuid,
+                                  final BigDecimal      amount,
+                                  final BigDecimal      localAmount,
+                                  final ZonedDateTime   postedAt,
+                                  final LocalDate       reportedOn,
+                                  final String          description) throws LedgerException {
+        final Account debit = getExistingByUuid(debitUuid);
+        final Account credit = getExistingByUuid(creditUuid);
+        return transferFunds(transferRef, clientUuid, clientCustomerId, debit.getAccountId(), credit.getAccountId(),
+                amount, localAmount, postedAt, reportedOn, description);
     }
 
     /**
@@ -173,13 +247,16 @@ public class Ledger {
      * @throws LedgerException
      */
     public IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
+                                                      final String     clientUuid,
+                                                      final String     clientCustomerId,
                                                       final String     debitUuid,
                                                       final String     creditUuid,
                                                       final BigDecimal amount,
                                                       final String     description) throws LedgerException {
         final Account debit = getExistingByUuid(debitUuid);
         final Account credit = getExistingByUuid(creditUuid);
-        return reserveFunds(transferRef, debit.getAccountId(), credit.getAccountId(), amount, description);
+        return reserveFunds(transferRef, clientUuid, clientCustomerId,
+                debit.getAccountId(), credit.getAccountId(), amount, description);
     }
 
     /**
@@ -193,6 +270,8 @@ public class Ledger {
      * @throws LedgerException
      */
     public IdentifiedEntity<Reservation> reserveFunds(final String     transferRef,
+                                                      final String     clientUuid,
+                                                      final String     clientCustomerId,
                                                       final Long       debitId,
                                                       final Long       creditId,
                                                       final BigDecimal amount,
@@ -200,6 +279,8 @@ public class Ledger {
         // 1. Create a reservation
         final Reservation reservation = new Reservation();
         reservation.setUuid(UUID.randomUUID().toString());
+        reservation.setClientUuid(clientUuid);
+        reservation.setClientCustomerId(clientCustomerId);
         reservation.setTransferRef(transferRef);
         reservation.setDebitId(debitId);
         reservation.setCreditId(creditId);
@@ -245,11 +326,15 @@ public class Ledger {
                                     final LocalDate    reportedOn) throws LedgerException {
         // 1. Get the reservation
         final IdentifiedEntity<Reservation> reservation = reservationRepo.getById(id);
+        final String clientUuid = reservation.getEntity().getClientUuid();
+        final String clientCustomerId = reservation.getEntity().getClientCustomerId();
         final Long debitId = reservation.getEntity().getDebitId();
         final Long creditId = reservation.getEntity().getCreditId();
         final BigDecimal amount = reservation.getEntity().getAmount();
         // 2. Make new transfer
         final Transfer transfer = transferFunds(reservation.getEntity().getTransferRef(),
+                                                                  clientUuid,
+                                                                  clientCustomerId,
                                                                   debitId,
                                                                   creditId,
                                                                   amount,
@@ -316,6 +401,8 @@ public class Ledger {
         final TransferData response = new TransferData();
         response.setUuid(tr.getTransferUuid());
         response.setTransferRef(tr.getTransferRef());
+        response.setClientUuid(tr.getClientUuid());
+        response.setClientCustomerId(tr.getClientCustomerId());
         response.setPostedAt(tr.getPostedAt().toString());
         response.setReportedOn(tr.getReportedOn().toString());
         response.setAmount(tr.getAmount());

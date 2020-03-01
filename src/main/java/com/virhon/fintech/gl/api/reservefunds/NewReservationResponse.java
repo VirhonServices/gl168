@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 public class NewReservationResponse {
     private String uuid;
     private String transferRef;
+    private String clientUuid;
+    private String clientCustomerId;
     private String debitAccountUuid;
     private String creditAccountUuid;
     private BigDecimal amount;
@@ -25,6 +27,22 @@ public class NewReservationResponse {
 
     public void setTransferRef(String transferRef) {
         this.transferRef = transferRef;
+    }
+
+    public String getClientUuid() {
+        return clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
     }
 
     public String getDebitAccountUuid() {

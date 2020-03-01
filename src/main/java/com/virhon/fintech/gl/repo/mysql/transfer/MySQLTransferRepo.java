@@ -13,9 +13,12 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
     }
 
     @Override
-    public Long reg(String uuid, String debitPageUuid, String creditPageUuid) {
+    public Long reg(String uuid, String clientUuid, String clientCustomerId,
+                    String debitPageUuid, String creditPageUuid) {
         final MySQLTransferRecord record = new MySQLTransferRecord();
         record.setUuid(uuid);
+        record.setClientUuid(clientUuid);
+        record.setClientCustomerId(clientCustomerId);
         record.setDebitPageUuid(debitPageUuid);
         record.setCreditPageUuid(creditPageUuid);
         return getMapper().insert(getTablename(), record);
@@ -27,6 +30,8 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
         if (record != null) {
             final TransferPages pages = new TransferPages();
             pages.setTransferUuid(record.getUuid());
+            pages.setClientUuid(record.getClientUuid());
+            pages.setClientCustomerId(record.getClientCustomerId());
             pages.setDebitPageUuid(record.getDebitPageUuid());
             pages.setCreditPageUuid(record.getCreditPageUuid());
             return pages;
@@ -40,6 +45,8 @@ public class MySQLTransferRepo extends MySQLAbstactRepo<MySQLTransferDAO> implem
         if (record != null) {
             final TransferPages pages = new TransferPages();
             pages.setTransferUuid(record.getUuid());
+            pages.setClientUuid(record.getClientUuid());
+            pages.setClientCustomerId(record.getClientCustomerId());
             pages.setDebitPageUuid(record.getDebitPageUuid());
             pages.setCreditPageUuid(record.getCreditPageUuid());
             return pages;

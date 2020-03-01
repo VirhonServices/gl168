@@ -33,7 +33,9 @@ public class NewTransferController {
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account debit = ledger.getExistingByUuid(debitAccountUuid);
             final Account credit = ledger.getExistingByUuid(request.getCreditAccountUuid());
-            final Transfer tr = ledger.transferFunds(request.getTransferRef(), debit.getAccountId(),
+            // TODO: 02.03.20  
+            final Transfer tr = ledger.transferFunds(request.getTransferRef(), "Client's UUID must be here",
+                    "CLientCustomerId", debit.getAccountId(),
                     credit.getAccountId(), request.getAmount(), request.getRepAmount(),
                     request.getReportedOn().asLocalDate(), request.getDescription());
             final TransferData response = ledger.createTransferResponseBody(tr);

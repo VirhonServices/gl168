@@ -1,6 +1,9 @@
 package com.virhon.fintech.gl.api.accountinformation;
 
+import com.virhon.fintech.gl.TestDataMacros;
 import com.virhon.fintech.gl.api.Application;
+import com.virhon.fintech.gl.model.Account;
+import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -20,6 +23,12 @@ public class AccountInformationControllerTest extends AbstractTestNGSpringContex
     @Autowired
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private TestDataMacros macros;
+
+    @Autowired
+    private MySQLGeneralLedger gl;
+
     private MockMvc mockMvc;
 
     @BeforeClass
@@ -29,20 +38,22 @@ public class AccountInformationControllerTest extends AbstractTestNGSpringContex
 
     @Test
     public void testGet200() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/uah/accounts/03bb9d86-3716-4018-883e-78bd2222ddee")
+        final String accountUuid = macros.getObjectUuid("PASSIVE_SINGLE_HISTORY2");
+        final Account account = gl.getLedger("UAH").getExistingByUuid(accountUuid);
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/uah/accounts/".concat(accountUuid))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.accNumber").value("26003000078365"));
+                .andExpect(jsonPath("$.accNumber").value(account.getAttributes().getEntity().getAccountNumber()));
     }
 
     @Test
     public void testGetInvalidCurrency() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/bhd/accounts/03bb9d86-3716-4018-883e-78bd2222ddee")
+        final String accountUuid = macros.getObjectUuid("PASSIVE_SINGLE_HISTORY2");
+        final Account account = gl.getLedger("UAH").getExistingByUuid(accountUuid);
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/bhd/accounts/".concat(accountUuid))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.code").value(150));
+                .andExpect(status().isBadRequest());
     }
 
     @Test

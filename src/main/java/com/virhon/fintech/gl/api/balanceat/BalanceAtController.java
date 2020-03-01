@@ -39,6 +39,8 @@ public class BalanceAtController {
             }
             final AccountAttributes attr = account.getAttributes().getEntity();
             final BalanceAtResponseBody response = new BalanceAtResponseBody();
+            response.setClientUuid(attr.getClientUuid());
+            response.setClientCustomerId(attr.getClientCustomerId());
             response.setAccNumber(attr.getAccountNumber());
             response.setAccType(attr.getAccountType().toString());
             response.setAt(at.toString());

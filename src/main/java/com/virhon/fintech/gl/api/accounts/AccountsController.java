@@ -25,11 +25,15 @@ public class AccountsController {
         try {
             request.checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
+            // TODO: 02.03.20 change uuids
             final Account account =
-                    ledger.openNew(request.getAccNumber(), request.getIban(), AccountType.valueOf(request.getAccType()));
+                    ledger.openNew(request.getAccNumber(),"CLIENT_UUID", "clientCustomerId",
+                            request.getIban(), AccountType.valueOf(request.getAccType()));
             final IdentifiedEntity<AccountAttributes> attr = ledger.getAttrRepo().getById(account.getAccountId());
             this.gl.commit();
             final NewAccountResponseBody response = new NewAccountResponseBody();
+            response.setClientUuid(attr.getEntity().getClientUuid());
+            response.setClientCustomerId(attr.getEntity().getClientCustomerId());
             response.setUuid(attr.getEntity().getAccountUUID());
             response.setAccNumber(attr.getEntity().getAccountNumber());
             response.setAccType(attr.getEntity().getAccountType().toString());

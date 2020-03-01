@@ -32,7 +32,7 @@ public class LedgerTest {
         final BigDecimal debitBalBefore = debit.getAttributes().getEntity().getBalance();
         final Account credit = uahLedger.getExistingByUuid(macros.getObjectUuid("PASSIVE_EMPTY2"));
         final BigDecimal creditBalBefore = credit.getAttributes().getEntity().getBalance();
-        final Transfer tr = uahLedger.transferFunds("TEST-REF-1", debit.getAccountId(),
+        final Transfer tr = uahLedger.transferFunds("TEST-REF-1", "CLIENT_UUID", "ClientCustomerId", debit.getAccountId(),
                 credit.getAccountId(), amount, amount,
                 LocalDate.now(), "Testing transfer");
         MySQLStorageConnection.getInstance().commit();
@@ -49,7 +49,7 @@ public class LedgerTest {
         final BigDecimal debitBalBefore = debit.getAttributes().getEntity().getBalance();
         final Account credit = uahLedger.getExistingByUuid(macros.getObjectUuid("PASSIVE_EMPTY2"));
         final BigDecimal creditBalBefore = credit.getAttributes().getEntity().getBalance();
-        final Transfer tr = uahLedger.transferFunds("TEST-REF-1", credit.getAccountId(),
+        final Transfer tr = uahLedger.transferFunds("TEST-REF-1", "CLIENT_UUID", "ClientCustomerId", credit.getAccountId(),
                 debit.getAccountId(), amount, amount,
                 LocalDate.now(), "Testing transfer");
     }
@@ -60,10 +60,10 @@ public class LedgerTest {
         final Account credit = uahLedger.getExistingByUuid(macros.getObjectUuid("ACTIVE2"));
         final BigDecimal balance = debit.getAttributes().getEntity().getBalance();
         final BigDecimal successAmount = balance.multiply(new BigDecimal("0.5")).negate();
-        uahLedger.reserveFunds("RESERVATION_REF1",debit.getAccountId(), credit.getAccountId(), successAmount,
-                "reservation-success");
-        uahLedger.reserveFunds("RESERVATION_REF2",debit.getAccountId(), credit.getAccountId(),
-                balance.negate(),"reservation-failed");
+        uahLedger.reserveFunds("RESERVATION_REF1","CLIENT_UUID", "ClientCustomerId",
+                debit.getAccountId(), credit.getAccountId(), successAmount,"reservation-success");
+        uahLedger.reserveFunds("RESERVATION_REF2","CLIENT_UUID", "ClientCustomerId",
+                debit.getAccountId(), credit.getAccountId(), balance.negate(),"reservation-failed");
     }
 
     @Test(priority = 4)
@@ -74,8 +74,9 @@ public class LedgerTest {
         final BigDecimal balance = debit.getAttributes().getEntity().getBalance();
         for (Integer i=0;i<10;i++) {
             final BigDecimal amount = new BigDecimal(i.toString());
-            res.add(uahLedger.reserveFunds("RESREF#".concat(i.toString()),debit.getAccountId(),
-                    credit.getAccountId(), amount,"reservation-test"));
+            res.add(uahLedger.reserveFunds("RESREF#".concat(i.toString()), "CLIENT_UUID",
+                    "ClientCustomerId", debit.getAccountId(),credit.getAccountId(), amount,
+                    "reservation-test"));
         }
         final Long id = res.get(3).getId();
         uahLedger.cancelReservation(id);

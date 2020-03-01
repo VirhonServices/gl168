@@ -32,9 +32,9 @@ public class PostReservationController {
             final Ledger ledger = gl.getLedger(currencyCode);
             final IdentifiedEntity<Reservation> iRes = ledger.getReservationRepo().getByUuid(reservationUuid);
             final Reservation res = iRes.getEntity();
-            final Transfer tr = ledger.transferFunds(res.getTransferRef(), res.getDebitId(),
-                                res.getCreditId(), res.getAmount(), request.getRepAmount(), request.getReportedOn().asLocalDate(),
-                                res.getDescription());
+            final Transfer tr = ledger.transferFunds(res.getTransferRef(), "Client's UUID must be here",
+                    "CLientCustomerId", res.getDebitId(), res.getCreditId(), res.getAmount(),
+                    request.getRepAmount(), request.getReportedOn().asLocalDate(), res.getDescription());
             gl.commit();
             final TransferData response = ledger.createTransferResponseBody(tr);
             return new ResponseEntity<>(response, HttpStatus.CREATED);

@@ -38,6 +38,8 @@ public class ReportingPeriodController {
             final Ledger.ReportingCollection collection = ledger.collectReportingData(account.getAccountId(),
                     request.getBeginOn().asLocalDate(), request.getFinishOn().asLocalDate());
             final PeriodResponse response = new PeriodResponse();
+            response.setClientUuid(attr.getClientUuid());
+            response.setClientCustomerId(attr.getClientCustomerId());
             response.setAccType(attr.getAccountType().toString());
             response.setAccNumber(attr.getAccountNumber());
             response.setIban(attr.getIban());

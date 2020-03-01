@@ -41,6 +41,8 @@ public class PeriodResponse {
     public static class TransferResponse {
         private String          transferUuid;
         private String          transferRef;
+        private String          clientUuid;
+        private String          clientCustomerId;
         private String          postedAt;
         private String          transferType;
         private BigDecimal      amount;
@@ -55,6 +57,10 @@ public class PeriodResponse {
             final TransferResponse tres = new TransferResponse();
             tres.setTransferUuid(tr.getTransferUuid());
             tres.setTransferRef(tr.getTransferRef());
+            tres.setClientUuid(tr.getClientUuid());
+            tres.setClientCustomerId(tr.getClientCustomerId());
+            tres.setClientUuid(tr.getClientUuid());
+            tres.setClientCustomerId(tr.getClientCustomerId());
             tres.setPostedAt(tr.getPostedAt().toString());
             tres.setAmount(tr.getAmount().abs());
             tres.setRepAmount(tr.getLocalAmount().abs());
@@ -63,6 +69,22 @@ public class PeriodResponse {
             tres.setDebitPageUuid(tr.getDebitPageUuid());
             tres.setCreditPageUuid(tr.getCreditPageUuid());
             return tres;
+        }
+
+        public String getClientUuid() {
+            return clientUuid;
+        }
+
+        public void setClientUuid(String clientUuid) {
+            this.clientUuid = clientUuid;
+        }
+
+        public String getClientCustomerId() {
+            return clientCustomerId;
+        }
+
+        public void setClientCustomerId(String clientCustomerId) {
+            this.clientCustomerId = clientCustomerId;
         }
 
         public String getTransferType() {
@@ -146,12 +168,30 @@ public class PeriodResponse {
         }
     }
 
+    private String clientUuid;
+    private String clientCustomerId;
     private String accType;
     private String accNumber;
     private String iban;
     private Balance open;
     private List<TransferResponse> transfers;
     private Balance closed;
+
+    public String getClientUuid() {
+        return clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
+    }
 
     public String getAccType() {
         return accType;

@@ -42,6 +42,8 @@ public class TransferData {
         }
     }
     private String uuid;
+    private String clientUuid;
+    private String clientCustomerId;
     private String transferRef;
     private String postedAt;
     private String reportedOn;
@@ -59,8 +61,24 @@ public class TransferData {
         this.uuid = uuid;
     }
 
+    public String getClientUuid() {
+        return this.clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return this.clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
+    }
+
     public String getTransferRef() {
-        return transferRef;
+        return this.transferRef;
     }
 
     public void setTransferRef(String transferRef) {
@@ -68,7 +86,7 @@ public class TransferData {
     }
 
     public String getPostedAt() {
-        return postedAt;
+        return this.postedAt;
     }
 
     public void setPostedAt(String postedAt) {
@@ -76,7 +94,7 @@ public class TransferData {
     }
 
     public String getReportedOn() {
-        return reportedOn;
+        return this.reportedOn;
     }
 
     public void setReportedOn(String reportedOn) {
@@ -84,7 +102,7 @@ public class TransferData {
     }
 
     public BigDecimal getAmount() {
-        return amount;
+        return this.amount;
     }
 
     public void setAmount(BigDecimal amount) {
@@ -92,7 +110,7 @@ public class TransferData {
     }
 
     public BigDecimal getRepAmount() {
-        return repAmount;
+        return this.repAmount;
     }
 
     public void setRepAmount(BigDecimal repAmount) {
@@ -100,7 +118,7 @@ public class TransferData {
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public void setDescription(String description) {
@@ -108,7 +126,7 @@ public class TransferData {
     }
 
     public Account getDebit() {
-        return debit;
+        return this.debit;
     }
 
     public void setDebit(Account debit) {
@@ -116,7 +134,7 @@ public class TransferData {
     }
 
     public Account getCredit() {
-        return credit;
+        return this.credit;
     }
 
     public void setCredit(Account credit) {

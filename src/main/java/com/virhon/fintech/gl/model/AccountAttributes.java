@@ -30,8 +30,11 @@ public class AccountAttributes {
      * @param accountType
      * @return
      */
-    public static AccountAttributes createNew(String accountNumber, String iban, AccountType accountType) {
+    public static AccountAttributes createNew(String clientUuid, String clientCustomerId, String accountNumber,
+                                              String iban, AccountType accountType) {
         AccountAttributes result = new AccountAttributes();
+        result.setClientUuid(clientUuid);
+        result.setClientCustomerId(clientCustomerId);
         result.accountNumber = accountNumber;
         result.accountType = accountType;
         result.accountUUID = UUID.randomUUID().toString();

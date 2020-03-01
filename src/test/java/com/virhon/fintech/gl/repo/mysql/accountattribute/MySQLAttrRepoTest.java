@@ -32,7 +32,8 @@ public class MySQLAttrRepoTest {
             final Long counter = 877 + generator.nextInt(100) + i * generator.nextInt(10000);
             final String accountNumber = "2600100".concat(counter.toString());
             final String iban = "UA6730587".concat(accountNumber);
-            final AccountAttributes attributes = AccountAttributes.createNew(accountNumber,iban, AccountType.PASSIVE);
+            final AccountAttributes attributes = AccountAttributes.createNew("clientUuid",
+                    "ClientCustomerId", accountNumber,iban, AccountType.PASSIVE);
             attributes.setBalance(new BigDecimal(i));
             final IdentifiedEntity<AccountAttributes> identifiedEntity = new IdentifiedEntity<>(i, attributes);
             final Long id = this.repo.insert(attributes);

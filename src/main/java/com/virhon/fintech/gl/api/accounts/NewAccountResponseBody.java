@@ -1,9 +1,9 @@
 package com.virhon.fintech.gl.api.accounts;
 
-import java.time.ZonedDateTime;
-
 public class NewAccountResponseBody {
     private String uuid;
+    private String clientUuid;
+    private String clientCustomerId;
     private String accType;
     private String accNumber;
     private String iban;
@@ -18,8 +18,24 @@ public class NewAccountResponseBody {
         this.uuid = uuid;
     }
 
+    public String getClientUuid() {
+        return this.clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return this.clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
+    }
+
     public String getAccType() {
-        return accType;
+        return this.accType;
     }
 
     public void setAccType(String accType) {
@@ -27,7 +43,7 @@ public class NewAccountResponseBody {
     }
 
     public String getAccNumber() {
-        return accNumber;
+        return this.accNumber;
     }
 
     public void setAccNumber(String accNumber) {
@@ -43,7 +59,7 @@ public class NewAccountResponseBody {
     }
 
     public String getCurrency() {
-        return currency;
+        return this.currency;
     }
 
     public void setCurrency(String currency) {
@@ -51,7 +67,7 @@ public class NewAccountResponseBody {
     }
 
     public String getOpenedAt() {
-        return openedAt;
+        return this.openedAt;
     }
 
     public void setOpenedAt(String openedAt) {

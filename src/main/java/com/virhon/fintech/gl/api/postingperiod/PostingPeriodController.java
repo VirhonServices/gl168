@@ -40,6 +40,8 @@ public class PostingPeriodController {
             final Ledger.PostingCollection collection = ledger.collectPostingData(account.getAccountId(),
                     request.getStartedAt().asDateTime(), request.getFinishedAt().asDateTime());
             final PeriodResponse response = new PeriodResponse();
+            response.setClientUuid(attr.getClientUuid());
+            response.setClientCustomerId(attr.getClientCustomerId());
             response.setAccType(attr.getAccountType().toString());
             response.setAccNumber(attr.getAccountNumber());
             response.setIban(attr.getIban());
