@@ -5,6 +5,8 @@ import java.time.ZonedDateTime;
 public class MySQLReservationRecord {
     private Long            id;
     private String          uuid;
+    private String          clientUuid;
+    private String          clientCustomerId;
     private ZonedDateTime   expireAt;
     private ZonedDateTime   closedAt;
     private String          reason;
@@ -24,6 +26,22 @@ public class MySQLReservationRecord {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getClientUuid() {
+        return clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
     }
 
     public ZonedDateTime getExpireAt() {

@@ -7,6 +7,8 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class AccountAttributes {
+    private String          clientUuid;
+    private String          clientCustomerId;
     private AccountType     accountType;
     private String          accountUUID;
     private String          accountNumber;
@@ -60,6 +62,22 @@ public class AccountAttributes {
                 return AmountType.CREDIT;
             }
         }
+    }
+
+    public String getClientUuid() {
+        return clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
     }
 
     public AmountType getBalanceType() {

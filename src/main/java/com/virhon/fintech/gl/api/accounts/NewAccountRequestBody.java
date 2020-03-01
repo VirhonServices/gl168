@@ -3,9 +3,18 @@ package com.virhon.fintech.gl.api.accounts;
 import com.virhon.fintech.gl.api.RequestValidator;
 
 public class NewAccountRequestBody extends RequestValidator {
+    private String clientCustomerId;
     private String accType;
     private String accNumber;
     private String iban;
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
+    }
 
     public String getAccType() {
         return accType;

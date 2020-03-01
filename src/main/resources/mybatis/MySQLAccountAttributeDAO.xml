@@ -5,6 +5,8 @@
     <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.accountattribute.MySQLAccountAttributeRecord">
         <result column="id" property="id"/>
         <result column="uuid" property="uuid"/>
+        <result column="client_uuid" property="clientUuid"/>
+        <result column="client_customer_id" property="clientCustomerId"/>
         <result column="account_number" property="accountNumber"/>
         <result column="iban" property="iban"/>
         <result column="closed_at" property="closedAt"/>
@@ -12,24 +14,18 @@
     </resultMap>
 
     <!--auto generated Code-->
-    <sql id="all_column">
-        `id`,
-        `transferUuid`,
-        `account_number`,
-        `iban`,
-        `closed_at`,
-        `data`
-    </sql>
-
-    <!--auto generated Code-->
     <insert id="insert" parameterType="account_attribute" useGeneratedKeys="true" keyProperty="pojo.id" keyColumn="id">
         INSERT INTO ${tablename} (
         `uuid`,
+        `client_uuid`,
+        `client_customer_id`,
         `account_number`,
         `iban`,
         `data`
         ) VALUES (
         #{pojo.uuid},
+        #{pojo.clientUuid},
+        #{pojo.clientCustomerId},
         #{pojo.accountNumber},
         #{pojo.iban},
         #{pojo.data}
@@ -44,6 +40,8 @@
         UPDATE ${tablename}
         <set>
             <if test="pojo.uuid != null"> `uuid` = #{pojo.uuid}, </if>
+            <if test="pojo.clientUuid != null"> `client_uuid` = #{pojo.clientUuid}, </if>
+            <if test="pojo.clientCustomerId != null"> `client_customer_id` = #{pojo.clientCustomerId}, </if>
             <if test="pojo.accountNumber != null"> `account_number` = #{pojo.accountNumber}, </if>
             <if test="pojo.iban != null"> `iban` = #{pojo.iban}, </if>
             <if test="pojo.closedAt != null"> `closed_at` = #{pojo.closedAt} </if>

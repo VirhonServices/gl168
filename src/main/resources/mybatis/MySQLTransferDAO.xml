@@ -5,6 +5,8 @@
     <resultMap id="transferResult" type="com.virhon.fintech.gl.repo.mysql.transfer.MySQLTransferRecord">
         <result column="id" property="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
         <result column="uuid" property="uuid" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        <result column="client_uuid" property="clientUuid"/>
+        <result column="client_customer_id" property="clientCustomerId"/>
         <result column="debit_page_uuid" property="debitPageUuid" javaType="java.lang.String" jdbcType="VARCHAR"/>
         <result column="credit_page_uuid" property="creditPageUuid" javaType="java.lang.String" jdbcType="VARCHAR"/>
     </resultMap>
@@ -13,10 +15,14 @@
     <insert id="insert" parameterType="transfer" useGeneratedKeys="true" keyProperty="pojo.id" keyColumn="id">
         INSERT INTO ${tablename} (
         `uuid`,
+        `client_uuid`,
+        `client_customer_id`,
         `debit_page_uuid`,
         `credit_page_uuid`
         ) VALUES (
         #{pojo.uuid},
+        #{pojo.clientUuid},
+        #{pojo.clientCustomerId},
         #{pojo.debitPageUuid},
         #{pojo.creditPageUuid}
         )
@@ -30,6 +36,8 @@
         UPDATE ${tablename}
         <set>
             <if test="pojo.uuid != null"> `uuid` = #{pojo.uuid}, </if>
+            <if test="pojo.clientUuid != null"> `client_uuid` = #{pojo.clientUuid}, </if>
+            <if test="pojo.clientCustomerId != null"> `client_customer_id` = #{pojo.clientCustomerId}, </if>
             <if test="pojo.debitPageUuid != null"> `debit_page_uuid` = #{pojo.debitPageUuid}, </if>
             <if test="pojo.creditPageUuid != null"> `credit_page_uuid` = #{pojo.creditPageUuid}, </if>
         </set>

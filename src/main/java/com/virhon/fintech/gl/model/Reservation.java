@@ -6,6 +6,8 @@ import java.time.ZonedDateTime;
 public class Reservation {
     private String          uuid;
     private String          transferRef;
+    private String          clientUuid;
+    private String          clientCustomerId;
     private Long            debitId;
     private Long            creditId;
     private BigDecimal      amount;
@@ -26,6 +28,22 @@ public class Reservation {
 
     public void setTransferRef(String transferRef) {
         this.transferRef = transferRef;
+    }
+
+    public String getClientUuid() {
+        return clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
     }
 
     public Long getDebitId() {

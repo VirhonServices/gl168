@@ -5,6 +5,8 @@ import java.time.ZonedDateTime;
 public class MySQLAccountAttributeRecord {
     private Long                id;
     private String              uuid;
+    private String              clientUuid;
+    private String              clientCustomerId;
     private String              accountNumber;
     private String              iban;
     private ZonedDateTime       closedAt;
@@ -24,6 +26,22 @@ public class MySQLAccountAttributeRecord {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getClientUuid() {
+        return clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
     }
 
     public String getAccountNumber() {

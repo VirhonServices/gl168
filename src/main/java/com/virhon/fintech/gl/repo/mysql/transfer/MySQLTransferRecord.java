@@ -3,6 +3,8 @@ package com.virhon.fintech.gl.repo.mysql.transfer;
 public class MySQLTransferRecord {
     private Long        id;
     private String      uuid;
+    private String      clientUuid;
+    private String      clientCustomerId;
     private String      debitPageUuid;
     private String      creditPageUuid;
 
@@ -20,6 +22,22 @@ public class MySQLTransferRecord {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getClientUuid() {
+        return clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
     }
 
     public String getDebitPageUuid() {

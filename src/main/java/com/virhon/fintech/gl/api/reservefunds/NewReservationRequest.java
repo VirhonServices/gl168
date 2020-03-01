@@ -5,10 +5,19 @@ import com.virhon.fintech.gl.api.RequestValidator;
 import java.math.BigDecimal;
 
 public class NewReservationRequest extends RequestValidator {
+    private String clientCustomerId;
     private String transferRef;
     private String creditAccountUuid;
     private BigDecimal amount;
     private String description;
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
+    }
 
     public String getTransferRef() {
         return transferRef;

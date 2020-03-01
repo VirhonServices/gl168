@@ -7,6 +7,8 @@ import java.time.ZonedDateTime;
 public class Transfer {
     private String          transferUuid;
     private String          transferRef;
+    private String          clientUuid;
+    private String          clientCustomerId;
     private ZonedDateTime   postedAt;
     private BigDecimal      amount;
     private BigDecimal      localAmount;
@@ -19,6 +21,8 @@ public class Transfer {
         final Transfer result = new Transfer();
         result.setTransferUuid(this.transferUuid);
         result.setTransferRef(this.getTransferRef());
+        result.setClientUuid(this.getClientUuid());
+        result.setClientCustomerId(this.getClientCustomerId());
         result.setPostedAt(this.getPostedAt());
         result.setAmount(this.getAmount().negate());
         result.setLocalAmount(this.getLocalAmount().negate());
@@ -27,6 +31,22 @@ public class Transfer {
         result.setDebitPageUuid(this.getDebitPageUuid());
         result.setCreditPageUuid(this.getCreditPageUuid());
         return result;
+    }
+
+    public String getClientUuid() {
+        return clientUuid;
+    }
+
+    public void setClientUuid(String clientUuid) {
+        this.clientUuid = clientUuid;
+    }
+
+    public String getClientCustomerId() {
+        return clientCustomerId;
+    }
+
+    public void setClientCustomerId(String clientCustomerId) {
+        this.clientCustomerId = clientCustomerId;
     }
 
     public String getTransferUuid() {

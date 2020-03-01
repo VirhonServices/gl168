@@ -5,6 +5,8 @@
     <resultMap id="AllColumnMap" type="com.virhon.fintech.gl.repo.mysql.reservation.MySQLReservationRecord">
         <result column="id" property="id"/>
         <result column="uuid" property="uuid"/>
+        <result column="client_uuid" property="clientUuid"/>
+        <result column="client_customer_id" property="clientCustomerId"/>
         <result column="expire_at" property="expireAt"/>
         <result column="closed_at" property="closedAt"/>
         <result column="reason" property="reason"/>
@@ -12,25 +14,19 @@
     </resultMap>
 
     <!--auto generated Code-->
-    <sql id="all_column">
-        `id`,
-        `uuid`,
-        `expire_at`,
-        `closed_at`,
-        `reason`,
-        `data`
-    </sql>
-
-    <!--auto generated Code-->
     <insert id="insert" parameterType="reservation" useGeneratedKeys="false" keyProperty="pojo.id" keyColumn="id">
         INSERT INTO ${tablename} (
         `uuid`,
+        `client_uuid`,
+        `client_customer_id`,
         `expire_at`,
         `closed_at`,
         `reason`,
         `data`
         ) VALUES (
         #{pojo.uuid},
+        #{pojo.clientUuid},
+        #{pojo.clientCustomerId},
         #{pojo.expireAt},
         #{pojo.closedAt},
         #{pojo.reason},
