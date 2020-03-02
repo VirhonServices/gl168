@@ -9,6 +9,8 @@ import java.util.Properties;
 @Configuration
 public class APIConfig {
     public static final String PROPERTIES_FILE_NAME = "/application.properties";
+    public static final String SECURE_WINDOW = "secure-window";
+    public static final String AUTH_LIST = "auth-list";
     private final Properties properties = new Properties();
 
     public APIConfig() throws IOException {
@@ -18,5 +20,14 @@ public class APIConfig {
 
     public final String getProperty(final String propertyName) {
         return properties.getProperty(propertyName);
+    }
+
+    public Integer getSecureWindow() {
+        final String result = getProperty(SECURE_WINDOW);
+        return Integer.valueOf(result);
+    }
+
+    public String getAuthFilename() {
+        return getProperty(AUTH_LIST);
     }
 }

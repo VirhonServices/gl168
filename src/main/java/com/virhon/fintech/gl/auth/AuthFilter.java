@@ -1,4 +1,4 @@
-package com.virhon.fintech.gl.api;
+package com.virhon.fintech.gl.auth;
 
 import org.springframework.stereotype.Component;
 
@@ -6,7 +6,7 @@ import javax.servlet.*;
 import java.io.IOException;
 
 @Component
-public class RequestValidatorFilter implements Filter {
+public class AuthFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 

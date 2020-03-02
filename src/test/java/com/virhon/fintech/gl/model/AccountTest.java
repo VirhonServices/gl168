@@ -2,9 +2,7 @@ package com.virhon.fintech.gl.model;
 
 import com.virhon.fintech.gl.Config;
 import com.virhon.fintech.gl.TestDataMacros;
-import com.virhon.fintech.gl.api.accountinformation.AccountInformationResponseBody;
 import com.virhon.fintech.gl.exception.LedgerException;
-import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.LedgerRepoFactory;
 import com.virhon.fintech.gl.repo.mysql.MySQLLedgerRepoFactory;
 import com.virhon.fintech.gl.repo.mysql.accountattribute.MySQLAttrRepo;
@@ -19,7 +17,6 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 public class AccountTest {
@@ -95,17 +92,5 @@ public class AccountTest {
         final AccountAttributes attributes = account.getAttributes().getEntity();
         final BigDecimal targetBalance = new BigDecimal(limit * 2);
         Assert.assertTrue(attributes.getBalance().subtract(startBalance).compareTo(targetBalance.negate())==0);
-/*
-        // 4. Check number of historical pages
-        final String accUuid = macros.getObjectUuid("PASSIVE_EMPTY5");
-        account = ledger.getExistingByUuid(accUuid);
-        final List<IdentifiedEntity<Page>> pages = hRepo.getHistory(account.getAccountId());
-        final long pagesNum = pages.size();
-        final int historicalPagesNumber = limit / Config.getInstance().getMaxNumPostsInBlock();
-        Assert.assertEquals(pagesNum, historicalPagesNumber);
-        final long curPageSize = limit - (pagesNum * Config.getInstance().getMaxNumPostsInBlock());
-        final Page curPage = this.cRepo.getById(account.getAccountId()).getEntity();
-        Assert.assertEquals(curPage.getTransfers().size(), curPageSize);
-*/
     }
 }
