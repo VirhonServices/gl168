@@ -3,7 +3,7 @@ package com.virhon.fintech.gl.api.balanceat;
 import java.math.BigDecimal;
 
 public class BalanceAtResponseBody {
-    private String clientUuid;
+    private String uuid;
     private String clientCustomerId;
     private String at;
     private String accType;
@@ -13,12 +13,12 @@ public class BalanceAtResponseBody {
     private BigDecimal repBalance;
     private String balType;
 
-    public String getClientUuid() {
-        return this.clientUuid;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setClientUuid(String clientUuid) {
-        this.clientUuid = clientUuid;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getClientCustomerId() {

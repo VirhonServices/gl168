@@ -122,6 +122,7 @@ The following table shows all the possible error situations:
 ##### Request
 ````json
 {
+  "clientCustomerId": "ff637646-7673/WWD",
   "accType": "PASSIVE",
   "accNumber": "26003000078365",
   "iban": "UA5630529926003000078365"
@@ -130,6 +131,7 @@ The following table shows all the possible error situations:
 ##### Response 201
 ````json
 {
+  "clientCustomerId": "ff637646-7673/WWD",
   "transferUuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
   "accType": "PASSIVE",
   "accNumber": "26003000078365",
@@ -153,7 +155,8 @@ The following table shows all the possible error situations:
 ##### Response 200
 ````json
 {
-  "transferUuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
+  "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
+  "clientCustomerId": "ff637646-7673/WWD",
   "accType": "PASSIVE",
   "accNumber": "26003000078365",
   "iban": "UA5630529926003000078365",
@@ -187,15 +190,15 @@ You need to pass separated DateTime value in server's timezone
     "hour": 1,
     "minute": 26,
     "second": 51,
-    "nanoOfSecond": 556,
-    "zoneId": "Europe/Kiev"
+    "nanoOfSecond": 556
 }
 ````
 
 ##### Response 200
 ````json
 {
-   "transferUuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
+   "uuid": "9f9ec79d-4e98-410f-b180-cecce31d9680",
+   "clientCustomerId": "ff637646-7673/WWD",
    "at": "2020-02-16T01:26:51.556+02:00[Europe/Kiev]",
    "accType": "PASSIVE",
    "accNumber": "26003000078365",
@@ -221,6 +224,7 @@ You need to pass separated DateTime value in server's timezone
 ````json
 {
   "transferRef": "qw7663837jnn0094948-003",
+  "clientCustomerId": "ff637646-7673/WWD",  
   "creditAccountUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
   "amount": 2481.00,
   "repAmount": 100.00,
@@ -237,6 +241,7 @@ You need to pass separated DateTime value in server's timezone
 {
   "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
   "transferRef": "qw7663837jnn0094948-003",
+  "clientCustomerId": "ff637646-7673/WWD",  
   "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
   "reportedOn": "2020-02-21",
   "amount": 2481.00,
@@ -272,6 +277,7 @@ You need to pass separated DateTime value in server's timezone
 {
   "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
   "transferRef": "qw7663837jnn0094948-003",
+  "clientCustomerId": "ff637646-7673/WWD",  
   "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
   "reportedOn": "2020-02-21",
   "amount": 2481.00,
@@ -305,6 +311,7 @@ You need to pass separated DateTime value in server's timezone
 ````json
 {
   "transferRef": "qw7663837jnn0094948-003",
+  "clientCustomerId": "ff637646-7673/WWD",  
   "creditAccountUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
   "amount": 100.00,
   "description": "ONLINE TAXI bill 1228/UKR-11 payment"
@@ -315,6 +322,7 @@ You need to pass separated DateTime value in server's timezone
 {
   "uuid": "48db13a1-b58d-4f42-89f1-c58f30fb6297",
   "transferRef": "qw7663837jnn0094948-003",
+  "clientCustomerId": "ff637646-7673/WWD",  
   "debitAccountUuid": "f1fb1ca9-3e3e-4eb1-80cf-e2a42a82ebff",
   "creditAccountUuid": "d9984b8e-9a7a-401c-840a-2531f003c9dc",
   "amount": 100.00,
@@ -347,6 +355,7 @@ You need to pass separated DateTime value in server's timezone
 {
   "transferUuid": "be65733f-5479-4850-8d9f-9509b33fc5fc",
   "transferRef": "qw7663837jnn0094948-003",
+  "clientCustomerId": "ff637646-7673/WWD",  
   "postedAt": "2020-02-21T01:26:51.556+02:00[Europe/Kiev]",
   "reportedOn": "2020-02-20",
   "amount": 100.00,
@@ -396,6 +405,7 @@ You need to pass separated parts of LocalDate values
 ##### Response 200
 ````json
 {
+    "clientCustomerId": "ff637646-7673/WWD",  
     "accType": "PASSIVE",
     "accNumber": "260350009",
     "iban": "UA55305299260350009",
@@ -413,6 +423,7 @@ You need to pass separated parts of LocalDate values
         {
             "transferUuid": "e711609d-bb88-482f-ba0f-1dcef2695cd3",
             "transferRef": "AUTO-426",
+            "clientCustomerId": "ff637646-7673/WWD",  
             "amountType": "DEBIT",
             "amount": 4.26,
             "repAmount": 102.879,
@@ -463,6 +474,7 @@ You need to pass separated parts of LocalDate values
 ##### Response 200
 ````json
 {
+    "clientCustomerId": "ff637646-7673/WWD",  
     "accType": "PASSIVE",
     "accNumber": "260350009",
     "iban": "UA55305299260350009",
@@ -480,6 +492,7 @@ You need to pass separated parts of LocalDate values
         {
             "transferUuid": "e711609d-bb88-482f-ba0f-1dcef2695cd3",
             "transferRef": "AUTO-426",
+            "clientCustomerId": "ff637646-7673/WWD",  
             "amountType": "DEBIT",
             "amount": 4.26,
             "repAmount": 102.879,

@@ -34,7 +34,6 @@ public class AccountInformationController {
             if (attr != null) {
                 final AccountInformationResponseBody response = new AccountInformationResponseBody();
                 response.setUuid(accountUuid);
-                response.setClientUuid(attr.getEntity().getClientUuid());
                 response.setClientCustomerId(attr.getEntity().getClientCustomerId());
                 response.setAccType(attr.getEntity().getAccountType().toString());
                 response.setAccNumber(attr.getEntity().getAccountNumber());

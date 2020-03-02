@@ -8,8 +8,8 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class NewTransferRequestBody extends RequestValidator {
-    private String clientCustomerId;
     private String transferRef;
+    private String clientCustomerId;
     private String creditAccountUuid;
     private BigDecimal amount;
     private BigDecimal repAmount;

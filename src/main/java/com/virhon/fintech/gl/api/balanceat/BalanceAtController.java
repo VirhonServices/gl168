@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @RestController
@@ -32,14 +33,14 @@ public class BalanceAtController {
             final Ledger ledger = gl.getLedger(currencyCode);
             final ZonedDateTime at = Tool.buildByDefault(request.getYear(), request.getMonth(), request.getDay(),
                     request.getHour(), request.getMinute(), request.getSecond(), request.getNanoOfSecond(),
-                    request.getZoneId());
+                    ZoneId.systemDefault().toString());
             final Account account = ledger.getExistingByUuid(accountUuid);
             if (account == null) {
                 throw LedgerException.invalidAccount(accountUuid);
             }
             final AccountAttributes attr = account.getAttributes().getEntity();
             final BalanceAtResponseBody response = new BalanceAtResponseBody();
-            response.setClientUuid(attr.getClientUuid());
+            response.setUuid(attr.getAccountUUID());
             response.setClientCustomerId(attr.getClientCustomerId());
             response.setAccNumber(attr.getAccountNumber());
             response.setAccType(attr.getAccountType().toString());

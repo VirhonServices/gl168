@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 
 public class AccountInformationResponseBody {
     private String uuid;
-    private String clientUuid;
     private String clientCustomerId;
     private String accType;
     private String accNumber;
@@ -25,14 +24,6 @@ public class AccountInformationResponseBody {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    public String getClientUuid() {
-        return clientUuid;
-    }
-
-    public void setClientUuid(String clientUuid) {
-        this.clientUuid = clientUuid;
     }
 
     public String getClientCustomerId() {

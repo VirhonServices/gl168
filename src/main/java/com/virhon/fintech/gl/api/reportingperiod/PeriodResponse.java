@@ -41,7 +41,6 @@ public class PeriodResponse {
     public static class TransferResponse {
         private String          transferUuid;
         private String          transferRef;
-        private String          clientUuid;
         private String          clientCustomerId;
         private String          postedAt;
         private String          transferType;
@@ -57,9 +56,7 @@ public class PeriodResponse {
             final TransferResponse tres = new TransferResponse();
             tres.setTransferUuid(tr.getTransferUuid());
             tres.setTransferRef(tr.getTransferRef());
-            tres.setClientUuid(tr.getClientUuid());
             tres.setClientCustomerId(tr.getClientCustomerId());
-            tres.setClientUuid(tr.getClientUuid());
             tres.setClientCustomerId(tr.getClientCustomerId());
             tres.setPostedAt(tr.getPostedAt().toString());
             tres.setAmount(tr.getAmount().abs());
@@ -69,14 +66,6 @@ public class PeriodResponse {
             tres.setDebitPageUuid(tr.getDebitPageUuid());
             tres.setCreditPageUuid(tr.getCreditPageUuid());
             return tres;
-        }
-
-        public String getClientUuid() {
-            return clientUuid;
-        }
-
-        public void setClientUuid(String clientUuid) {
-            this.clientUuid = clientUuid;
         }
 
         public String getClientCustomerId() {
@@ -168,7 +157,6 @@ public class PeriodResponse {
         }
     }
 
-    private String clientUuid;
     private String clientCustomerId;
     private String accType;
     private String accNumber;
@@ -176,14 +164,6 @@ public class PeriodResponse {
     private Balance open;
     private List<TransferResponse> transfers;
     private Balance closed;
-
-    public String getClientUuid() {
-        return clientUuid;
-    }
-
-    public void setClientUuid(String clientUuid) {
-        this.clientUuid = clientUuid;
-    }
 
     public String getClientCustomerId() {
         return clientCustomerId;

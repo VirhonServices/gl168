@@ -32,9 +32,8 @@ public class AccountsController {
             final IdentifiedEntity<AccountAttributes> attr = ledger.getAttrRepo().getById(account.getAccountId());
             this.gl.commit();
             final NewAccountResponseBody response = new NewAccountResponseBody();
-            response.setClientUuid(attr.getEntity().getClientUuid());
-            response.setClientCustomerId(attr.getEntity().getClientCustomerId());
             response.setUuid(attr.getEntity().getAccountUUID());
+            response.setClientCustomerId(attr.getEntity().getClientCustomerId());
             response.setAccNumber(attr.getEntity().getAccountNumber());
             response.setAccType(attr.getEntity().getAccountType().toString());
             response.setIban(attr.getEntity().getIban());

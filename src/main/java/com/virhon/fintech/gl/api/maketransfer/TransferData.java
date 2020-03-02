@@ -42,7 +42,6 @@ public class TransferData {
         }
     }
     private String uuid;
-    private String clientUuid;
     private String clientCustomerId;
     private String transferRef;
     private String postedAt;
@@ -59,14 +58,6 @@ public class TransferData {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    public String getClientUuid() {
-        return this.clientUuid;
-    }
-
-    public void setClientUuid(String clientUuid) {
-        this.clientUuid = clientUuid;
     }
 
     public String getClientCustomerId() {

@@ -2,7 +2,6 @@ package com.virhon.fintech.gl.api.accounts;
 
 public class NewAccountResponseBody {
     private String uuid;
-    private String clientUuid;
     private String clientCustomerId;
     private String accType;
     private String accNumber;
@@ -16,14 +15,6 @@ public class NewAccountResponseBody {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
-    }
-
-    public String getClientUuid() {
-        return this.clientUuid;
-    }
-
-    public void setClientUuid(String clientUuid) {
-        this.clientUuid = clientUuid;
     }
 
     public String getClientCustomerId() {

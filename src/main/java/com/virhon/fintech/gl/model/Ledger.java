@@ -401,7 +401,6 @@ public class Ledger {
         final TransferData response = new TransferData();
         response.setUuid(tr.getTransferUuid());
         response.setTransferRef(tr.getTransferRef());
-        response.setClientUuid(tr.getClientUuid());
         response.setClientCustomerId(tr.getClientCustomerId());
         response.setPostedAt(tr.getPostedAt().toString());
         response.setReportedOn(tr.getReportedOn().toString());

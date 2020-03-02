@@ -33,7 +33,6 @@ public class ReservationController {
             final NewReservationResponse response = new NewReservationResponse();
             response.setUuid(iRes.getEntity().getUuid());
             response.setTransferRef(iRes.getEntity().getTransferRef());
-            response.setClientUuid(iRes.getEntity().getClientUuid());
             response.setClientCustomerId(iRes.getEntity().getClientCustomerId());
             response.setDebitAccountUuid(debitAccountUuid);
             response.setCreditAccountUuid(request.getCreditAccountUuid());

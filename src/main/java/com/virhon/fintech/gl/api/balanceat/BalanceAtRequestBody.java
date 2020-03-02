@@ -10,7 +10,6 @@ public class BalanceAtRequestBody extends RequestValidator {
     private Integer minute;
     private Integer second;
     private Integer nanoOfSecond;
-    private String zoneId;
 
     public Integer getYear() {
         return year;
@@ -66,13 +65,5 @@ public class BalanceAtRequestBody extends RequestValidator {
 
     public void setNanoOfSecond(Integer nanoOfSecond) {
         this.nanoOfSecond = nanoOfSecond;
-    }
-
-    public String getZoneId() {
-        return zoneId;
-    }
-
-    public void setZoneId(String zoneId) {
-        this.zoneId = zoneId;
     }
 }
