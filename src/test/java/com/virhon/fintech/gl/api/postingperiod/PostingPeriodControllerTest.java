@@ -49,21 +49,21 @@ public class PostingPeriodControllerTest extends AbstractTestNGSpringContextTest
     @Test
     void testPostingPeriod() throws Exception {
         final String accountUuid = macros.getObjectUuid("PASSIVE_MULTI_HISTORY9");
+        final ZonedDateTime startDate = ZonedDateTime.parse(macros.getObjectUuid("START_DATE"));
         final Ledger ledger = gl.getLedger("UAH");
         final Account account = ledger.getExistingByUuid(accountUuid);
-
         final SeparatedDateTime startedAt = new SeparatedDateTime();
-        startedAt.setYear(2020);
-        startedAt.setMonth(2);
-        startedAt.setDay(26);
+        startedAt.setYear(startDate.getYear());
+        startedAt.setMonth(startDate.getMonthValue());
+        startedAt.setDay(startDate.getDayOfMonth());
         startedAt.setHour(0);
         startedAt.setMinute(0);
         startedAt.setSecond(0);
         startedAt.setNano(0);
         final SeparatedDateTime finishedAt = new SeparatedDateTime();
-        finishedAt.setYear(2020);
-        finishedAt.setMonth(2);
-        finishedAt.setDay(26);
+        finishedAt.setYear(startDate.getYear());
+        finishedAt.setMonth(startDate.getMonthValue());
+        finishedAt.setDay(startDate.getDayOfMonth());
         finishedAt.setHour(23);
         finishedAt.setMinute(59);
         finishedAt.setSecond(59);

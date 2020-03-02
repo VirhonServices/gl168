@@ -34,6 +34,7 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
     public void openNewAccountSuccessTest() throws Exception {
         final NewAccountRequestBody request = new NewAccountRequestBody();
         request.setAccType("PASSIVE");
+        request.setClientCustomerId("CLIENT_CUSTOMER_ID");
         request.setAccNumber("26003000078365");
         request.setIban("UA5630529926003000078365");
         final String req = gson.toJson(request);
@@ -58,7 +59,7 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.code").value(910));
+                .andExpect(jsonPath("$.code").value(160));
     }
 
 }

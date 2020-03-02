@@ -27,7 +27,7 @@ public class AccountsController {
             final Ledger ledger = gl.getLedger(currencyCode);
             // TODO: 02.03.20 change uuids
             final Account account =
-                    ledger.openNew(request.getAccNumber(),"CLIENT_UUID", "clientCustomerId",
+                    ledger.openNew("CLIENT_UUID","clientCustomerId", request.getAccNumber(),
                             request.getIban(), AccountType.valueOf(request.getAccType()));
             final IdentifiedEntity<AccountAttributes> attr = ledger.getAttrRepo().getById(account.getAccountId());
             this.gl.commit();
@@ -46,13 +46,6 @@ public class AccountsController {
             LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
             return new ResponseEntity<LedgerError>(new LedgerError(e.getCode(), e.getMessage()),
                     HttpStatus.BAD_REQUEST);
-        } catch (IllegalArgumentException e) {
-            LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
-            return new ResponseEntity<>(new LedgerError(900,"Invalid account type "
-                    .concat(request.getAccType())), HttpStatus.BAD_REQUEST);
-        } catch (NullPointerException e) {
-            LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
-            return new ResponseEntity<>(new LedgerError(910, e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
             return new ResponseEntity<>(new LedgerError(500,"Something went wrong"),

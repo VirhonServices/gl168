@@ -40,6 +40,8 @@ public class MySQLReservationRepo extends MySQLAbstactRepo<MySQLReservationDAO> 
         final MySQLReservationRecord record = new MySQLReservationRecord();
         final String data = getConverter().toJson(reservation);
         record.setUuid(reservation.getUuid());
+        record.setClientUuid(reservation.getClientUuid());
+        record.setClientCustomerId(reservation.getClientCustomerId());
         record.setExpireAt(reservation.getExpireAt());
         record.setData(data);
         getMapper().insert(getTablename(), record);

@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -54,7 +55,8 @@ public class ReportingPeriodControllerTest extends AbstractTestNGSpringContextTe
         final Ledger ledger = gl.getLedger("UAH");
         final Account account = ledger.getExistingByUuid(accountUuid);
 
-        final LocalDate startedOn = LocalDate.of(2020, 2, 26);
+        final ZonedDateTime startDate = ZonedDateTime.parse(macros.getObjectUuid("START_DATE"));
+        final LocalDate startedOn = LocalDate.of(startDate.getYear(), startDate.getMonthValue(), startDate.getDayOfMonth());
         final LocalDate finishedOn = startedOn.plusDays(0);
         final Ledger.ReportingCollection collection = ledger.collectReportingData(account.getAccountId(), startedOn, finishedOn);
 
@@ -65,7 +67,7 @@ public class ReportingPeriodControllerTest extends AbstractTestNGSpringContextTe
         }
         Assert.assertEquals(bal, collection.getFinishBalance());
 
-        final LocalDate startedOn1 = LocalDate.of(2020, 2, 27);
+        final LocalDate startedOn1 = startedOn.plusDays(1);
         final LocalDate finishedOn1 = startedOn1.plusDays(0);
         final Ledger.ReportingCollection collection1 = ledger.collectReportingData(account.getAccountId(), startedOn1, finishedOn1);
 
@@ -78,18 +80,19 @@ public class ReportingPeriodControllerTest extends AbstractTestNGSpringContextTe
         final Ledger ledger = gl.getLedger("UAH");
         final Account account = ledger.getExistingByUuid(accountUuid);
 
-        final LocalDate startedOn1 = LocalDate.of(2020, 2, 27);
+        final ZonedDateTime startDate = ZonedDateTime.parse(macros.getObjectUuid("START_DATE")).plusDays(1);
+        final LocalDate startedOn1 = LocalDate.of(startDate.getYear(), startDate.getMonthValue(), startDate.getDayOfMonth());
         final LocalDate finishedOn1 = startedOn1.plusDays(0);
         final Ledger.ReportingCollection collection1 = ledger.collectReportingData(account.getAccountId(), startedOn1, finishedOn1);
 
         final SeparatedDate startedOn = new SeparatedDate();
-        startedOn.setYear(2020);
-        startedOn.setMonth(2);
-        startedOn.setDay(27);
+        startedOn.setYear(startDate.getYear());
+        startedOn.setMonth(startDate.getMonthValue());
+        startedOn.setDay(startDate.getDayOfMonth());
         final SeparatedDate finishedOn = new SeparatedDate();
-        finishedOn.setYear(2020);
-        finishedOn.setMonth(2);
-        finishedOn.setDay(27);
+        finishedOn.setYear(startDate.getYear());
+        finishedOn.setMonth(startDate.getMonthValue());
+        finishedOn.setDay(startDate.getDayOfMonth());
         final ReportingPeriodRequest request = new ReportingPeriodRequest();
         request.setBeginOn(startedOn);
         request.setFinishOn(finishedOn);

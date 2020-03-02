@@ -35,14 +35,14 @@ public class NewTransferController {
             final Account credit = ledger.getExistingByUuid(request.getCreditAccountUuid());
             // TODO: 02.03.20  
             final Transfer tr = ledger.transferFunds(request.getTransferRef(), "Client's UUID must be here",
-                    "CLientCustomerId", debit.getAccountId(),
+                    request.getClientCustomerId(), debit.getAccountId(),
                     credit.getAccountId(), request.getAmount(), request.getRepAmount(),
                     request.getReportedOn().asLocalDate(), request.getDescription());
             final TransferData response = ledger.createTransferResponseBody(tr);
             this.gl.commit();
             LOGGER.info("Transfer ".concat(tr.getTransferUuid()).concat(" has been succeed"));
             final ResponseEntity<TransferData> result =
-                    new ResponseEntity<TransferData>(response, HttpStatus.OK);
+                    new ResponseEntity<TransferData>(response, HttpStatus.CREATED);
             return result;
         } catch (LedgerException e) {
             LOGGER.error(e.getMessage());

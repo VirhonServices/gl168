@@ -1,13 +1,11 @@
 package com.virhon.fintech.gl.api.maketransfer;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import com.virhon.fintech.gl.GsonConverter;
+import com.virhon.fintech.gl.TestDataMacros;
 import com.virhon.fintech.gl.api.Application;
 import com.virhon.fintech.gl.api.SeparatedDate;
+import com.virhon.fintech.gl.model.AccountAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -19,10 +17,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -34,6 +29,9 @@ public class NewTransferControllerTest extends AbstractTestNGSpringContextTests 
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mockMvc;
+
+    @Autowired
+    private TestDataMacros macros;
 
     @BeforeClass
     public void setup() {
@@ -50,19 +48,22 @@ public class NewTransferControllerTest extends AbstractTestNGSpringContextTests 
         reportedOn.setDay(21);
         final NewTransferRequestBody request = new NewTransferRequestBody();
         request.setTransferRef("TRANSFER-001");
-        request.setCreditAccountUuid("5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6");
+        final String debitUuid = macros.getObjectUuid("ACTIVE2");
+        final String creditUuid = macros.getObjectUuid("PASSIVE_EMPTY0");
+        request.setClientCustomerId("ClientCustomerId must be here");
+        request.setCreditAccountUuid(creditUuid);
         request.setAmount(amount);
         request.setRepAmount(repAmount);
         request.setReportedOn(reportedOn);
         request.setDescription("Test transfer #111");
         final String req = gson.toJson(request);
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/b105791b-2252-48fa-8558-8faa40a003bd/transfers")
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/".concat(debitUuid).concat("/transfers"))
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.credit.accNumber").value("2602100009203")
+                .andExpect(jsonPath("$.credit.accUuid").value(creditUuid)
                 );
         // TODO: 22.02.20 check balances after test data added
     }
@@ -77,19 +78,22 @@ public class NewTransferControllerTest extends AbstractTestNGSpringContextTests 
         reportedOn.setDay(15);
         final NewTransferRequestBody request = new NewTransferRequestBody();
         request.setTransferRef("TRANSFER-001");
-        request.setCreditAccountUuid("b105791b-2252-48fa-8558-8faa40a003bd");
+        final String debitUuid = macros.getObjectUuid("ACTIVE2");
+        final String creditUuid = macros.getObjectUuid("PASSIVE_EMPTY0");
+        request.setClientCustomerId("ClientCustomerId must be here");
+        request.setCreditAccountUuid(creditUuid);
         request.setAmount(amount);
         request.setRepAmount(repAmount);
         request.setReportedOn(null);
         request.setDescription("Test transfer #111");
         final String req = gson.toJson(request);
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6/transfers")
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/".concat(debitUuid).concat("/transfers"))
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.code").value(200)
+                .andExpect(jsonPath("$.code").value(160)
                 );
     }
 
@@ -103,13 +107,17 @@ public class NewTransferControllerTest extends AbstractTestNGSpringContextTests 
         reportedOn.setDay(15);
         final NewTransferRequestBody request = new NewTransferRequestBody();
         request.setTransferRef("TRANSFER-001");
-        request.setCreditAccountUuid("b105791b-2252-48fa-8558-8faa40a003bd");
+        request.setTransferRef("TRANSFER-001");
+        final String debitUuid = macros.getObjectUuid("PASSIVE_EMPTY1");
+        final String creditUuid = macros.getObjectUuid("ACTIVE2");
+        request.setClientCustomerId("ClientCustomerId must be here");
+        request.setCreditAccountUuid(creditUuid);
         request.setAmount(amount);
         request.setRepAmount(repAmount);
         request.setReportedOn(reportedOn);
         request.setDescription("Test transfer #111");
         final String req = gson.toJson(request);
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/5e19fcbb-3fc5-497e-bcb9-09cf5e157fc6/transfers")
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/".concat(debitUuid).concat("/transfers"))
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))

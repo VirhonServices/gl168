@@ -2,6 +2,7 @@ package com.virhon.fintech.gl.api.balanceat;
 
 import com.google.gson.Gson;
 import com.virhon.fintech.gl.GsonConverter;
+import com.virhon.fintech.gl.TestDataMacros;
 import com.virhon.fintech.gl.api.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,13 +18,16 @@ import org.testng.annotations.Test;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = Application.class)
-public class BalanceAtControllerTest  extends AbstractTestNGSpringContextTests {
+public class BalanceAtControllerTest extends AbstractTestNGSpringContextTests {
     private Gson gson = GsonConverter.create();
 
     @Autowired
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mockMvc;
+
+    @Autowired
+    private TestDataMacros macros;
 
     @BeforeClass
     public void setup() {
@@ -39,8 +43,10 @@ public class BalanceAtControllerTest  extends AbstractTestNGSpringContextTests {
         request.setHour(15);
         request.setMinute(43);
         request.setSecond(59);
+        request.setNanoOfSecond(0);
         final String req = gson.toJson(request);
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/03bb9d86-3716-4018-883e-78bd2222ddee/posting/balance")
+        final String accNumber = macros.getObjectUuid("PASSIVE_EMPTY5");
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/".concat(accNumber).concat("/posting/balance"))
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -59,8 +65,10 @@ public class BalanceAtControllerTest  extends AbstractTestNGSpringContextTests {
         request.setHour(15);
         request.setMinute(43);
         request.setSecond(59);
+        request.setNanoOfSecond(0);
         final String req = gson.toJson(request);
-        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/bhd/accounts/03bb9d86-3716-4018-883e-78bd2222ddee/posting/balance")
+        final String accNumber = macros.getObjectUuid("PASSIVE_EMPTY0");
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/bhd/accounts/".concat(accNumber).concat("/posting/balance"))
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -79,7 +87,9 @@ public class BalanceAtControllerTest  extends AbstractTestNGSpringContextTests {
         request.setHour(15);
         request.setMinute(43);
         request.setSecond(59);
+        request.setNanoOfSecond(0);
         final String req = gson.toJson(request);
+        final String accNumber = macros.getObjectUuid("PASSIVE_EMPTY0");
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/wrong-account/posting/balance")
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON)

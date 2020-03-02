@@ -52,6 +52,7 @@ public class PostReservationControllerTest extends AbstractTestNGSpringContextTe
         final BigDecimal amount = new BigDecimal("300.00");
         final NewReservationRequest request = new NewReservationRequest();
         request.setTransferRef("RESERVATION-REF-MANUAL-TEST-1");
+        request.setClientCustomerId("ClientCustomerId");
         request.setCreditAccountUuid(macros.getObjectUuid("PASSIVE_EMPTY9"));
         request.setAmount(amount);
         request.setDescription("Manual test reservation");
