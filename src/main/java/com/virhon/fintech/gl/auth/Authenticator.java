@@ -94,6 +94,9 @@ public class Authenticator {
                           final ZonedDateTime dateTime,
                           final String requestPayload,
                           final String providedToken) throws NoSuchAlgorithmException, AuthenticationException {
+        if (!config.isAuthOn()) {
+            return true;
+        }
         if (!isValid(dateTime)) {
             throw new AuthenticationException();
         }

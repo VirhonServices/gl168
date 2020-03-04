@@ -11,6 +11,7 @@ public class APIConfig {
     public static final String PROPERTIES_FILE_NAME = "/application.properties";
     public static final String SECURE_WINDOW = "secure-window";
     public static final String AUTH_LIST = "auth-list";
+    private boolean authOn = true;
     private final Properties properties = new Properties();
 
     public APIConfig() throws IOException {
@@ -29,5 +30,13 @@ public class APIConfig {
 
     public String getAuthFilename() {
         return getProperty(AUTH_LIST);
+    }
+
+    public boolean isAuthOn() {
+        return authOn;
+    }
+
+    public void setAuthOn(boolean authOn) {
+        this.authOn = authOn;
     }
 }
