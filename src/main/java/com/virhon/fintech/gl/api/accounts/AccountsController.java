@@ -1,15 +1,22 @@
 package com.virhon.fintech.gl.api.accounts;
 
+import com.google.gson.Gson;
+import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.*;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
+import com.virhon.fintech.gl.signature.SignatureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.naming.AuthenticationException;
+
+import static com.virhon.fintech.gl.api.APIConfig.*;
 
 @RestController
 @RequestMapping("/v1/gl/{currencyCode}/accounts")
@@ -19,10 +26,20 @@ public class AccountsController {
     @Autowired
     MySQLGeneralLedger gl;
 
+    @Autowired
+    SignatureChecker checker;
+
+    private Gson gc = GsonConverter.create();
+
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> openNewAccount(@PathVariable String currencyCode,
+    public ResponseEntity<?> openNewAccount(@RequestHeader(value = CLIENT_UUID_HEADER) String hClientUuid,
+                                            @RequestHeader(value = SIGNATURE_HEADER) String hSignature,
+                                            @RequestHeader(value = DATE_HEADER) String hDate,
+                                            @PathVariable String currencyCode,
                                             @RequestBody NewAccountRequestBody request) {
         try {
+            final String req = gc.toJson(request);
+            checker.validateSignature(hClientUuid, hDate, req, hSignature);
             request.checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             // TODO: 02.03.20 change uuids
@@ -46,6 +63,10 @@ public class AccountsController {
             LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
             return new ResponseEntity<LedgerError>(new LedgerError(e.getCode(), e.getMessage()),
                     HttpStatus.BAD_REQUEST);
+        } catch (AuthenticationException e) {
+            LOGGER.error(e.getMessage());
+            final LedgerError error = new LedgerError(401, e.getMessage());
+            return new ResponseEntity<LedgerError>(error, HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
             return new ResponseEntity<>(new LedgerError(500,"Something went wrong"),

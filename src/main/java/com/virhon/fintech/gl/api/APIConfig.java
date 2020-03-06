@@ -4,14 +4,20 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
 @Configuration
 public class APIConfig {
     public static final String PROPERTIES_FILE_NAME = "/application.properties";
     public static final String SECURE_WINDOW = "secure-window";
-    public static final String AUTH_LIST = "auth-list";
-    private boolean authOn = true;
+    public static final String CLIENTS_LIST = "digests-list";
+    public static final DateTimeFormatter DATE_HEADER_FORMAT = DateTimeFormatter.ISO_ZONED_DATE_TIME;
+    public static final String CLIENT_UUID_HEADER = "x-client-uuid";
+    public static final String SIGNATURE_HEADER = "x-signature";
+    public static final String DATE_HEADER = "date";
+
+    private boolean isSignatureChecked = true;
     private final Properties properties = new Properties();
 
     public APIConfig() throws IOException {
@@ -28,15 +34,15 @@ public class APIConfig {
         return Integer.valueOf(result);
     }
 
-    public String getAuthFilename() {
-        return getProperty(AUTH_LIST);
+    public String getClientsListFilename() {
+        return getProperty(CLIENTS_LIST);
     }
 
-    public boolean isAuthOn() {
-        return authOn;
+    public void setSignatureChecked(boolean signatureChecked) {
+        this.isSignatureChecked = signatureChecked;
     }
 
-    public void setAuthOn(boolean authOn) {
-        this.authOn = authOn;
+    public boolean isSignatureChecked() {
+        return isSignatureChecked;
     }
 }

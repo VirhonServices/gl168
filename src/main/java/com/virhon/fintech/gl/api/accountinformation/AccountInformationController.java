@@ -1,5 +1,7 @@
 package com.virhon.fintech.gl.api.accountinformation;
 
+import com.google.gson.Gson;
+import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.AccountAttributes;
@@ -7,6 +9,7 @@ import com.virhon.fintech.gl.model.AccountType;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
+import com.virhon.fintech.gl.signature.SignatureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,8 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.ZonedDateTime;
 
+import static com.virhon.fintech.gl.api.APIConfig.*;
+
 @RestController
 @RequestMapping("/v1/gl/{currencyCode}/accounts/{accountUuid}")
 public class AccountInformationController {
@@ -26,11 +31,20 @@ public class AccountInformationController {
     @Autowired
     MySQLGeneralLedger gl;
 
+    @Autowired
+    SignatureChecker checker;
+
+    private Gson gc = GsonConverter.create();
+
     @GetMapping
-    public ResponseEntity<?> get(@PathVariable String currencyCode, @PathVariable String accountUuid) {
+    public ResponseEntity<?> get(@RequestHeader(value = CLIENT_UUID_HEADER) String hClientUuid,
+                                 @RequestHeader(value = SIGNATURE_HEADER) String hSignature,
+                                 @RequestHeader(value = DATE_HEADER) String hDate,
+                                 @PathVariable String currencyCode, @PathVariable String accountUuid) {
         try {
             final String cur = currencyCode.toUpperCase();
             final Ledger ledger = gl.getLedger(cur);
+            checker.validateSignature(hClientUuid, hDate, "", hSignature);
             final IdentifiedEntity<AccountAttributes> attr = ledger.getAttrRepo().getByUuid(accountUuid);
             if (attr != null) {
                 final AccountInformationResponseBody response = new AccountInformationResponseBody();
@@ -72,6 +86,10 @@ public class AccountInformationController {
             LOGGER.error(e.getMessage());
             return new ResponseEntity<LedgerError>(new LedgerError(e.getCode(), e.getMessage()),
                     HttpStatus.BAD_REQUEST);
+        } catch (AuthenticationException e) {
+            LOGGER.error(e.getMessage());
+            final LedgerError error = new LedgerError(401, e.getMessage());
+            return new ResponseEntity<LedgerError>(error, HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return new ResponseEntity<>(new LedgerError(500,"Something went wrong"),

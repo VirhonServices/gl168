@@ -2,7 +2,9 @@ package com.virhon.fintech.gl.api.accounts;
 
 import com.google.gson.Gson;
 import com.virhon.fintech.gl.GsonConverter;
+import com.virhon.fintech.gl.api.APIConfig;
 import com.virhon.fintech.gl.api.Application;
+import com.virhon.fintech.gl.signature.SignatureChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -14,6 +16,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.time.ZonedDateTime;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(classes = Application.class)
@@ -22,6 +26,9 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private APIConfig config;
 
     private MockMvc mockMvc;
 
@@ -38,12 +45,17 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
         request.setAccNumber("26003000078365");
         request.setIban("UA5630529926003000078365");
         final String req = gson.toJson(request);
+        final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
+        final String token = SignatureChecker.calculateToken(date, req, "53b179afe1b7e001b3e881a31e0ddee7c2063f71");
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts")
+                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.SIGNATURE_HEADER, token)
+                .header(config.DATE_HEADER, date)
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.accNumber").value("26003000078365"));
     }
 
@@ -53,13 +65,33 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
         request.setAccNumber("26003000078365");
         request.setIban("UA5630529926003000078365");
         final String req = gson.toJson(request);
+        final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
+        final String token = SignatureChecker.calculateToken(date, req, "53b179afe1b7e001b3e881a31e0ddee7c2063f71");
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts")
+                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.SIGNATURE_HEADER, token)
+                .header(config.DATE_HEADER, date)
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.code").value(160));
     }
 
+    @Test
+    public void testUnauthorized() throws Exception {
+        final NewAccountRequestBody request = new NewAccountRequestBody();
+        request.setAccNumber("26003000078365");
+        request.setIban("UA5630529926003000078365");
+        final String req = gson.toJson(request);
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts")
+                .header(config.CLIENT_UUID_HEADER, "wrong")
+                .header(config.SIGNATURE_HEADER, "wrong")
+                .header(config.DATE_HEADER, "wrong")
+                .content(req)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
 }

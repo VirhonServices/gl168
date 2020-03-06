@@ -72,7 +72,7 @@ public class LedgerException extends Exception {
     }
 
     public static LedgerException invalidMode(Account account) {
-        return new LedgerException(400, "Can't operate read-only account "
+        return new LedgerException(600, "Can't operate read-only account "
                 .concat(account.getAttributes().getEntity().getAccountNumber()));
     }
 
