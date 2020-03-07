@@ -544,80 +544,98 @@ public class Ledger {
     public ReportingCollection collectReportingData(Long accountId,
                                                     LocalDate beginOn,
                                                     LocalDate finishOn) {
-        final List<Page> pages = collectReportingPages(accountId, beginOn, finishOn);
-        final List<Transfer> previousTransfers = pages.stream()
-                .map(p -> p.getTransfers())
-                .flatMap(posts -> posts.stream())
-                .filter(post -> post.getReportedOn().compareTo(beginOn) < 0)
-                .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
-                .collect(Collectors.toList());
-        final BigDecimal preTurnover = previousTransfers.stream().map(p -> p.getAmount())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal preRepTurnover = previousTransfers.stream().map(p -> p.getLocalAmount())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal startBalance = pages.get(0).getStartBalance().add(preTurnover);
-        final BigDecimal startRepBalance = pages.get(0).getStartRepBalance().add(preRepTurnover);
-        final List<Transfer> periodTransfers = pages.stream()
-                .map(p -> p.getTransfers())
-                .flatMap(posts -> posts.stream())
-                .filter(post -> post.getReportedOn().compareTo(beginOn) >= 0 &&
-                        post.getReportedOn().compareTo(finishOn) <= 0)
-                .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
-                .collect(Collectors.toList());
-        final BigDecimal periodTurnover = periodTransfers.stream().map(p -> p.getAmount())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal periodRepTurnover = periodTransfers.stream().map(p -> p.getLocalAmount())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal finishBalance = startBalance.add(periodTurnover);
-        final BigDecimal finishRepBalance = startRepBalance.add(periodRepTurnover);
         final ReportingCollection collection = new ReportingCollection();
         collection.setStartedOn(beginOn);
         collection.setFinishedOn(finishOn);
-        collection.setStartBalance(startBalance);
-        collection.setStartRepBalance(startRepBalance);
-        collection.setFinishBalance(finishBalance);
-        collection.setFinishRepBalance(finishRepBalance);
-        collection.setTransfers(periodTransfers);
+        collection.setStartBalance(BigDecimal.ZERO);
+        collection.setStartRepBalance(BigDecimal.ZERO);
+        collection.setFinishBalance(BigDecimal.ZERO);
+        collection.setFinishRepBalance(BigDecimal.ZERO);
+        collection.setTransfers(new ArrayList<>());
+        final List<Page> pages = collectReportingPages(accountId, beginOn, finishOn);
+        if (!pages.isEmpty()) {
+            final List<Transfer> previousTransfers = pages.stream()
+                    .map(p -> p.getTransfers())
+                    .flatMap(posts -> posts.stream())
+                    .filter(post -> post.getReportedOn().compareTo(beginOn) < 0)
+                    .sorted((p1, p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
+                    .collect(Collectors.toList());
+            final BigDecimal preTurnover = previousTransfers.stream().map(p -> p.getAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            final BigDecimal preRepTurnover = previousTransfers.stream().map(p -> p.getLocalAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            final BigDecimal startBalance = pages.get(0).getStartBalance().add(preTurnover);
+            final BigDecimal startRepBalance = pages.get(0).getStartRepBalance().add(preRepTurnover);
+            final List<Transfer> periodTransfers = pages.stream()
+                    .map(p -> p.getTransfers())
+                    .flatMap(posts -> posts.stream())
+                    .filter(post -> post.getReportedOn().compareTo(beginOn) >= 0 &&
+                            post.getReportedOn().compareTo(finishOn) <= 0)
+                    .sorted((p1, p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
+                    .collect(Collectors.toList());
+            final BigDecimal periodTurnover = periodTransfers.stream().map(p -> p.getAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            final BigDecimal periodRepTurnover = periodTransfers.stream().map(p -> p.getLocalAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            final BigDecimal finishBalance = startBalance.add(periodTurnover);
+            final BigDecimal finishRepBalance = startRepBalance.add(periodRepTurnover);
+            collection.setStartedOn(beginOn);
+            collection.setFinishedOn(finishOn);
+            collection.setStartBalance(startBalance);
+            collection.setStartRepBalance(startRepBalance);
+            collection.setFinishBalance(finishBalance);
+            collection.setFinishRepBalance(finishRepBalance);
+            collection.setTransfers(periodTransfers);
+        }
         return collection;
     }
 
     public PostingCollection collectPostingData(Long accountId,
                                                 ZonedDateTime startAt,
                                                 ZonedDateTime finishAt) {
-        final List<Page> pages = collectPostingPages(accountId, startAt, finishAt);
-        final List<Transfer> previousTransfers = pages.stream()
-                .map(p -> p.getTransfers())
-                .flatMap(posts -> posts.stream())
-                .filter(post -> post.getPostedAt().compareTo(startAt) < 0)
-                .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
-                .collect(Collectors.toList());
-        final BigDecimal preTurnover = previousTransfers.stream().map(p -> p.getAmount())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal preRepTurnover = previousTransfers.stream().map(p -> p.getLocalAmount())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal startBalance = pages.get(0).getStartBalance().add(preTurnover);
-        final BigDecimal startRepBalance = pages.get(0).getStartRepBalance().add(preRepTurnover);
-        final List<Transfer> periodTransfers = pages.stream()
-                .map(p -> p.getTransfers())
-                .flatMap(posts -> posts.stream())
-                .filter(post -> post.getPostedAt().compareTo(startAt) >= 0 &&
-                        post.getPostedAt().compareTo(finishAt) <= 0)
-                .sorted((p1,p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
-                .collect(Collectors.toList());
-        final BigDecimal periodTurnover = periodTransfers.stream().map(p -> p.getAmount())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal periodRepTurnover = periodTransfers.stream().map(p -> p.getLocalAmount())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        final BigDecimal finishBalance = startBalance.add(periodTurnover);
-        final BigDecimal finishRepBalance = startRepBalance.add(periodRepTurnover);
         final PostingCollection collection = new PostingCollection();
         collection.setStartedAt(startAt);
         collection.setFinishedAt(finishAt);
-        collection.setStartBalance(startBalance);
-        collection.setStartRepBalance(startRepBalance);
-        collection.setFinishBalance(finishBalance);
-        collection.setFinishRepBalance(finishRepBalance);
-        collection.setTransfers(periodTransfers);
+        collection.setStartBalance(BigDecimal.ZERO);
+        collection.setStartRepBalance(BigDecimal.ZERO);
+        collection.setFinishBalance(BigDecimal.ZERO);
+        collection.setFinishRepBalance(BigDecimal.ZERO);
+        collection.setTransfers(new ArrayList<>());
+        final List<Page> pages = collectPostingPages(accountId, startAt, finishAt);
+        if (!pages.isEmpty()) {
+            final List<Transfer> previousTransfers = pages.stream()
+                    .map(p -> p.getTransfers())
+                    .flatMap(posts -> posts.stream())
+                    .filter(post -> post.getPostedAt().compareTo(startAt) < 0)
+                    .sorted((p1, p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
+                    .collect(Collectors.toList());
+            final BigDecimal preTurnover = previousTransfers.stream().map(p -> p.getAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            final BigDecimal preRepTurnover = previousTransfers.stream().map(p -> p.getLocalAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            final BigDecimal startBalance = pages.get(0).getStartBalance().add(preTurnover);
+            final BigDecimal startRepBalance = pages.get(0).getStartRepBalance().add(preRepTurnover);
+            final List<Transfer> periodTransfers = pages.stream()
+                    .map(p -> p.getTransfers())
+                    .flatMap(posts -> posts.stream())
+                    .filter(post -> post.getPostedAt().compareTo(startAt) >= 0 &&
+                            post.getPostedAt().compareTo(finishAt) <= 0)
+                    .sorted((p1, p2) -> p1.getPostedAt().compareTo(p2.getPostedAt()))
+                    .collect(Collectors.toList());
+            final BigDecimal periodTurnover = periodTransfers.stream().map(p -> p.getAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            final BigDecimal periodRepTurnover = periodTransfers.stream().map(p -> p.getLocalAmount())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            final BigDecimal finishBalance = startBalance.add(periodTurnover);
+            final BigDecimal finishRepBalance = startRepBalance.add(periodRepTurnover);
+            collection.setStartedAt(startAt);
+            collection.setFinishedAt(finishAt);
+            collection.setStartBalance(startBalance);
+            collection.setStartRepBalance(startRepBalance);
+            collection.setFinishBalance(finishBalance);
+            collection.setFinishRepBalance(finishRepBalance);
+            collection.setTransfers(periodTransfers);
+        }
         return collection;
     }
 }

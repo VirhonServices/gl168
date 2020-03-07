@@ -115,9 +115,6 @@ public class SignatureChecker {
                           final ZonedDateTime dateTime,
                           final String requestPayload,
                           final String providedToken) throws AuthenticationException {
-        if (!config.isSignatureChecked()) {
-            return true;
-        }
         final String clientDigest = this.digests.get(clientUuid);
         if (clientDigest == null) {
             throw new AuthenticationException();
@@ -131,6 +128,9 @@ public class SignatureChecker {
                                   final String strDt,
                                   final String requestPayload,
                                   final String providedToken) throws AuthenticationException {
+        if (!config.isSignatureChecked()) {
+            return;
+        }
         try {
             //1. check date
             final ZonedDateTime dateTime = ZonedDateTime.parse(strDt, DATE_HEADER_FORMAT);

@@ -37,9 +37,9 @@ public class PostingPeriodController {
     private Gson gc = GsonConverter.create();
 
     @PostMapping
-    public ResponseEntity<?> getPostingPeriod(  @RequestHeader(value = CLIENT_UUID_HEADER) String hClientUuid,
-                                                @RequestHeader(value = SIGNATURE_HEADER) String hSignature,
-                                                @RequestHeader(value = DATE_HEADER) String hDate,
+    public ResponseEntity<?> getPostingPeriod(  @RequestHeader(value = CLIENT_UUID_HEADER, required = false) String hClientUuid,
+                                                @RequestHeader(value = SIGNATURE_HEADER, required = false) String hSignature,
+                                                @RequestHeader(value = DATE_HEADER, required = false) String hDate,
                                                 @PathVariable String currencyCode,
                                                 @PathVariable String accountUuid,
                                                 @RequestBody PostingPeriodRequest request) {

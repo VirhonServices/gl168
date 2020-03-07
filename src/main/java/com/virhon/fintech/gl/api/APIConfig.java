@@ -17,7 +17,7 @@ public class APIConfig {
     public static final String SIGNATURE_HEADER = "x-signature";
     public static final String DATE_HEADER = "date";
 
-    private boolean isSignatureChecked = true;
+    private boolean isSignatureChecked = false;
     private final Properties properties = new Properties();
 
     public APIConfig() throws IOException {
