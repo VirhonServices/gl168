@@ -1,16 +1,16 @@
 package com.virhon.fintech.gl.api.gettransfer;
 
-import com.google.gson.Gson;
-import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.api.maketransfer.TransferData;
+import com.virhon.fintech.gl.exception.AccessDenied;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.model.Page;
 import com.virhon.fintech.gl.model.Transfer;
 import com.virhon.fintech.gl.repo.TransferPages;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +33,9 @@ public class GettingTransferController {
     @Autowired
     SignatureChecker checker;
 
+    @Autowired
+    private Authorizer authorizer;
+
     @GetMapping
     public ResponseEntity<?> getTransfer(@RequestHeader(value = CLIENT_UUID_HEADER) String hClientUuid,
                                          @RequestHeader(value = SIGNATURE_HEADER) String hSignature,
@@ -40,6 +43,7 @@ public class GettingTransferController {
                                          @PathVariable(required = true) String currencyCode,
                                          @PathVariable(required = true) String transferUuid) {
         try {
+            authorizer.checkPresense(hClientUuid);
             checker.validateSignature(hClientUuid, hDate, "", hSignature);
             final Ledger ledger = gl.getLedger(currencyCode);
             final TransferPages pages = ledger.getTransferRepo().get(transferUuid);
@@ -52,6 +56,7 @@ public class GettingTransferController {
                 throw LedgerException.transferNotExist(transferUuid);
             }
             final Transfer transfer = tr.get();
+            transfer.checkAccess(hClientUuid);
             final TransferData response = ledger.createTransferResponseBody(transfer);
             this.gl.commit();
             final ResponseEntity<TransferData> result = new ResponseEntity<TransferData>(response, HttpStatus.OK);
@@ -64,6 +69,10 @@ public class GettingTransferController {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(401, e.getMessage());
             return new ResponseEntity<LedgerError>(error, HttpStatus.UNAUTHORIZED);
+        } catch (AccessDenied e) {
+            LOGGER.error(e.getMessage());
+            final LedgerError error = new LedgerError(403, e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(500, e.getMessage());

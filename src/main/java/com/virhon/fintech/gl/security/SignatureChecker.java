@@ -1,6 +1,7 @@
-package com.virhon.fintech.gl.signature;
+package com.virhon.fintech.gl.security;
 
 import com.virhon.fintech.gl.api.APIConfig;
+import com.virhon.fintech.gl.exception.AccessDenied;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.naming.AuthenticationException;
 import java.io.*;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -31,29 +30,12 @@ public class SignatureChecker {
     final static Logger LOGGER = Logger.getLogger(SignatureChecker.class);
 
     private static final String SALT = "unocolabatronix";
-    private Map<String, String> digests = new HashMap<>();
 
     @Autowired
     private APIConfig config;
 
-    @PostConstruct
-    public void init() throws IOException {
-        loadDigests();
-    }
-
-    private void loadDigests() throws IOException {
-        final String filename = config.getClientsListFilename();
-        InputStreamReader isReader=
-                new InputStreamReader(new FileInputStream(new File(filename)));
-        BufferedReader br = new BufferedReader(isReader);
-        String brLine = br.readLine();
-        while (brLine != null) {
-            final List<String> pair = new ArrayList<>();
-            Arrays.asList(brLine.trim().split("=")).forEach(kp -> pair.add(kp));
-            digests.put(pair.get(0), pair.get(1));
-            brLine = br.readLine();
-        }
-    }
+    @Autowired
+    private Authorizer authorizer;
 
     private boolean isValid(final ZonedDateTime dateTime) {
         final ZonedDateTime begin = ZonedDateTime.now();
@@ -67,13 +49,6 @@ public class SignatureChecker {
      * @throws NoSuchAlgorithmException
      */
     private static String encrypt(final String input) {
-/*
-        final MessageDigest md1 = MessageDigest.getInstance("SHA-1");
-        final MessageDigest md5 = MessageDigest.getInstance("MD5");
-        final byte[] md5msg = md5.digest(input.getBytes());
-        final byte[] md1msg = md1.digest(md5msg);
-        return md1msg;
-*/
         return DigestUtils.sha1Hex(DigestUtils.md5Hex(input));
     }
 
@@ -114,11 +89,8 @@ public class SignatureChecker {
     private boolean check(final String clientUuid,
                           final ZonedDateTime dateTime,
                           final String requestPayload,
-                          final String providedToken) throws AuthenticationException {
-        final String clientDigest = this.digests.get(clientUuid);
-        if (clientDigest == null) {
-            throw new AuthenticationException();
-        }
+                          final String providedToken) throws AccessDenied {
+        final String clientDigest = authorizer.getDigest(clientUuid);
         final String dt = dateTime.format(DATE_HEADER_FORMAT);
         final String token = calculateToken(dt, requestPayload, clientDigest);
         return providedToken.equals(token);

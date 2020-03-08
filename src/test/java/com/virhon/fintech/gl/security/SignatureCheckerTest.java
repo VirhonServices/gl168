@@ -1,15 +1,12 @@
-package com.virhon.fintech.gl.signature;
+package com.virhon.fintech.gl.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.*;
-
-import static org.testng.Assert.*;
 
 @SpringBootTest
 public class SignatureCheckerTest {
@@ -41,6 +38,6 @@ public class SignatureCheckerTest {
         final String date = LocalDate.now().toString();
         final String data = "{emptyData}";
         final String token = SignatureChecker.calculateToken(date, data, digest);
-        Assert.assertEquals(token, "bcb6aef0dbbeab82692c0db18df96ff1423ee5ec");
+        Assert.assertEquals(token, "1a872ae31be336a1d9f878dcc39fb9db89694f05");
     }
 }

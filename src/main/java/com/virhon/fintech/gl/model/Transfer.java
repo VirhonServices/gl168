@@ -1,5 +1,7 @@
 package com.virhon.fintech.gl.model;
 
+import com.virhon.fintech.gl.exception.AccessDenied;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -120,4 +122,15 @@ public class Transfer {
     public void setCreditPageUuid(String creditPageUuid) {
         this.creditPageUuid = creditPageUuid;
     }
+
+    public boolean isOwnedBy(final String clientUuid) {
+        return this.clientUuid.toLowerCase().equals(clientUuid.toLowerCase());
+    }
+
+    public void checkAccess(final String clientUuid) throws AccessDenied {
+        if (!isOwnedBy(clientUuid)) {
+            throw new AccessDenied();
+        }
+    }
+
 }

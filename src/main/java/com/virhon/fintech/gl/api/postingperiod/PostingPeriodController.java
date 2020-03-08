@@ -4,12 +4,14 @@ import com.google.gson.Gson;
 import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.api.reportingperiod.PeriodResponse;
+import com.virhon.fintech.gl.exception.AccessDenied;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.AccountAttributes;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,9 @@ public class PostingPeriodController {
     @Autowired
     SignatureChecker checker;
 
+    @Autowired
+    private Authorizer authorizer;
+
     private Gson gc = GsonConverter.create();
 
     @PostMapping
@@ -44,6 +49,7 @@ public class PostingPeriodController {
                                                 @PathVariable String accountUuid,
                                                 @RequestBody PostingPeriodRequest request) {
         try {
+            authorizer.checkPresense(hClientUuid);
             final String req = gc.toJson(request);
             checker.validateSignature(hClientUuid, hDate, req, hSignature);
             request.checkNotNullAllFields();
@@ -51,6 +57,7 @@ public class PostingPeriodController {
             request.getFinishedAt().checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             final Account account = ledger.getExistingByUuid(accountUuid);
+            account.checkAccess(hClientUuid);
             final AccountAttributes attr = account.getAttributes().getEntity();
             final Ledger.PostingCollection collection = ledger.collectPostingData(account.getAccountId(),
                     request.getStartedAt().asDateTime(), request.getFinishedAt().asDateTime());
@@ -88,6 +95,10 @@ public class PostingPeriodController {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(401, e.getMessage());
             return new ResponseEntity<LedgerError>(error, HttpStatus.UNAUTHORIZED);
+        } catch (AccessDenied e) {
+            LOGGER.error(e.getMessage());
+            final LedgerError error = new LedgerError(403, e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(500, e.getMessage());

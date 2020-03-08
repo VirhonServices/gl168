@@ -4,7 +4,12 @@ import com.google.gson.Gson;
 import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.APIConfig;
 import com.virhon.fintech.gl.api.Application;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.model.Account;
+import com.virhon.fintech.gl.model.AccountAttributes;
+import com.virhon.fintech.gl.model.GeneralLedger;
+import com.virhon.fintech.gl.model.Ledger;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -30,6 +35,9 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private APIConfig config;
 
+    @Autowired
+    private Authorizer authorizer;
+
     private MockMvc mockMvc;
 
     @BeforeClass
@@ -46,9 +54,11 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
         request.setIban("UA5630529926003000078365");
         final String req = gson.toJson(request);
         final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
-        final String token = SignatureChecker.calculateToken(date, req, "53b179afe1b7e001b3e881a31e0ddee7c2063f71");
+        final String clientUuid = authorizer.get(1).getKey();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, req, digest);
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts")
-                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
                 .header(config.SIGNATURE_HEADER, token)
                 .header(config.DATE_HEADER, date)
                 .content(req)
@@ -66,9 +76,11 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
         request.setIban("UA5630529926003000078365");
         final String req = gson.toJson(request);
         final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
-        final String token = SignatureChecker.calculateToken(date, req, "53b179afe1b7e001b3e881a31e0ddee7c2063f71");
+        final String clientUuid = authorizer.get(1).getKey();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, req, digest);
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts")
-                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
                 .header(config.SIGNATURE_HEADER, token)
                 .header(config.DATE_HEADER, date)
                 .content(req)
@@ -84,9 +96,12 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
         final NewAccountRequestBody request = new NewAccountRequestBody();
         request.setAccNumber("26003000078365");
         request.setIban("UA5630529926003000078365");
+        final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
         final String req = gson.toJson(request);
+        final String clientUuid = authorizer.get(1).getKey();
+        final String digest = authorizer.getDigest(clientUuid);
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts")
-                .header(config.CLIENT_UUID_HEADER, "wrong")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
                 .header(config.SIGNATURE_HEADER, "wrong")
                 .header(config.DATE_HEADER, "wrong")
                 .content(req)
@@ -94,4 +109,5 @@ public class AccountsControllerTest extends AbstractTestNGSpringContextTests {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
+
 }

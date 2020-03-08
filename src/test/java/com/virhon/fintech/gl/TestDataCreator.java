@@ -7,6 +7,7 @@ import com.virhon.fintech.gl.model.AccountType;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.model.Transfer;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
+import com.virhon.fintech.gl.security.Authorizer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +26,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 // Класс ожидает что база данных существует но таблицы пусты
 @SpringBootTest(classes = Application.class)
@@ -38,6 +40,9 @@ public class TestDataCreator extends AbstractTestNGSpringContextTests {
     @Autowired
     private MySQLGeneralLedger gl;
 
+    @Autowired
+    private Authorizer authorizer;
+
     @BeforeClass
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -47,8 +52,7 @@ public class TestDataCreator extends AbstractTestNGSpringContextTests {
     public void generateUahTestData() throws LedgerException, IOException, URISyntaxException {
         final Map<String, String> macros = new HashMap<>();
         final Ledger ledger = gl.getLedger("UAH");
-        final List<String> uuids = Arrays.asList(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(), UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        final List<String> uuids = authorizer.getClients().stream().map(p->p.getKey()).collect(Collectors.toList());
         // 1. Пассивные счета без истории и оборотов
         String area = "1";
         Integer count = 10;

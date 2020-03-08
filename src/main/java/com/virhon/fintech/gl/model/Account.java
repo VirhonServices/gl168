@@ -1,5 +1,6 @@
 package com.virhon.fintech.gl.model;
 
+import com.virhon.fintech.gl.exception.AccessDenied;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import org.apache.log4j.Logger;
@@ -181,6 +182,17 @@ public class Account {
         final IdentifiedEntity<AccountAttributes> oAttr = new IdentifiedEntity<>(this.accountId, attributes);
         this.ledger.getAttrRepo().update(oAttr);
         return newReserved;
+    }
+
+    public boolean isOwnedBy(final String clientUuid) {
+        final AccountAttributes attr = getAttributes().getEntity();
+        return attr.getClientUuid().toLowerCase().equals(clientUuid.toLowerCase());
+    }
+
+    public void checkAccess(final String clientUuid) throws AccessDenied {
+        if (!isOwnedBy(clientUuid)) {
+            throw new AccessDenied();
+        }
     }
 
     /**

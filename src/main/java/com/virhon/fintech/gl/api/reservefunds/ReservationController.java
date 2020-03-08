@@ -3,12 +3,16 @@ package com.virhon.fintech.gl.api.reservefunds;
 import com.google.gson.Gson;
 import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.LedgerError;
+import com.virhon.fintech.gl.exception.AccessDenied;
 import com.virhon.fintech.gl.exception.LedgerException;
+import com.virhon.fintech.gl.model.Account;
+import com.virhon.fintech.gl.model.AccountAttributes;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.model.Reservation;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +34,9 @@ public class ReservationController {
     @Autowired
     SignatureChecker checker;
 
+    @Autowired
+    private Authorizer authorizer;
+
     private Gson gc = GsonConverter.create();
 
     @PostMapping
@@ -40,12 +47,15 @@ public class ReservationController {
                                           @PathVariable String debitAccountUuid,
                                           @RequestBody NewReservationRequest request) {
         try {
+            authorizer.checkPresense(hClientUuid);
             final String req = gc.toJson(request);
             checker.validateSignature(hClientUuid, hDate, req, hSignature);
             request.checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
+            final Account debit = ledger.getExistingByUuid(debitAccountUuid);
+            debit.checkAccess(hClientUuid);
             final IdentifiedEntity<Reservation> iRes = ledger.reserveFunds(request.getTransferRef(),
-                    "Client's UUID must be here","CLientCustomerId", debitAccountUuid,
+                    hClientUuid,request.getClientCustomerId(), debitAccountUuid,
                     request.getCreditAccountUuid(), request.getAmount(), request.getDescription());
             final NewReservationResponse response = new NewReservationResponse();
             response.setUuid(iRes.getEntity().getUuid());
@@ -65,6 +75,10 @@ public class ReservationController {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(401, e.getMessage());
             return new ResponseEntity<LedgerError>(error, HttpStatus.UNAUTHORIZED);
+        } catch (AccessDenied e) {
+            LOGGER.error(e.getMessage());
+            final LedgerError error = new LedgerError(403, e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(500, e.getMessage());

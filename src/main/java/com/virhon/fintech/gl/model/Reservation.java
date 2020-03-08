@@ -1,5 +1,7 @@
 package com.virhon.fintech.gl.model;
 
+import com.virhon.fintech.gl.exception.AccessDenied;
+
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
@@ -85,4 +87,15 @@ public class Reservation {
     public void setExpireAt(ZonedDateTime expireAt) {
         this.expireAt = expireAt;
     }
+
+    public boolean isOwnedBy(final String clientUuid) {
+        return this.clientUuid.toLowerCase().equals(clientUuid.toLowerCase());
+    }
+
+    public void checkAccess(final String clientUuid) throws AccessDenied {
+        if (!isOwnedBy(clientUuid)) {
+            throw new AccessDenied();
+        }
+    }
+
 }

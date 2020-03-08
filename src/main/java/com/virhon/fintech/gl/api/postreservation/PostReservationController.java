@@ -4,13 +4,15 @@ import com.google.gson.Gson;
 import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.LedgerError;
 import com.virhon.fintech.gl.api.maketransfer.TransferData;
+import com.virhon.fintech.gl.exception.AccessDenied;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.model.Reservation;
 import com.virhon.fintech.gl.model.Transfer;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,9 @@ public class PostReservationController {
     @Autowired
     SignatureChecker checker;
 
+    @Autowired
+    private Authorizer authorizer;
+
     private Gson gc = GsonConverter.create();
 
     @PutMapping
@@ -42,6 +47,7 @@ public class PostReservationController {
                                              @PathVariable String reservationUuid,
                                              @RequestBody PostReservationRequest request) {
         try {
+            authorizer.checkPresense(hClientUuid);
             final String req = gc.toJson(request);
             checker.validateSignature(hClientUuid, hDate, req, hSignature);
             request.checkNotNullAllFields();
@@ -49,8 +55,9 @@ public class PostReservationController {
             final Ledger ledger = gl.getLedger(currencyCode);
             final IdentifiedEntity<Reservation> iRes = ledger.getReservationRepo().getByUuid(reservationUuid);
             final Reservation res = iRes.getEntity();
-            final Transfer tr = ledger.transferFunds(res.getTransferRef(), "Client's UUID must be here",
-                    "CLientCustomerId", res.getDebitId(), res.getCreditId(), res.getAmount(),
+            res.checkAccess(hClientUuid);
+            final Transfer tr = ledger.transferFunds(res.getTransferRef(), hClientUuid,
+                    res.getClientCustomerId(), res.getDebitId(), res.getCreditId(), res.getAmount(),
                     request.getRepAmount(), request.getReportedOn().asLocalDate(), res.getDescription());
             gl.commit();
             final TransferData response = ledger.createTransferResponseBody(tr);
@@ -63,6 +70,10 @@ public class PostReservationController {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(401, e.getMessage());
             return new ResponseEntity<LedgerError>(error, HttpStatus.UNAUTHORIZED);
+        } catch (AccessDenied e) {
+            LOGGER.error(e.getMessage());
+            final LedgerError error = new LedgerError(403, e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(500, e.getMessage());

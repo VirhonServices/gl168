@@ -3,11 +3,13 @@ package com.virhon.fintech.gl.api.accounts;
 import com.google.gson.Gson;
 import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.LedgerError;
+import com.virhon.fintech.gl.exception.AccessDenied;
 import com.virhon.fintech.gl.exception.LedgerException;
 import com.virhon.fintech.gl.model.*;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,9 @@ public class AccountsController {
     @Autowired
     SignatureChecker checker;
 
+    @Autowired
+    private Authorizer authorizer;
+
     private Gson gc = GsonConverter.create();
 
     @RequestMapping(method = RequestMethod.POST)
@@ -39,12 +44,13 @@ public class AccountsController {
                                             @RequestBody NewAccountRequestBody request) {
         try {
             final String req = gc.toJson(request);
+            authorizer.checkPresense(hClientUuid);
             checker.validateSignature(hClientUuid, hDate, req, hSignature);
             request.checkNotNullAllFields();
             final Ledger ledger = gl.getLedger(currencyCode);
             // TODO: 02.03.20 change uuids
             final Account account =
-                    ledger.openNew("CLIENT_UUID","clientCustomerId", request.getAccNumber(),
+                    ledger.openNew(hClientUuid, request.getClientCustomerId(), request.getAccNumber(),
                             request.getIban(), AccountType.valueOf(request.getAccType()));
             final IdentifiedEntity<AccountAttributes> attr = ledger.getAttrRepo().getById(account.getAccountId());
             this.gl.commit();
@@ -67,6 +73,10 @@ public class AccountsController {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(401, e.getMessage());
             return new ResponseEntity<LedgerError>(error, HttpStatus.UNAUTHORIZED);
+        } catch (AccessDenied e) {
+            LOGGER.error(e.getMessage());
+            final LedgerError error = new LedgerError(403, e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             LOGGER.error("Account ".concat(request.getAccNumber().concat(" hasn't been opened")));
             return new ResponseEntity<>(new LedgerError(500,"Something went wrong"),

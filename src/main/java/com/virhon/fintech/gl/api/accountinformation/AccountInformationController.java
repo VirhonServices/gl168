@@ -3,13 +3,16 @@ package com.virhon.fintech.gl.api.accountinformation;
 import com.google.gson.Gson;
 import com.virhon.fintech.gl.GsonConverter;
 import com.virhon.fintech.gl.api.LedgerError;
+import com.virhon.fintech.gl.exception.AccessDenied;
 import com.virhon.fintech.gl.exception.LedgerException;
+import com.virhon.fintech.gl.model.Account;
 import com.virhon.fintech.gl.model.AccountAttributes;
 import com.virhon.fintech.gl.model.AccountType;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
 import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.repo.IdentifiedEntity;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.time.ZonedDateTime;
 
 import static com.virhon.fintech.gl.api.APIConfig.*;
@@ -34,6 +36,9 @@ public class AccountInformationController {
     @Autowired
     SignatureChecker checker;
 
+    @Autowired
+    private Authorizer authorizer;
+
     private Gson gc = GsonConverter.create();
 
     @GetMapping
@@ -44,8 +49,11 @@ public class AccountInformationController {
         try {
             final String cur = currencyCode.toUpperCase();
             final Ledger ledger = gl.getLedger(cur);
+            authorizer.checkPresense(hClientUuid);
             checker.validateSignature(hClientUuid, hDate, "", hSignature);
-            final IdentifiedEntity<AccountAttributes> attr = ledger.getAttrRepo().getByUuid(accountUuid);
+            final Account account = ledger.getExistingByUuid(accountUuid);
+            account.checkAccess(hClientUuid);
+            final IdentifiedEntity<AccountAttributes> attr = account.getAttributes();
             if (attr != null) {
                 final AccountInformationResponseBody response = new AccountInformationResponseBody();
                 response.setUuid(accountUuid);
@@ -90,6 +98,10 @@ public class AccountInformationController {
             LOGGER.error(e.getMessage());
             final LedgerError error = new LedgerError(401, e.getMessage());
             return new ResponseEntity<LedgerError>(error, HttpStatus.UNAUTHORIZED);
+        } catch (AccessDenied e) {
+            LOGGER.error(e.getMessage());
+            final LedgerError error = new LedgerError(403, e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             return new ResponseEntity<>(new LedgerError(500,"Something went wrong"),

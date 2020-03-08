@@ -7,11 +7,9 @@ import com.virhon.fintech.gl.api.APIConfig;
 import com.virhon.fintech.gl.api.Application;
 import com.virhon.fintech.gl.api.SeparatedDate;
 import com.virhon.fintech.gl.exception.LedgerException;
-import com.virhon.fintech.gl.model.Account;
-import com.virhon.fintech.gl.model.GeneralLedger;
-import com.virhon.fintech.gl.model.Ledger;
-import com.virhon.fintech.gl.model.Transfer;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.model.*;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -43,6 +41,9 @@ public class ReportingPeriodControllerTest extends AbstractTestNGSpringContextTe
 
     @Autowired
     private GeneralLedger gl;
+
+    @Autowired
+    private Authorizer authorizer;
 
     @Autowired
     private APIConfig config;
@@ -103,9 +104,12 @@ public class ReportingPeriodControllerTest extends AbstractTestNGSpringContextTe
         request.setFinishOn(finishedOn);
         final String req = gson.toJson(request);
         final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
-        final String token = SignatureChecker.calculateToken(date, req, "53b179afe1b7e001b3e881a31e0ddee7c2063f71");
+        final AccountAttributes attr = account.getAttributes().getEntity();
+        final String clientUuid = attr.getClientUuid();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, req, digest);
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/".concat(accountUuid).concat("/reporting"))
-                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
                 .header(config.SIGNATURE_HEADER, token)
                 .header(config.DATE_HEADER, date)
                 .content(req)
@@ -142,14 +146,56 @@ public class ReportingPeriodControllerTest extends AbstractTestNGSpringContextTe
         request.setFinishOn(finishedOn);
         final String req = gson.toJson(request);
         final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
+        final AccountAttributes attr = account.getAttributes().getEntity();
+        final String clientUuid = attr.getClientUuid();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, req, digest);
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/".concat(accountUuid).concat("/reporting"))
-                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
                 .header(config.SIGNATURE_HEADER, "wrong token")
                 .header(config.DATE_HEADER, date)
                 .content(req)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testAccessDenied() throws Exception {
+        final String accountUuid = macros.getObjectUuid("PASSIVE_MULTI_HISTORY9");
+        final Ledger ledger = gl.getLedger("UAH");
+        final Account account = ledger.getExistingByUuid(accountUuid);
+
+        final ZonedDateTime startDate = ZonedDateTime.parse(macros.getObjectUuid("START_DATE")).plusDays(1);
+        final LocalDate startedOn1 = LocalDate.of(startDate.getYear(), startDate.getMonthValue(), startDate.getDayOfMonth());
+        final LocalDate finishedOn1 = startedOn1.plusDays(0);
+        final Ledger.ReportingCollection collection1 = ledger.collectReportingData(account.getAccountId(), startedOn1, finishedOn1);
+
+        final SeparatedDate startedOn = new SeparatedDate();
+        startedOn.setYear(startDate.getYear());
+        startedOn.setMonth(startDate.getMonthValue());
+        startedOn.setDay(startDate.getDayOfMonth());
+        final SeparatedDate finishedOn = new SeparatedDate();
+        finishedOn.setYear(startDate.getYear());
+        finishedOn.setMonth(startDate.getMonthValue());
+        finishedOn.setDay(startDate.getDayOfMonth());
+        final ReportingPeriodRequest request = new ReportingPeriodRequest();
+        request.setBeginOn(startedOn);
+        request.setFinishOn(finishedOn);
+        final String req = gson.toJson(request);
+        final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
+        final AccountAttributes attr = account.getAttributes().getEntity();
+        final String clientUuid = authorizer.get(3).getKey();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, req, digest);
+        mockMvc.perform(MockMvcRequestBuilders.post("/v1/gl/uah/accounts/".concat(accountUuid).concat("/reporting"))
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
+                .header(config.SIGNATURE_HEADER, token)
+                .header(config.DATE_HEADER, date)
+                .content(req)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 
 }

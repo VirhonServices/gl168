@@ -4,8 +4,12 @@ import com.virhon.fintech.gl.TestDataMacros;
 import com.virhon.fintech.gl.api.APIConfig;
 import com.virhon.fintech.gl.api.Application;
 import com.virhon.fintech.gl.model.Account;
+import com.virhon.fintech.gl.model.AccountAttributes;
+import com.virhon.fintech.gl.model.GeneralLedger;
+import com.virhon.fintech.gl.model.Ledger;
 import com.virhon.fintech.gl.repo.mysql.MySQLGeneralLedger;
-import com.virhon.fintech.gl.signature.SignatureChecker;
+import com.virhon.fintech.gl.security.Authorizer;
+import com.virhon.fintech.gl.security.SignatureChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -34,6 +38,9 @@ public class AccountInformationControllerTest extends AbstractTestNGSpringContex
     private MySQLGeneralLedger gl;
 
     @Autowired
+    private Authorizer authorizer;
+
+    @Autowired
     private APIConfig config;
 
     private MockMvc mockMvc;
@@ -48,9 +55,12 @@ public class AccountInformationControllerTest extends AbstractTestNGSpringContex
         final String accountUuid = macros.getObjectUuid("PASSIVE_SINGLE_HISTORY2");
         final Account account = gl.getLedger("UAH").getExistingByUuid(accountUuid);
         final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
-        final String token = SignatureChecker.calculateToken(date, "", "53b179afe1b7e001b3e881a31e0ddee7c2063f71");
+        final AccountAttributes attr = account.getAttributes().getEntity();
+        final String clientUuid = attr.getClientUuid();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, "", digest);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/uah/accounts/".concat(accountUuid))
-                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
                 .header(config.SIGNATURE_HEADER, token)
                 .header(config.DATE_HEADER, date)
                 .accept(MediaType.APPLICATION_JSON))
@@ -64,9 +74,12 @@ public class AccountInformationControllerTest extends AbstractTestNGSpringContex
         final String accountUuid = macros.getObjectUuid("PASSIVE_SINGLE_HISTORY2");
         final Account account = gl.getLedger("UAH").getExistingByUuid(accountUuid);
         final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
-        final String token = SignatureChecker.calculateToken(date, "", "53b179afe1b7e001b3e881a31e0ddee7c2063f71");
+        final AccountAttributes attr = account.getAttributes().getEntity();
+        final String clientUuid = attr.getClientUuid();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, "", digest);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/bhd/accounts/".concat(accountUuid))
-                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
                 .header(config.SIGNATURE_HEADER, token)
                 .header(config.DATE_HEADER, date)
                 .accept(MediaType.APPLICATION_JSON))
@@ -75,10 +88,15 @@ public class AccountInformationControllerTest extends AbstractTestNGSpringContex
 
     @Test
     public void testGetInvalidAccount() throws Exception {
+        final String accountUuid = macros.getObjectUuid("PASSIVE_SINGLE_HISTORY2");
+        final Account account = gl.getLedger("UAH").getExistingByUuid(accountUuid);
         final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
-        final String token = SignatureChecker.calculateToken(date, "", "53b179afe1b7e001b3e881a31e0ddee7c2063f71");
+        final AccountAttributes attr = account.getAttributes().getEntity();
+        final String clientUuid = attr.getClientUuid();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, "", digest);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/uah/accounts/wrong-uuid")
-                .header(config.CLIENT_UUID_HEADER, "9a0fd125-2e7e-486c-8884-97e4275adf90")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
                 .header(config.SIGNATURE_HEADER, token)
                 .header(config.DATE_HEADER, date)
                 .accept(MediaType.APPLICATION_JSON))
@@ -89,12 +107,35 @@ public class AccountInformationControllerTest extends AbstractTestNGSpringContex
 
     @Test
     public void testUnauthorized() throws Exception {
+        final String accountUuid = macros.getObjectUuid("PASSIVE_SINGLE_HISTORY2");
+        final Account account = gl.getLedger("UAH").getExistingByUuid(accountUuid);
         final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
+        final AccountAttributes attr = account.getAttributes().getEntity();
+        final String clientUuid = attr.getClientUuid();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, "", digest);
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/uah/accounts/wrong-uuid")
+                .header(config.CLIENT_UUID_HEADER, clientUuid)
+                .header(config.SIGNATURE_HEADER, "wrong token")
+                .header(config.DATE_HEADER, date)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testAccessDenied() throws Exception {
+        final String accountUuid = macros.getObjectUuid("PASSIVE_SINGLE_HISTORY2");
+        final Account account = gl.getLedger("UAH").getExistingByUuid(accountUuid);
+        final String date = ZonedDateTime.now().format(config.DATE_HEADER_FORMAT);
+        final AccountAttributes attr = account.getAttributes().getEntity();
+        final String clientUuid = authorizer.get(5).getKey();
+        final String digest = authorizer.getDigest(clientUuid);
+        final String token = SignatureChecker.calculateToken(date, "", digest);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/gl/uah/accounts/wrong-uuid")
                 .header(config.CLIENT_UUID_HEADER, "wrong client")
                 .header(config.SIGNATURE_HEADER, "wrong token")
                 .header(config.DATE_HEADER, date)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 }
