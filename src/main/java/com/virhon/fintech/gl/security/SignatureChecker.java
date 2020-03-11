@@ -7,13 +7,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.naming.AuthenticationException;
-import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
 
 import static com.virhon.fintech.gl.api.APIConfig.DATE_HEADER_FORMAT;
 

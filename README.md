@@ -17,6 +17,25 @@
 
 ## OVERVIEW
 
+### Authentication
+The service ia able to be communicated by authorized TPP's systems only. So, each of request should 
+be signed according to the following schema:
+````
+access-token = sha1(md5(requestDateTime.requestData.clientDigest.salt))
+````
+where
+* requestDateTime - the moment of request provided by **Date** header in format **DateTimeFormatter.ISO_ZONED_DATE_TIME**
+* requestData - the content of request's body in string Json format
+* salt - a mixina previded during the boarding process
+* clientDigest - the digest stored for the client and calculated as:
+````
+clientDigest = sha1(md5(apiKey.clientuuid.salt))
+````
+where
+* apiKey - the key provided during the boarding process
+* clientUuid - ID of the client provided during the boarding process
+* salt - a mixina previded during the boarding process
+
 ### Types of account
  |Parameter| Description|
  |---------|------------|
@@ -29,44 +48,6 @@ Some functions require date or period to be defined. There are two types of
 date values regarding the transfers:
 * posting
 * reporting
-
-#### POSTING moment
-Posting date shows the moment when the transfer was posted. The value 
-includes year, month, day, hour, minutes, seconds, milliseconds and 
-server's timezone.
-
-All the possible timezones provided below:
-
-|Code|Zone
-|----|-----
-|EST|-05:00
-|HST|-10:00
-|MST|-07:00
-|ACT|Australia/Darwin
-|AET|Australia/Sydney
-|AGT|America/Argentina/Buenos_Aires
-|ART|Africa/Cairo
-|AST|America/Anchorage
-|BET|America/Sao_Paulo
-|BST|Asia/Dhaka
-|CAT|Africa/Harare
-|CNT|America/St_Johns
-|CST|America/Chicago
-|CTT|Asia/Shanghai
-|EAT|Africa/Addis_Ababa
-|ECT|Europe/Paris
-|IET|America/Indiana/Indianapolis
-|IST|Asia/Kolkata
-|JST|Asia/Tokyo
-|MIT|Pacific/Apia
-|NET|Asia/Yerevan
-|NST|Pacific/Auckland
-|PLT|Asia/Karachi
-|PNT|America/Phoenix
-|PRT|America/Puerto_Rico
-|PST|America/Los_Angeles
-|SST|Pacific/Guadalcanal
-|VST|Asia/Ho_Chi_Minh
 
 #### REPORTING date 
 Reporting date says about the financial day the action was referred to. 
