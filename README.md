@@ -23,6 +23,8 @@ be signed according to the following schema:
 ````
 access-token = sha1(md5(requestDateTime.requestData.clientDigest.salt))
 ````
+dots means a concatenation operation
+
 where
 * requestDateTime - the moment of request provided by **Date** header in format **DateTimeFormatter.ISO_ZONED_DATE_TIME**
 * requestData - the content of request's body in string Json format
