@@ -1,7 +1,5 @@
 # Virhon General Ledger
 
-![picture](http://i.piccy.info/i9/4000ad033c7371a6cc1a72d2fe9c194c/1582148037/8830/1363454/1111.png)
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -16,9 +14,10 @@
     * [Get the data for posting period](#get-the-data-for-posting-period-post)
 
 ## OVERVIEW
+The service provides General Ledger functionality includes accounts, transfers and reservations.  
 
 ### Authentication
-The service ia able to be communicated by authorized TPP's systems only. So, each of request should 
+The service is able to be communicated by authorized TPP's systems only. So, each of request should 
 be signed according to the following schema:
 ````
 access-token = sha1(md5(requestDateTime.requestData.clientDigest.salt))

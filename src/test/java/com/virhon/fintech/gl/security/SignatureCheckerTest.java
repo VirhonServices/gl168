@@ -31,7 +31,7 @@ public class SignatureCheckerTest {
         digests.forEach((c,d) -> System.out.println(c.concat("=").concat(d)));
     }
 
-    @Test
+    @Test(enabled = false)
     public void testValidateSignature() {
         final String clientUuid = "9a0fd125-2e7e-486c-8884-97e4275adf90";
         final String digest = "53b179afe1b7e001b3e881a31e0ddee7c2063f71";
