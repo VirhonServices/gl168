@@ -37,7 +37,7 @@ where
 * clientUuid - ID of the client provided during the boarding process
 * salt - a mixina previded during the boarding process
 
-Each request has to be signed. The signature is passed via ***X_SIGNATURE*** header either a client's uuid via ***X-CLIENT-UUID***.  
+Each request has to be signed. The signature is passed via ***X_SIGNATURE*** header as well as a client's uuid via ***X-CLIENT-UUID***.  
 
 ### Types of account
 The service enables you to operate the following types of accounts:
