@@ -97,14 +97,6 @@ public class Page {
     }
 
     public List<Transfer> addTransfer(final Transfer transfer) throws LedgerException {
-/*
-        if (this.startedAt.compareTo(post.getPostedAt()) > 0) {
-            throw LedgerException.invalidPostedAt(post);
-        }
-        if (this.repStartedOn.compareTo(post.getReportedOn()) > 0) {
-            throw LedgerException.invalidReportedOn(post);
-        }
-*/
         this.transfers.add(transfer);
         this.finishBalance = this.finishBalance.add(transfer.getAmount());
         this.finishRepBalance = this.finishRepBalance.add(transfer.getLocalAmount());

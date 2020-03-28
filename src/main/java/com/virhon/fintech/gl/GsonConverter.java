@@ -11,6 +11,9 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 public class GsonConverter {
+    private GsonConverter() {
+    }
+
     public static Gson create() {
         final Gson converter = new GsonBuilder()
                 .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
